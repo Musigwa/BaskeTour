@@ -1,0 +1,25 @@
+import React from "react";
+import styled from "styled-components/native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import ImageIcon from "../assets/svgs/ImageIcon";
+
+import { Paragraph, View } from "../styles/styled-elements";
+
+const PhotoHolder = () => {
+  return (
+    <Wrapper>
+      <ImageIcon />
+    </Wrapper>
+  );
+};
+
+const Wrapper = styled(View)`
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 271px;
+  border-radius: 24px;
+  background-color: #e5e3ee;
+`;
+
+export default PhotoHolder;
