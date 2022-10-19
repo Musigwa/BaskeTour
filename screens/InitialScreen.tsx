@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAppSelector } from "../hooks/useStore";
 
 import Button from "../components/common/Buttons";
 import Logo from "../assets/svgs/Logo";
@@ -12,6 +13,7 @@ import { Paragraph, View } from "../styles/styled-elements";
 
 function InitialScreen({ navigation }: AuthScreenProps<"Initial">) {
   const insets = useSafeAreaInsets();
+  const { token, user } = useAppSelector((state) => state.auth);
 
   const handleGetStarted = () => {
     navigation.push("CreateAccount");
@@ -20,6 +22,12 @@ function InitialScreen({ navigation }: AuthScreenProps<"Initial">) {
   const handleSignin = () => {
     navigation.push("Login");
   };
+
+  useEffect(() => {
+    if (token && !user.profilePic) {
+      navigation.push("Photo");
+    }
+  }, [token, user]);
   return (
     <>
       <StatusBar barStyle="light-content" />
@@ -58,7 +66,6 @@ const ActionText = styled(Paragraph)`
   width: 100%;
   font-size: 18px;
 `;
-
 
 const Bottom = styled(View)`
   margin-top: 262px;

@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { Formik } from "formik";
+import { createFormData } from "../utils/methods";
 import * as Yup from "yup";
+
+import { useAppSelector } from "../hooks/useStore";
+import { useUploadProfileDetailsMutation } from "../store/api-queries/auth-queries";
 
 import IndicatorHeader from "../components/Indicator";
 import PhotoUploader from "../components/PhotoUploader";
@@ -12,18 +16,34 @@ import Button from "../components/common/Buttons";
 import { AuthScreenProps } from "../types";
 
 import { Paragraph, View } from "../styles/styled-elements";
+import { Alert } from "react-native";
 
 function PhotoScreen({ navigation }: AuthScreenProps<"Photo">) {
+  const [photo, setPhoto] = useState<any>();
   const insets = useSafeAreaInsets();
+
+  const { token, user, completedOnboarding } = useAppSelector((state) => state.auth);
+
+  const [uploadDetails, { isLoading }] = useUploadProfileDetailsMutation();
 
   const handleGetStarted = () => {
     navigation.push("Onboarding");
+  };
+
+  const onImageSelect = (image: any) => {
+    setPhoto(image);
   };
 
   const ProfileSchema = Yup.object().shape({
     firstName: Yup.string().min(2, "Too Short").required("Field is required"),
     lastName: Yup.string().min(2, "Too Short").required("Field is required"),
   });
+
+  useEffect(() => {
+    if (token && user.profilePic && !completedOnboarding) {
+      navigation.push("Onboarding");
+    }
+  }, [token, user]);
 
   return (
     <Container pt={insets.top} pb={insets.bottom}>
@@ -38,7 +58,7 @@ function PhotoScreen({ navigation }: AuthScreenProps<"Photo">) {
       </View>
 
       <View w-100 items-center>
-        <PhotoUploader />
+        <PhotoUploader onSelect={onImageSelect} />
         <Paragraph mt={18} color="#4F1473">
           Add photo
         </Paragraph>
@@ -49,8 +69,25 @@ function PhotoScreen({ navigation }: AuthScreenProps<"Photo">) {
           initialValues={{ firstName: "", lastName: "" }}
           validationSchema={ProfileSchema}
           onSubmit={async (values) => {
-            console.log("values", values);
-            navigation.push("Onboarding");
+            try {
+              if (!photo) {
+                Alert.alert("Please upload a photo");
+                return;
+              }
+              console.log("values", values);
+              const data = createFormData(photo, values);
+              console.log("values", data);
+
+              const res = await uploadDetails(data).unwrap();
+              console.log("res---", res);
+              if (res.status === 200) {
+                navigation.push("Onboarding");
+              } else {
+                Alert.alert("Something went wrong");
+              }
+            } catch (error) {
+              console.log("error", error);
+            }
           }}
         >
           {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
@@ -78,7 +115,11 @@ function PhotoScreen({ navigation }: AuthScreenProps<"Photo">) {
                 />
               </View>
               <View mt={50} w-100 items-center>
-                <Button text="Next" onPress={handleSubmit} />
+                <Button
+                  text="Next"
+                  onPress={handleSubmit}
+                  loading={isLoading}
+                />
               </View>
             </>
           )}

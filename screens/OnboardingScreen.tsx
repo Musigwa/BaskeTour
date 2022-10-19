@@ -6,27 +6,38 @@ import IndicatorHeader from "../components/Indicator";
 import PhotoHolder from "../components/PhotoHolder";
 import Input from "../components/common/Input";
 import Button from "../components/common/Buttons";
+import { useAppDispatch } from "../hooks/useStore";
 
 import { AuthScreenProps } from "../types";
-
+import { completedOnboarding } from "../store/slices/authSlice";
 import { Paragraph, View } from "../styles/styled-elements";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 function OnboardingScreen({ navigation }: AuthScreenProps<"Onboarding">) {
   const [currentStep, setCurrentStep] = useState(0);
+
   const insets = useSafeAreaInsets();
+  const dispatch = useAppDispatch();
 
   const handleGetStarted = () => {
     if (currentStep < 5) {
       setCurrentStep((prevState) => prevState + 1);
+    }
+    if (currentStep >= 5) {
+      dispatch(completedOnboarding(true));
     }
   };
 
   const handleBack = () => {
     if (currentStep > 0) {
       setCurrentStep((prevState) => prevState - 1);
-    }else {
-      navigation.goBack()
+    } else {
+      navigation.goBack();
     }
+  };
+
+  const handleSkip = () => {
+    dispatch(completedOnboarding(true));
   };
 
   const steps = [
@@ -88,7 +99,9 @@ function OnboardingScreen({ navigation }: AuthScreenProps<"Onboarding">) {
 
         <View mt={50} w-100 items-center>
           <Button text="Next" onPress={handleGetStarted} />
-          <Skip mt={39}>Skip for now</Skip>
+          <TouchableOpacity onPress={handleSkip}>
+            <Skip mt={39}>Skip for now</Skip>
+          </TouchableOpacity>
         </View>
       </View>
     </Container>

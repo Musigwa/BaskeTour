@@ -4,7 +4,7 @@ import NotFoundScreen from "../screens/NotFoundScreen";
 
 import BottomTabNavigator from "./BottomNavigator";
 import AuthNavigator from "./AuthNavigator";
-import SetupNavigator from "./SetupNavigator"
+import SetupNavigator from "./SetupNavigator";
 
 import { useAppSelector } from "../hooks/useStore";
 import { RootStackParamList } from "../types";
@@ -15,10 +15,10 @@ import { RootStackParamList } from "../types";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
-  const { token } = useAppSelector((state) => state.auth);
+  const { token, user, completedOnboarding } = useAppSelector((state) => state.auth);
   return (
     <>
-      {!token ? (
+      {!token || !user.profilePic || !completedOnboarding ? (
         <AuthNavigator />
       ) : (
         <Stack.Navigator>

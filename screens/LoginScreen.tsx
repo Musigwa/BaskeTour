@@ -15,11 +15,16 @@ import FacebookLogo from "../assets/svgs/FacebookLogo";
 
 import { AuthScreenProps } from "../types";
 import { Paragraph, View } from "../styles/styled-elements";
-import { Pressable } from "react-native";
+import { Alert, Pressable } from "react-native";
+
+import { useLoginMutation } from "../store/api-queries/auth-queries";
 
 function CreateAccount({ navigation }: AuthScreenProps<"Login">) {
   const [isChecked, setChecked] = useState(false);
   const insets = useSafeAreaInsets();
+
+  //mutations
+  const [loginUser, { isLoading }] = useLoginMutation();
 
   const handleGetStarted = () => {
     navigation.push("Photo");
@@ -49,9 +54,21 @@ function CreateAccount({ navigation }: AuthScreenProps<"Login">) {
           initialValues={{ email: "", password: "" }}
           validationSchema={SigninSchema}
           onSubmit={async (values) => {
-            console.log("values", values);
-            if(isChecked) {
-              
+            try {
+              console.log("values", values);
+              const res = await loginUser({
+                accountIdentifier: values.email,
+                password: values.password,
+              }).unwrap();
+
+              console.log("RES---", res);
+              if (res.status === 200) {
+                navigation.push("Photo");
+              } else {
+                Alert.alert("Something went wrong");
+              }
+            } catch (error) {
+              console.log('error', error)
             }
           }}
         >
@@ -97,7 +114,11 @@ function CreateAccount({ navigation }: AuthScreenProps<"Login">) {
               </View>
 
               <View mt={50} w-100 items-center>
-                <Button text="Create Account" onPress={handleSubmit} />
+                <Button
+                  text="Create Account"
+                  onPress={handleSubmit}
+                  loading={isLoading}
+                />
                 <Paragraph mb={22} mt={22} size={16} color="#8D8D8D">
                   OR
                 </Paragraph>

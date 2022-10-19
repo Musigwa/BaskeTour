@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useAppSelector } from "../hooks/useStore";
 import styled from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -9,12 +10,19 @@ import IndicatorHeader from "../components/Indicator";
 import Input from "../components/common/Input";
 import Button from "../components/common/Buttons";
 
+import { useSignupMutation } from "../store/api-queries/auth-queries";
+
 import { AuthScreenProps } from "../types";
 import { Paragraph, View } from "../styles/styled-elements";
-import { Pressable } from "react-native";
+import { Alert, Pressable } from "react-native";
 
 function CreateAccount({ navigation }: AuthScreenProps<"CreateAccount">) {
   const insets = useSafeAreaInsets();
+
+  const { token, user } = useAppSelector((state) => state.auth);
+
+  // mutations
+  const [signUp, { isLoading }] = useSignupMutation();
 
   const CreateAccountSchema = Yup.object().shape({
     email: Yup.string().email().required("Field is required"),
@@ -30,6 +38,12 @@ function CreateAccount({ navigation }: AuthScreenProps<"CreateAccount">) {
       .required()
       .oneOf([Yup.ref("password"), null], "Passwords must match"),
   });
+
+  useEffect(() => {
+    if (token && !user.profilePic) {
+      navigation.push("Photo");
+    }
+  }, [token, user]);
 
   return (
     <Container pt={insets.top} pb={insets.bottom}>
@@ -47,8 +61,20 @@ function CreateAccount({ navigation }: AuthScreenProps<"CreateAccount">) {
         initialValues={{ email: "", password: "", confirmPassword: "" }}
         validationSchema={CreateAccountSchema}
         onSubmit={async (values) => {
-          console.log("values", values);
-          navigation.push("Photo");
+          try {
+            console.log("values", values);
+            const res = await signUp({
+              email: values.email,
+              password: values.password,
+            }).unwrap();
+            if(res.status === 201) {
+              navigation.push("Photo");
+            }else {
+              Alert.alert('Something went wrong')
+            }
+          } catch (error) {
+            console.log('error', error)
+          }
         }}
       >
         {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
@@ -129,7 +155,11 @@ function CreateAccount({ navigation }: AuthScreenProps<"CreateAccount">) {
             </View>
 
             <View mt={50} w-100 items-center>
-              <Button text="Create Account" onPress={handleSubmit} />
+              <Button
+                text="Create Account"
+                onPress={handleSubmit}
+                loading={isLoading}
+              />
               <BottomText>
                 <Paragraph>By using Ulli you agree to our </Paragraph>
                 <Pressable>
