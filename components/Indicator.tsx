@@ -8,7 +8,7 @@ interface IProps {
   count: number;
   currentStep: number;
   showBackIcon?: boolean;
-  handleBackPress?: () => void
+  handleBackPress?: () => void;
 }
 
 const Indicator = ({
@@ -28,8 +28,9 @@ const Indicator = ({
       )}
 
       <View flex-row style={{ alignSelf: "center" }}>
-        {stepArray.map((step) => (
+        {stepArray.map((step, idx) => (
           <IndicatorItem
+            key={idx}
             mr={step < stepArray.length ? 10 : 0}
             active={step <= currentStep}
           />

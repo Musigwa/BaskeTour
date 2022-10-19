@@ -6,8 +6,8 @@ import * as Updates from "expo-updates";
 import { Platform } from "react-native";
 const localhost =
   Platform.OS === "ios"
-    ? "https://apis.cliquetheapp.com"
-    : "https://apis.cliquetheapp.com";
+    ? "https://api.ullipicks.com"
+    : "https://api.ullipicks.com";
 
 let Config = {
   API_BASE_URL: `${localhost}/api/v1`,
@@ -20,9 +20,9 @@ let Config = {
 };
 
 if (Updates.channel === "production") {
-  Config["API_BASE_URL"] = "https://apis.production.com";
+  Config["API_BASE_URL"] = "https://api.ullipicks.com";
 } else if (Updates.channel === "staging") {
-  Config["API_BASE_URL"] = "https://apis.cliquetheapp.com/api/v1";
+  Config["API_BASE_URL"] = "https://api.ullipicks.com/api/v1";
 }
 
 export default Config;
