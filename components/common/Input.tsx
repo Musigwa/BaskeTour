@@ -38,7 +38,8 @@ const Input = ({
   autoCorrect = false,
   isPassword = false,
 }: IntProps) => {
-    const {rightIcon, passwordVisibility, handlePasswordVisibility} = useTogglePassword()
+  const { rightIcon, passwordVisibility, handlePasswordVisibility } =
+    useTogglePassword();
   return (
     <View w-100>
       {isPassword ? (
@@ -101,8 +102,6 @@ const Error = styled(Paragraph)`
   font-size: 10px;
 `;
 
-const PasswordIcon = styled.Pressable`
-
-`
+const PasswordIcon = styled.Pressable``;
 
 export default Input;

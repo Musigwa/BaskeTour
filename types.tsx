@@ -9,6 +9,7 @@ import {
   NavigatorScreenParams,
 } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { IGroup } from "./interfaces";
 
 declare global {
   namespace ReactNavigation {
@@ -29,11 +30,21 @@ export type RootStackParamList = {
   Setup: undefined;
   Modal: undefined;
   NotFound: undefined;
+  JoinGroup: NavigatorScreenParams<JoinGroupStackParamList> | undefined;
 };
 
 export type SetupStackParamList = {
   ActionType: undefined;
   CreateGroup: undefined;
+  [x: string]: any;
+};
+
+export type JoinGroupStackParamList = {
+  SearchGroup: undefined;
+  FullGroup: undefined;
+  Join: undefined;
+  Success: undefined;
+  params: { group: IGroup };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
@@ -41,6 +52,10 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
 
 export type SetupStackScreenProps<Screen extends keyof SetupStackParamList> =
   NativeStackScreenProps<SetupStackParamList, Screen>;
+
+export type JoinGroupStackScreenProps<
+  Screen extends keyof JoinGroupStackParamList
+> = NativeStackScreenProps<JoinGroupStackParamList, Screen>;
 
 export type RootTabParamList = {
   TabOne: undefined;

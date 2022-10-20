@@ -14,6 +14,8 @@ import {
 
 import authReducer from "./slices/authSlice";
 import { authApi } from "./api-queries/auth-queries";
+import { groupApi } from "./api-queries/group-queries";
+import groupReducer from "./slices/groupSlice";
 
 const persistConfig = {
   key: "root",
@@ -25,6 +27,8 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: authReducer,
   [authApi.reducerPath]: authApi.reducer,
+  groups: groupReducer,
+  [groupApi.reducerPath]: groupApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

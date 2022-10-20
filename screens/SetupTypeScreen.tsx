@@ -2,21 +2,29 @@ import React from "react";
 import { StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import Button from "../components/common/Buttons";
 import Logo from "../assets/svgs/Logo";
 import BallIcon from "../assets/svgs/BallIcon";
 import HoopIcon from "../assets/svgs/HoopIcon";
 
-import { SetupStackScreenProps } from "../types";
+import {
+  RootStackParamList,
+  SetupStackParamList,
+  SetupStackScreenProps,
+} from "../types";
 
 import { Paragraph, View } from "../styles/styled-elements";
+import { NavigationProp } from "@react-navigation/native";
 
-function SetupTypeScreen({ navigation }: SetupStackScreenProps<"ActionType">) {
+
+function SetupTypeScreen({ navigation }: SetupStackScreenProps<'CreateGroup'>) {
   const insets = useSafeAreaInsets();
 
   const handleCreateGroup = () => {
     navigation.push("CreateGroup");
+  };
+
+  const handleJoinGroup = () => {
+    navigation.navigate("JoinGroup", { screen: "SearchGroup" });
   };
 
   const handleSkip = () => {
@@ -45,11 +53,12 @@ function SetupTypeScreen({ navigation }: SetupStackScreenProps<"ActionType">) {
             </Action>
           </Touchable>
 
-          <Touchable style={{ width: "100%" }}>
+          <Touchable style={{ width: "100%" }} onPress={handleJoinGroup}>
             <Action bg="accentPurple">
               <ActionIcons>
                 <HoopIcon />
               </ActionIcons>
+
               <ActionButtonText>Join Existing Group</ActionButtonText>
             </Action>
           </Touchable>
