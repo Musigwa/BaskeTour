@@ -115,7 +115,7 @@ function CreateAccount({ navigation }: AuthScreenProps<"Login">) {
 
               <View mt={50} w-100 items-center>
                 <Button
-                  text="Create Account"
+                  text="Sign in"
                   onPress={handleSubmit}
                   loading={isLoading}
                 />

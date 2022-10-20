@@ -15,8 +15,8 @@ import { Paragraph, View } from "../styles/styled-elements";
 function SetupTypeScreen({ navigation }: SetupStackScreenProps<"ActionType">) {
   const insets = useSafeAreaInsets();
 
-  const handleGetStarted = () => {
-    // navigation.push("CreateAccount");
+  const handleCreateGroup = () => {
+    navigation.push("CreateGroup");
   };
 
   const handleSkip = () => {
@@ -36,7 +36,7 @@ function SetupTypeScreen({ navigation }: SetupStackScreenProps<"ActionType">) {
           <Logo />
         </View>
         <View mt={100} w-100>
-          <Touchable mb={23}>
+          <Touchable mb={23} onPress={handleCreateGroup}>
             <Action>
               <ActionIcons>
                 <BallIcon />

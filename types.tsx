@@ -33,13 +33,14 @@ export type RootStackParamList = {
 
 export type SetupStackParamList = {
   ActionType: undefined;
+  CreateGroup: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>;
 
 export type SetupStackScreenProps<Screen extends keyof SetupStackParamList> =
-NativeStackScreenProps<SetupStackParamList, Screen>;
+  NativeStackScreenProps<SetupStackParamList, Screen>;
 
 export type RootTabParamList = {
   TabOne: undefined;
