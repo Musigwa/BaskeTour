@@ -92,3 +92,8 @@ export const ScrollContainer = styled(StyledScrollView)`
   flex: 1;
   padding: 0 16px;
 `;
+
+export const Title = styled(Paragraph)`
+  font-size: 24px;
+  font-weight: 700;
+`;

@@ -68,7 +68,7 @@ function CreateAccount({ navigation }: AuthScreenProps<"Login">) {
                 Alert.alert("Something went wrong");
               }
             } catch (error) {
-              console.log('error', error)
+              console.log("error", error);
             }
           }}
         >
