@@ -2,9 +2,21 @@ import { FontAwesome } from "@expo/vector-icons";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
+import {
+  useFonts,
+  Montserrat_500Medium,
+  Montserrat_700Bold,
+} from "@expo-google-fonts/montserrat";
+import { Poppins_700Bold } from "@expo-google-fonts/poppins";
 
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
+
+  let [fontsLoaded] = useFonts({
+    Montserrat_500Medium,
+    Montserrat_700Bold,
+    Poppins_700Bold,
+  });
 
   // Load any resources or data that we need prior to rendering the app
   useEffect(() => {
@@ -31,5 +43,5 @@ export default function useCachedResources() {
     loadResourcesAndDataAsync();
   }, []);
 
-  return isLoadingComplete;
+  return isLoadingComplete && fontsLoaded;
 }

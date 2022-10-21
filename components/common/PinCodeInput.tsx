@@ -103,6 +103,7 @@ const PinCodeInput: React.FC<IPinCodeInputProps> = ({
             key={inputName}
             value={inputValues[inputName]}
             keyboardType="numeric"
+            secureTextEntry={true}
           />
         ))}
       </PinRow>

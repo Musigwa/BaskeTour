@@ -6,19 +6,14 @@ import Logo from "../assets/svgs/Logo";
 import BallIcon from "../assets/svgs/BallIcon";
 import HoopIcon from "../assets/svgs/HoopIcon";
 
-import {
-  RootStackParamList,
-  SetupStackParamList,
-  SetupStackScreenProps,
-} from "../types";
+import { SetupStackParamList } from "../types";
 
 import { Paragraph, View } from "../styles/styled-elements";
-import { NavigationProp } from "@react-navigation/native";
 
-interface ISetupScreenProps {
-  navigation: NavigationProp<SetupStackParamList, any>;
-}
-function SetupTypeScreen({ navigation }: ISetupScreenProps) {
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
+type SetupScreenProps = NativeStackScreenProps<SetupStackParamList, any>;
+function SetupTypeScreen({ navigation }: SetupScreenProps) {
   const insets = useSafeAreaInsets();
 
   const handleGetStarted = () => {
@@ -26,7 +21,7 @@ function SetupTypeScreen({ navigation }: ISetupScreenProps) {
   };
 
   const handleJoinGroup = () => {
-    navigation.navigate("JoinGroup", { screen: "SearchGroup" });
+    navigation.navigate("JoinGroup");
   };
 
   const handleSkip = () => {

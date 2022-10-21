@@ -1,34 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { Container, Paragraph, Title, View } from "../styles/styled-elements";
-import Input from "../components/common/Input";
-import { NavigationProp, RouteProp } from "@react-navigation/native";
-import { IGroup } from "../interfaces";
+import {
+  BackButtonWrapper,
+  Container,
+  Paragraph,
+  Title,
+  View,
+  ErrorMessage,
+} from "../styles/styled-elements";
 import Button from "../components/common/Buttons";
 import PinCodeInput from "../components/common/PinCodeInput";
-import { Formik, useFormikContext } from "formik";
+import { MaterialIcons } from "@expo/vector-icons";
 import {
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  Pressable,
 } from "react-native";
 import { JoinGroupStackParamList } from "../types";
 import { useJoinGroupMutation } from "../store/api-queries/group-queries";
-import { join } from "lodash";
 import styled from "styled-components";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-interface IJoinGroupProps {
-  navigation: NavigationProp<any, any>;
-  route: RouteProp<JoinGroupStackParamList, any>;
-}
+type IJoinGroupProps = NativeStackScreenProps<JoinGroupStackParamList, "Join">;
 
 const JoinGroupScreen: React.FC<IJoinGroupProps> = ({ navigation, route }) => {
   const {
     params: { group },
   } = route;
 
-  const [joinGroup, { isLoading, data }] = useJoinGroupMutation();
-  console.log("data", data);
+  const [joinGroup, { isLoading }] = useJoinGroupMutation();
 
   const [PIN, setPIN] = useState<string>("");
   const [keyboardVisible, setKeyboardVisible] = useState(false);
@@ -59,8 +60,8 @@ const JoinGroupScreen: React.FC<IJoinGroupProps> = ({ navigation, route }) => {
         groupId: group.id,
         groupPIN: PIN,
       }).unwrap();
-      navigation.navigate("JoinGroup", {
-        screen: "Success",
+      navigation.navigate("Success", {
+        group,
       });
     } catch (error) {
       setError(error.data.message);
@@ -80,7 +81,7 @@ const JoinGroupScreen: React.FC<IJoinGroupProps> = ({ navigation, route }) => {
           }}
         >
           <>
-            <View w-100 flex={keyboardVisible ? 0.7 : 1}>
+            <View w-100 flex={keyboardVisible ? 0.8 : 1} items-center>
               <Title>Join Existing Group </Title>
 
               <View w-100 mt={40}>
@@ -90,23 +91,25 @@ const JoinGroupScreen: React.FC<IJoinGroupProps> = ({ navigation, route }) => {
                 </GroupNameContainer>
               </View>
 
-              <View w-100 mb={40} mt={40}>
+              <View w-100 mb={30} mt={40}>
                 <PinCodeInput
                   value={PIN}
                   onChangeText={PINValueChangeHandler}
                 />
               </View>
-              <View w-100 mt={40} flex-row justify-center align-center>
+              <View w-100 flex-row justify-center align-center>
                 {error && <ErrorMessage w-100>{error}</ErrorMessage>}
               </View>
             </View>
 
-            <Button
-              text="Join"
-              onPress={handleSubmit}
-              loading={isLoading}
-              disabled={isLoading || PIN.length < 4}
-            />
+            <View w-100 mb={30}>
+              <Button
+                text="Join"
+                onPress={handleSubmit}
+                loading={isLoading}
+                disabled={isLoading || PIN.length < 4}
+              />
+            </View>
           </>
         </Container>
       </TouchableWithoutFeedback>
@@ -114,13 +117,22 @@ const JoinGroupScreen: React.FC<IJoinGroupProps> = ({ navigation, route }) => {
   );
 };
 
-export const joinGroupScreenOptions = () => ({
+export const joinGroupScreenOptions = ({ navigation }) => ({
   headerShown: true,
   headerTitle: "",
   headerStyle: {
     elevation: 0,
     shadowOpacity: 0,
+    backgroundColor: "#fff",
   },
+
+  headerLeft: (props) => (
+    <BackButtonWrapper>
+      <Pressable onPress={navigation.goBack} {...props}>
+        <MaterialIcons name="arrow-back-ios" size={24} color="black" />
+      </Pressable>
+    </BackButtonWrapper>
+  ),
 });
 
 const GroupNameContainer = styled(View)`
@@ -138,13 +150,6 @@ const GroupNameLabel = styled(Paragraph)`
 
 const GroupName = styled(Paragraph)`
   font-size: 16px;
-`;
-
-const ErrorMessage = styled(Paragraph)`
-  color: #ee3c15;
-  text-align: center;
-  font-size: 12px;
-  //  font-family: "Montserrat";
 `;
 
 export default JoinGroupScreen;
