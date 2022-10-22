@@ -31,10 +31,10 @@ export const Container = styled.View`
 `;
 
 export const Paragraph: React.FC<IntStyleProps> = styled.Text`
-  font-weight: 400;
+  font-weight: 500;
   font-size: ${(props: IntStyleProps) =>
     props.size ? props.size + "px" : "12px"};
-  /* font-family: Montserrat; */
+  font-family: Montserrat_500Medium;
   color: ${(props: IntStyleProps) =>
     props.color ? props.color : props.theme["text"]};
   margin-left: ${(props: IntStyleProps) =>
@@ -91,4 +91,20 @@ export const ScrollContainer = styled(StyledScrollView)`
   background-color: ${(props) => props.theme.background};
   flex: 1;
   padding: 0 16px;
+`;
+
+export const Title = styled(Paragraph)`
+  font-size: 24px;
+  font-family: Poppins_700Bold;
+`;
+
+export const BackButtonWrapper = styled(View)`
+  padding: 10px;
+`;
+
+export const ErrorMessage = styled(Paragraph)`
+  color: #ee3c15;
+  text-align: center;
+  font-size: 12px;
+  font-family: Montserrat_500Medium;
 `;

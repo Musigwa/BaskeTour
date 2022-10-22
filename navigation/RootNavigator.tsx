@@ -1,11 +1,11 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ModalScreen from "../screens/ModalScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";
-
+import React from "react";
 import BottomTabNavigator from "./BottomNavigator";
 import AuthNavigator from "./AuthNavigator";
 import SetupNavigator from "./SetupNavigator";
-
+import JoinGroupNavigation from "./JoinGroupNavigator";
 import { useAppSelector } from "../hooks/useStore";
 import { RootStackParamList } from "../types";
 /**
@@ -15,7 +15,9 @@ import { RootStackParamList } from "../types";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
-  const { token, user, completedOnboarding } = useAppSelector((state) => state.auth);
+  const { token, user, completedOnboarding } = useAppSelector(
+    (state) => state.auth
+  );
   return (
     <>
       {!token || !user.profilePic || !completedOnboarding ? (
@@ -36,6 +38,11 @@ function RootNavigator() {
             name="NotFound"
             component={NotFoundScreen}
             options={{ title: "Oops!" }}
+          />
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="JoinGroup"
+            component={JoinGroupNavigation}
           />
           <Stack.Group screenOptions={{ presentation: "modal" }}>
             <Stack.Screen name="Modal" component={ModalScreen} />
