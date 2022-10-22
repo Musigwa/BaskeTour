@@ -1,12 +1,19 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import baseQuery from "./baseQuery";
 
-import { GET_GROUPS, JOIN_GROUP } from "../enpoints";
+import { GET_GROUPS, JOIN_GROUP, GROUPS } from "../enpoints";
 
 export const groupApi = createApi({
   reducerPath: "groupApi",
   baseQuery: baseQuery,
   endpoints: (builder) => ({
+    createGroup: builder.mutation({
+      query: (payload) => ({
+        url: GROUPS,
+        method: 'POST',
+        body: payload
+      })
+    }),
     getGroups: builder.query<any, { searchQuery: string }>({
       query: (payload: { searchQuery: string }) =>
         GET_GROUPS(payload.searchQuery),
@@ -21,4 +28,4 @@ export const groupApi = createApi({
   }),
 });
 
-export const { useGetGroupsQuery, useJoinGroupMutation } = groupApi;
+export const { useGetGroupsQuery, useJoinGroupMutation, useCreateGroupMutation } = groupApi;

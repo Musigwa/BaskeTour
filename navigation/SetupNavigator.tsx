@@ -5,6 +5,7 @@ import { SetupStackParamList } from "../types";
 
 import SetupTypeScreen from "../screens/SetupTypeScreen";
 import CreateGroupScreen from "../screens/CreateGroupScreen";
+import ShareGroupScreen from "../screens/ShareGroupScreen";
 
 import ScreenHeader from "../components/common/ScreenHeader";
 
@@ -30,6 +31,12 @@ function SetupNavigator() {
       <Stack.Screen
         name="CreateGroup"
         component={CreateGroupScreen}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="ShareGroup"
+        component={ShareGroupScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

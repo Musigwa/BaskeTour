@@ -8,6 +8,7 @@ export interface IGroupState {
   groups: Array<IGroup>;
   loading: boolean;
   error: unknown | Error;
+  newGroup: IGroup;
   joinGroup: {
     data: IJoinGroup | null;
     loading: boolean;
@@ -19,6 +20,7 @@ const initialState: IGroupState = {
   groups: [],
   loading: false,
   error: null,
+  newGroup: {} as IGroup,
   joinGroup: {
     data: null,
     loading: false,
@@ -43,6 +45,13 @@ const groupSlice = createSlice({
       (state, { payload }) => {
         state.joinGroup.data = payload.data;
         state.joinGroup.error = payload.error;
+      }
+    );
+
+    builder.addMatcher(
+      groupApi.endpoints.createGroup.matchFulfilled,
+      (state, { payload }) => {
+        state.newGroup = payload.data;
       }
     );
   },

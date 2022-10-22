@@ -16,7 +16,7 @@ import { Paragraph, View } from "../styles/styled-elements";
 import { NavigationProp } from "@react-navigation/native";
 
 
-function SetupTypeScreen({ navigation }: SetupStackScreenProps<'CreateGroup'>) {
+function SetupTypeScreen({ navigation }: SetupStackScreenProps<'ActionType'>) {
   const insets = useSafeAreaInsets();
 
   const handleCreateGroup = () => {
