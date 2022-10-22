@@ -42,10 +42,9 @@ export type SetupStackParamList = {
 
 export type JoinGroupStackParamList = {
   SearchGroup: undefined;
-  FullGroup: undefined;
-  Join: undefined;
-  Success: undefined;
-  params: { group: IGroup };
+  FullGroup: { group: IGroup };
+  Join: { group: IGroup };
+  Success: { group: IGroup };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =

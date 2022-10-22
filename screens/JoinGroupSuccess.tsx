@@ -1,22 +1,27 @@
-import { NavigationProp } from "@react-navigation/native";
 import React from "react";
 import styled from "styled-components/native";
 import ConsensusIcon from "../assets/svgs/Consensus";
 import Button from "../components/common/Buttons";
 import { Container, Paragraph, View } from "../styles/styled-elements";
 import { Text } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { JoinGroupStackParamList } from "../types";
 
-interface IJoinGroupSuccessProps {
-  navigation: NavigationProp<any, any>;
-}
+type JoinGroupProps = NativeStackScreenProps<
+  JoinGroupStackParamList,
+  "Success"
+>;
 
-const JoinGroupSuccessScreen: React.FC<IJoinGroupSuccessProps> = ({
+const JoinGroupSuccessScreen: React.FC<JoinGroupProps> = ({
   navigation,
+  route,
 }) => {
+  const {
+    params: { group },
+  } = route;
+
   const gotItButtonClickHandler = () => {
-    navigation.navigate("JoinGroup", {
-      screen: "SearchGroup",
-    });
+    navigation.navigate("SearchGroup");
   };
 
   return (
@@ -25,7 +30,8 @@ const JoinGroupSuccessScreen: React.FC<IJoinGroupSuccessProps> = ({
         <InfoContainer items-center w-100>
           <ConsensusIcon />
           <CTAText mt={63}>
-            You Successfully Joined The <Highlight>Best Five Group</Highlight>
+            You Successfully Joined The{" "}
+            <Highlight>{group?.groupName} Group</Highlight>
           </CTAText>
         </InfoContainer>
       </View>

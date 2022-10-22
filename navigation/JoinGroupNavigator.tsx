@@ -12,7 +12,7 @@ import JoinGroupScreen, { joinGroupScreenOptions } from "../screens/JoinGroup";
 const JoinGroupStack = createStackNavigator<JoinGroupStackParamList>();
 
 const JoinGroupNavigation = () => (
-  <JoinGroupStack.Navigator>
+  <JoinGroupStack.Navigator initialRouteName="SearchGroup">
     <JoinGroupStack.Screen
       name="SearchGroup"
       component={SearchGroup}

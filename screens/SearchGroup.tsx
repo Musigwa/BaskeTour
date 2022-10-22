@@ -1,19 +1,29 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Container, Paragraph, Title, View } from "../styles/styled-elements";
+import React, { useEffect, useState } from "react";
+import {
+  BackButtonWrapper,
+  Container,
+  Paragraph,
+  Title,
+  View,
+  ErrorMessage,
+} from "../styles/styled-elements";
 import Input from "../components/common/Input";
 import styled from "styled-components/native";
-import { Pressable, Text, Touchable } from "react-native";
-import { NavigationProp } from "@react-navigation/native";
+import { Pressable, FlatList } from "react-native";
 import { IGroup } from "../interfaces";
 import { useGetGroupsQuery } from "../store/api-queries/group-queries";
 import { Formik } from "formik";
 import _ from "lodash";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { JoinGroupStackParamList } from "../types";
+import { MaterialIcons } from "@expo/vector-icons";
 
-interface ISearchGroupProps {
-  navigation: NavigationProp<any, any>;
-}
+type SearchGroupProps = NativeStackScreenProps<
+  JoinGroupStackParamList,
+  "SearchGroup"
+>;
 
-const SearchGroup: React.FC<ISearchGroupProps> = ({ navigation }) => {
+const SearchGroup: React.FC<SearchGroupProps> = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [skip, setSkip] = useState(true);
   const {
@@ -27,35 +37,16 @@ const SearchGroup: React.FC<ISearchGroupProps> = ({ navigation }) => {
     { skip }
   );
 
-  const handleJoinGroup = (group?: IGroup) => () => {
-    if (group?.availableSpots === 0) {
-      return navigation.navigate("JoinGroup", {
-        screen: "FullGroup",
-        params: {
-          group,
-        },
+  const handleJoinGroup = (group: IGroup) => () => {
+    if (group.availableSpots === 0) {
+      return navigation.navigate("FullGroup", {
+        group,
       });
     }
-    navigation.navigate("JoinGroup", {
-      screen: "Join",
-      params: {
-        group,
-      },
+    navigation.navigate("Join", {
+      group: group,
     });
   };
-
-  const handleJoinFUllGroup = (group?: IGroup) => () => {
-    navigation.navigate("JoinGroup", {
-      screen: "FullGroup",
-      params: {
-        group,
-      },
-    });
-  };
-
-  useEffect(() => {
-    console.log("groups", groups);
-  }, [groups]);
 
   useEffect(() => {
     if (searchQuery.length) {
@@ -67,86 +58,92 @@ const SearchGroup: React.FC<ISearchGroupProps> = ({ navigation }) => {
     leading: true,
     trailing: false,
   });
+
   return (
     <Container
       style={{
         justifyContent: "flex-start",
+        padding: 0,
       }}
     >
-      <Title>Join existing Group</Title>
-      <Formik
-        initialValues={{
-          searchQuery: "",
-        }}
-        onSubmit={refetch}
-      >
-        {({ handleChange, values }) => {
-          debouncedUpdate(values.searchQuery);
-          return (
-            <View w-100 mb={40} mt={40}>
-              <Input
-                placeholder="Group name"
-                label="Group name"
-                name="searchQuery"
-                required
-                handleChange={handleChange}
-                handleBlur={() => {}}
-              />
-            </View>
-          );
-        }}
-      </Formik>
-      <View w-100 mb={40}>
-        {!isLoading &&
-          groups &&
-          Array.isArray(groups.data) &&
-          groups.data.map((group: IGroup) => {
-            return (
-              <GroupListItem w-100 key={group.id}>
-                <GroupListTitle>{group.groupName}</GroupListTitle>
-                <Pressable onPress={handleJoinGroup(group)}>
-                  <JoinButton>
-                    <JoinButtonLabel>Join</JoinButtonLabel>
-                  </JoinButton>
-                </Pressable>
-              </GroupListItem>
-            );
-          })}
-
-        <GroupListItem w-100>
-          <GroupListTitle>Best Five Andy</GroupListTitle>
-          <Pressable onPress={handleJoinFUllGroup()}>
-            <JoinButton>
-              <JoinButtonLabel>Join</JoinButtonLabel>
-            </JoinButton>
-          </Pressable>
-        </GroupListItem>
-      </View>
-      <View w-100>
-        {!isLoading &&
-          groups &&
-          Array.isArray(groups.data) &&
-          groups.data.length === 0 && (
-            <ErrorMessage>
-              Group does not exist. Contact your group admin
-            </ErrorMessage>
-          )}
-      </View>
+      <FlatList
+        data={groups?.data ?? []}
+        style={{ width: "100%", padding: 10 }}
+        ListHeaderComponent={
+          <View w-100 items-center>
+            <Title>Join existing Group</Title>
+            <Formik
+              initialValues={{
+                searchQuery: "",
+              }}
+              onSubmit={refetch}
+            >
+              {({ handleChange, values }) => {
+                debouncedUpdate(values.searchQuery);
+                return (
+                  <View w-100 mb={40} mt={40}>
+                    <Input
+                      placeholder="Group name"
+                      label="Group name"
+                      name="searchQuery"
+                      required
+                      handleChange={handleChange}
+                      handleBlur={() => {}}
+                    />
+                  </View>
+                );
+              }}
+            </Formik>
+          </View>
+        }
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }: { item: IGroup }) => (
+          <GroupListItem w-100 key={item.id}>
+            <GroupListTitle>{item.groupName}</GroupListTitle>
+            <Pressable onPress={handleJoinGroup(item)}>
+              <JoinButton>
+                <JoinButtonLabel>Join</JoinButtonLabel>
+              </JoinButton>
+            </Pressable>
+          </GroupListItem>
+        )}
+        ListFooterComponent={
+          <View w-100>
+            {!isLoading &&
+              groups &&
+              Array.isArray(groups.data) &&
+              groups.data.length === 0 && (
+                <ErrorMessage>
+                  Group does not exist. Contact your group admin
+                </ErrorMessage>
+              )}
+          </View>
+        }
+      />
     </Container>
   );
 };
 
-export const searchGroupScreenOptions = () => ({
+export const searchGroupScreenOptions = ({ navigation }) => ({
   headerShown: true,
   headerTitle: "",
   headerStyle: {
     elevation: 0,
     shadowOpacity: 0,
+    backgroundColor: "#fff",
   },
+
+  headerLeft: (props) => (
+    <BackButtonWrapper>
+      <Pressable onPress={navigation.goBack} {...props}>
+        <MaterialIcons name="arrow-back-ios" size={24} color="black" />
+      </Pressable>
+    </BackButtonWrapper>
+  ),
 });
 
 const GroupListItem = styled(View)`
-  padding: 10px 0;
+  padding: 12px 0;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -154,7 +151,6 @@ const GroupListItem = styled(View)`
 
 const GroupListTitle = styled(Paragraph)`
   font-size: 16px;
-  font-weight: 500;
 `;
 
 const JoinButton = styled(View)`
@@ -166,19 +162,9 @@ const JoinButton = styled(View)`
   border-radius: 6px;
 `;
 
-const NoGroupFound = styled(Paragraph)`
-  color: #ee3c15;
-  font-weight: 500;
-  font-size: 12px;
-`;
-const JoinButtonLabel = styled(Text)`
+const JoinButtonLabel = styled(Paragraph)`
   color: #ff755b;
+  font-size: 16px;
 `;
 
-const ErrorMessage = styled(Paragraph)`
-  color: #ee3c15;
-  text-align: center;
-  font-size: 12px;
-  //  font-family: montserrat-bold;
-`;
 export default SearchGroup;

@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ModalScreen from "../screens/ModalScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";
-
+import React from "react";
 import BottomTabNavigator from "./BottomNavigator";
 import AuthNavigator from "./AuthNavigator";
 import SetupNavigator from "./SetupNavigator";
