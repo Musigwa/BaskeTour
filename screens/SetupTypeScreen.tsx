@@ -6,18 +6,16 @@ import Logo from "../assets/svgs/Logo";
 import BallIcon from "../assets/svgs/BallIcon";
 import HoopIcon from "../assets/svgs/HoopIcon";
 
-import { SetupStackParamList } from "../types";
+import { SetupStackScreenProps } from "../types";
 
 import { Paragraph, View } from "../styles/styled-elements";
 
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-type SetupScreenProps = NativeStackScreenProps<SetupStackParamList, any>;
-function SetupTypeScreen({ navigation }: SetupScreenProps) {
+function SetupTypeScreen({ navigation }: SetupStackScreenProps<'ActionType'>) {
   const insets = useSafeAreaInsets();
 
-  const handleGetStarted = () => {
-    // navigation.push("CreateAccount");
+  const handleCreateGroup = () => {
+    navigation.push("CreateGroup");
   };
 
   const handleJoinGroup = () => {
@@ -41,7 +39,7 @@ function SetupTypeScreen({ navigation }: SetupScreenProps) {
           <Logo />
         </View>
         <View mt={100} w-100>
-          <Touchable mb={23}>
+          <Touchable mb={23} onPress={handleCreateGroup}>
             <Action>
               <ActionIcons>
                 <BallIcon />

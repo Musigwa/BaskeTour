@@ -6,3 +6,4 @@ export const GET_GROUPS = (groupName = "") =>
   `/groups?searchQuery=${groupName}`;
 
 export const JOIN_GROUP = (groupId: string) => `/groups/${groupId}/join-group`;
+export const GROUPS = "/groups";

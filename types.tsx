@@ -35,6 +35,8 @@ export type RootStackParamList = {
 
 export type SetupStackParamList = {
   ActionType: undefined;
+  CreateGroup: undefined;
+  ShareGroup: undefined;
   [x: string]: any;
 };
 

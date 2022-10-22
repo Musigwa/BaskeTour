@@ -2,6 +2,7 @@
   "expo": {
     "name": "ulli",
     "slug": "ulli",
+    "owner": "ulli",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -13,7 +14,8 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/fdef2812-bc1e-4ab2-910a-85414f04ae90"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -29,6 +31,9 @@
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
     }
   }
 }

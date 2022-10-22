@@ -42,6 +42,7 @@ const Input = ({
     useTogglePassword();
   return (
     <View w-100>
+      {label ? <Label>{label}</Label> : null}
       {isPassword ? (
         <Wrapper borderColor={borderColor} bg={bg} style={style}>
           <TextInput
@@ -93,7 +94,9 @@ const TextInput = styled.TextInput`
 `;
 
 const Label = styled(Paragraph)`
-  color: ${(props) => props.theme.primary};
+  color: #8d8d8d;
+  font-size: 12px;
+  margin-bottom: 10px;
 `;
 
 const Error = styled(Paragraph)`
