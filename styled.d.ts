@@ -1,4 +1,4 @@
-import "styled-components";
+import "styled-components/native";
 interface IPalette {
   main: string;
   contrastText: string;
@@ -11,7 +11,7 @@ interface ICommon {
   danger: string;
 }
 
-declare module "styled-components" {
+declare module "styled-components/native" {
   export interface DefaultTheme {
     primary: string;
     primaryHighlight: string;
@@ -22,6 +22,6 @@ declare module "styled-components" {
     danger: string;
     common: ICommon;
     accentBlue: string;
-    accentPurple: string
+    accentPurple: string;
   }
 }

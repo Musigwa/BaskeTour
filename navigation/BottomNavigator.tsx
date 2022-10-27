@@ -1,17 +1,23 @@
+import React, { useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Pressable } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
+import { useTheme } from "styled-components/native";
 
-import TabOneScreen from "../screens/TabOneScreen";
-import TabTwoScreen from "../screens/TabTwoScreen";
+import Picks from "../screens/PicksScreen";
+
+import ScoresTabNavigator from "./ScoresTabNavigator";
+import TopBarHeader from "../components/TopBarHeader";
+import ScoresIcon from "../assets/svgs/ScoresIcon";
 
 import {
   RootStackParamList,
   RootTabParamList,
   RootTabScreenProps,
 } from "../types";
+import { Paragraph } from "../styles/styled-elements";
 
 /**
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
@@ -21,40 +27,47 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
   const colorScheme = useColorScheme();
-
+  const theme = useTheme();
   return (
-    <BottomTab.Navigator
-      initialRouteName="TabOne"
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint,
-      }}
-    >
+    <BottomTab.Navigator initialRouteName="Scores">
       <BottomTab.Screen
-        name="TabOne"
-        component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<"TabOne">) => ({
-          title: "Tab One",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate("Modal")}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}
-            >
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
+        name="Scores"
+        component={ScoresTabNavigator}
+        options={{
+          header: () => <TopBarHeader />,
+          tabBarLabel: ({ focused }) => (
+            <Paragraph size={12} color={focused ? theme.primary : "#000"}>
+              Scores
+            </Paragraph>
           ),
-        })}
+          tabBarIcon: ({ focused }) => (
+            <ScoresIcon color={focused ? theme.primary : "#000"} />
+          ),
+        }}
+
+        // options={({ navigation }: RootTabScreenProps<"Scores">) => ({
+        //   title: "Tab One",
+        //   tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+        //   headerRight: () => (
+        //     <Pressable
+        //       onPress={() => navigation.navigate("Modal")}
+        //       style={({ pressed }) => ({
+        //         opacity: pressed ? 0.5 : 1,
+        //       })}
+        //     >
+        //       <FontAwesome
+        //         name="info-circle"
+        //         size={25}
+        //         color={Colors[colorScheme].text}
+        //         style={{ marginRight: 15 }}
+        //       />
+        //     </Pressable>
+        //   ),
+        // })}
       />
       <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
+        name="Picks"
+        component={Picks}
         options={{
           title: "Tab Two",
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,

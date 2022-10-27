@@ -27,7 +27,7 @@ export type AuthStackParamList = {
 
 export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
-  Setup: undefined;
+  Setup: NavigatorScreenParams<SetupStackParamList> | undefined;
   Modal: undefined;
   NotFound: undefined;
   JoinGroup: NavigatorScreenParams<JoinGroupStackParamList> | undefined;
@@ -58,8 +58,8 @@ export type JoinGroupStackScreenProps<
 > = NativeStackScreenProps<JoinGroupStackParamList, Screen>;
 
 export type RootTabParamList = {
-  TabOne: undefined;
-  TabTwo: undefined;
+  Scores: undefined;
+  Picks: undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =

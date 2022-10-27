@@ -1,18 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Logo from "../assets/svgs/Logo";
 import BallIcon from "../assets/svgs/BallIcon";
 import HoopIcon from "../assets/svgs/HoopIcon";
+import { useAppSelector } from "../hooks/useStore";
 
 import { SetupStackScreenProps } from "../types";
 
 import { Paragraph, View } from "../styles/styled-elements";
 
-
-function SetupTypeScreen({ navigation }: SetupStackScreenProps<'ActionType'>) {
+function SetupTypeScreen({ navigation }: SetupStackScreenProps<"ActionType">) {
   const insets = useSafeAreaInsets();
+  const { newGroup } = useAppSelector((state) => state.groups);
 
   const handleCreateGroup = () => {
     navigation.push("CreateGroup");
@@ -25,6 +26,12 @@ function SetupTypeScreen({ navigation }: SetupStackScreenProps<'ActionType'>) {
   const handleSkip = () => {
     // navigation.push("Login");
   };
+
+  useEffect(() => {
+    if(newGroup) {
+      navigation.push('Root')
+    }
+  }, [newGroup]);
   return (
     <>
       <StatusBar barStyle="light-content" />
