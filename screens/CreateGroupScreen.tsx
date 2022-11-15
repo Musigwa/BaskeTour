@@ -19,11 +19,11 @@ import PinCodeInput from "../components/common/PinCodeInput";
 import Loader from "../components/common/Loader";
 
 import { Paragraph, View } from "../styles/styled-elements";
-import {
-  SetupStackScreenProps,
-} from "../types";
+import { SetupStackScreenProps } from "../types";
 
-const CreateGroupScreen = ({ navigation }: SetupStackScreenProps<'CreateGroup'>) => {
+const CreateGroupScreen = ({
+  navigation,
+}: SetupStackScreenProps<"CreateGroup">) => {
   const [error, setError] = useState("");
   const insets = useSafeAreaInsets();
 
@@ -56,8 +56,8 @@ const CreateGroupScreen = ({ navigation }: SetupStackScreenProps<'CreateGroup'>)
                   groupName: values.name,
                   groupPIN: values.pin,
                 }).unwrap();
-                console.log('res---', res)
-                navigation.push('ShareGroup')
+                console.log("res---", res);
+                navigation.push("ShareGroup");
               } catch (error) {
                 console.log("error", error);
                 setError(error?.data?.message);
