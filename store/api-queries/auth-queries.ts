@@ -1,37 +1,42 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import baseQuery from "./baseQuery";
+import { createApi } from '@reduxjs/toolkit/query/react';
+import baseQuery from './baseQuery';
 
-import { TODOS, SIGN_UP, USERS, LOGIN } from "../enpoints";
+import { LOGIN, SIGN_UP, TODOS, USERS } from '../endpoints';
 
 export const authApi = createApi({
-  reducerPath: "authApi",
+  reducerPath: 'authApi',
   baseQuery: baseQuery,
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     getTodos: builder.query<any, void>({
       query: () => TODOS,
     }),
     signup: builder.mutation({
-      query: (details) => ({
+      query: details => ({
         url: SIGN_UP,
-        method: "POST",
+        method: 'POST',
         body: details,
       }),
     }),
     login: builder.mutation({
-      query: (details) => ({
+      query: details => ({
         url: LOGIN,
-        method: "POST",
+        method: 'POST',
         body: details,
       }),
     }),
     uploadProfileDetails: builder.mutation({
-      query: (details) => ({
+      query: details => ({
         url: USERS,
-        method: "PUT",
+        method: 'PUT',
         body: details,
-      })
-    })
+      }),
+    }),
   }),
 });
 
-export const { useGetTodosQuery, useSignupMutation, useUploadProfileDetailsMutation, useLoginMutation } = authApi;
+export const {
+  useGetTodosQuery,
+  useSignupMutation,
+  useUploadProfileDetailsMutation,
+  useLoginMutation,
+} = authApi;
