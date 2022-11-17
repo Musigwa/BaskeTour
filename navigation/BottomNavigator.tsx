@@ -1,84 +1,90 @@
-import React, { useEffect } from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Pressable } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import Colors from '../constants/Colors';
-import useColorScheme from '../hooks/useColorScheme';
-import { useTheme } from 'styled-components/native';
+import {
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from "react";
+import styled from "styled-components/native";
+import TopBarHeader from "../components/TopBarHeader";
+import Bracketscreen from "../screens/BracketScreen";
+import ChatScreen from "../screens/ChatScreen";
+import PicksScreeen from "../screens/PicksScreen";
+import RankingScreen from "../screens/RankingScreen";
+import { H2, H3 } from "../styles/styled-elements";
+import ScoresTabNavigator from "./ScoresTabNavigator";
 
-import Picks from '../screens/PicksScreen';
+const Touchable = styled.TouchableOpacity`
+  border-color: #cfcfcf;
+  border-width: 2px;
+  padding-horizontal: 20px;
+  padding-vertical: 8px;
+  border-radius: 8px;
+`;
 
-import ScoresTabNavigator from './ScoresTabNavigator';
-import TopBarHeader from '../components/TopBarHeader';
-import ScoresIcon from '../assets/svgs/ScoresIcon';
+const Tab = createBottomTabNavigator();
 
-import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
-import { Paragraph } from '../styles/styled-elements';
-
-/**
- * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
- * https://reactnavigation.org/docs/bottom-tab-navigator
- */
-const BottomTab = createBottomTabNavigator<RootTabParamList>();
-
-function BottomTabNavigator() {
-  const colorScheme = useColorScheme();
-  const theme = useTheme();
+export default function BottomTab() {
   return (
-    <BottomTab.Navigator initialRouteName='Scores'>
-      <BottomTab.Screen
-        name='Scores'
+    <Tab.Navigator>
+      <Tab.Screen
+        name="Scores"
         component={ScoresTabNavigator}
         options={{
           header: () => <TopBarHeader />,
-          tabBarLabel: ({ focused }) => (
-            <Paragraph size={12} color={focused ? theme.primary : '#000'}>
-              Scores
-            </Paragraph>
+          tabBarIcon: ({ focused, color }) => (
+            <MaterialCommunityIcons name="scoreboard" size={24} color={color} />
           ),
-          tabBarIcon: ({ focused }) => <ScoresIcon color={focused ? theme.primary : '#000'} />,
         }}
-
-        // options={({ navigation }: RootTabScreenProps<"Scores">) => ({
-        //   title: "Tab One",
-        //   tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        //   headerRight: () => (
-        //     <Pressable
-        //       onPress={() => navigation.navigate("Modal")}
-        //       style={({ pressed }) => ({
-        //         opacity: pressed ? 0.5 : 1,
-        //       })}
-        //     >
-        //       <FontAwesome
-        //         name="info-circle"
-        //         size={25}
-        //         color={Colors[colorScheme].text}
-        //         style={{ marginRight: 15 }}
-        //       />
-        //     </Pressable>
-        //   ),
-        // })}
       />
-      <BottomTab.Screen
-        name='Picks'
-        component={Picks}
+      <Tab.Screen
+        name="Picks"
+        component={PicksScreeen}
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name='code' color={color} />,
+          tabBarIcon: (props) => (
+            <MaterialCommunityIcons name="checkbox-marked-circle" {...props} />
+          ),
+          headerTitle: (props) => <H2 {...props}>Picks</H2>,
+          headerRight: (props) => (
+            <Touchable
+              activeOpacity={0.5}
+              style={{ marginRight: 20 }}
+              {...props}
+            >
+              <H3 style={{ color: "#CFCFCF" }}>Save</H3>
+            </Touchable>
+          ),
+          headerShadowVisible: false,
         }}
       />
-    </BottomTab.Navigator>
+      <Tab.Screen
+        name="Ranking"
+        component={RankingScreen}
+        options={{
+          tabBarIcon: (props) => (
+            <MaterialIcons name="leaderboard" {...props} />
+          ),
+          headerTitle: () => <H2>Leader Board</H2>,
+        }}
+      />
+      <Tab.Screen
+        name="Chat"
+        component={ChatScreen}
+        options={{
+          tabBarIcon: (props) => <Ionicons name="chatbubbles" {...props} />,
+          headerTitle: () => <H2>Chat</H2>,
+        }}
+      />
+      <Tab.Screen
+        name="Bracket"
+        component={Bracketscreen}
+        options={{
+          tabBarIcon: (props) => <FontAwesome name="sitemap" {...props} />,
+          headerTitle: () => <H2>Bracket</H2>,
+        }}
+      />
+    </Tab.Navigator>
   );
 }
-
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
-}
-
-export default BottomTabNavigator;
