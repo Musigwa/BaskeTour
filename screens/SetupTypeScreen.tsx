@@ -27,11 +27,11 @@ function SetupTypeScreen({ navigation }: SetupStackScreenProps<"ActionType">) {
     // navigation.push("Login");
   };
 
-  useEffect(() => {
-    if(newGroup) {
-      navigation.push('Root')
-    }
-  }, [newGroup]);
+  // useEffect(() => {
+  //   if(newGroup) {
+  //     navigation.push('Root')
+  //   }
+  // }, [newGroup]);
   return (
     <>
       <StatusBar barStyle="light-content" />
