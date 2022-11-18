@@ -1,23 +1,19 @@
-import React, { useEffect } from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Pressable } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
-import Colors from "../constants/Colors";
-import useColorScheme from "../hooks/useColorScheme";
-import { useTheme } from "styled-components/native";
+import React, { useEffect } from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Pressable } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import Colors from '../constants/Colors';
+import useColorScheme from '../hooks/useColorScheme';
+import { useTheme } from 'styled-components/native';
 
-import Picks from "../screens/PicksScreen";
+import Picks from '../screens/PicksScreen';
 
-import ScoresTabNavigator from "./ScoresTabNavigator";
-import TopBarHeader from "../components/TopBarHeader";
-import ScoresIcon from "../assets/svgs/ScoresIcon";
+import ScoresTabNavigator from './ScoresTabNavigator';
+import TopBarHeader from '../components/TopBarHeader';
+import ScoresIcon from '../assets/svgs/ScoresIcon';
 
-import {
-  RootStackParamList,
-  RootTabParamList,
-  RootTabScreenProps,
-} from "../types";
-import { Paragraph } from "../styles/styled-elements";
+import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
+import { Paragraph } from '../styles/styled-elements';
 
 /**
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
@@ -29,20 +25,18 @@ function BottomTabNavigator() {
   const colorScheme = useColorScheme();
   const theme = useTheme();
   return (
-    <BottomTab.Navigator initialRouteName="Scores">
+    <BottomTab.Navigator initialRouteName='Scores'>
       <BottomTab.Screen
-        name="Scores"
+        name='Scores'
         component={ScoresTabNavigator}
         options={{
           header: () => <TopBarHeader />,
           tabBarLabel: ({ focused }) => (
-            <Paragraph size={12} color={focused ? theme.primary : "#000"}>
+            <Paragraph size={12} color={focused ? theme.primary : '#000'}>
               Scores
             </Paragraph>
           ),
-          tabBarIcon: ({ focused }) => (
-            <ScoresIcon color={focused ? theme.primary : "#000"} />
-          ),
+          tabBarIcon: ({ focused }) => <ScoresIcon color={focused ? theme.primary : '#000'} />,
         }}
 
         // options={({ navigation }: RootTabScreenProps<"Scores">) => ({
@@ -66,11 +60,11 @@ function BottomTabNavigator() {
         // })}
       />
       <BottomTab.Screen
-        name="Picks"
+        name='Picks'
         component={Picks}
         options={{
-          title: "Tab Two",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Tab Two',
+          tabBarIcon: ({ color }) => <TabBarIcon name='code' color={color} />,
         }}
       />
     </BottomTab.Navigator>
@@ -81,7 +75,7 @@ function BottomTabNavigator() {
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
 function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
+  name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
 }) {
   return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;

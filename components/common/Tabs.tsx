@@ -1,7 +1,7 @@
-import React from "react";
-import { Pressable } from "react-native";
-import styled from "styled-components/native";
-import { Paragraph, View } from "../../styles/styled-elements";
+import React from 'react';
+import { Pressable } from 'react-native';
+import styled from 'styled-components/native';
+import { Paragraph, View } from '../../styles/styled-elements';
 
 interface IProps {
   tabs: any[];
@@ -12,11 +12,9 @@ interface IProps {
 const Tabs = ({ tabs, current, onChange }: IProps) => {
   return (
     <Wrapper>
-      {tabs.map((tab) => (
+      {tabs.map(tab => (
         <Pressable onPress={() => onChange(tab.label)}>
-          <TabItem>
-            <TabText active={current === tab.label}>{tab.label}</TabText>
-          </TabItem>
+          <TabText active={current === tab.label}>{tab.label}</TabText>
         </Pressable>
       ))}
     </Wrapper>
@@ -37,7 +35,8 @@ const TabText = styled(Paragraph)<{ active: boolean }>`
   text-transform: capitalize;
   font-weight: 700;
   font-size: 18px;
-  color: ${(props) => (props.active ? props.theme.primary : "#7B7B7B")};
+  color: ${props => (props.active ? props.theme.primary : '#7B7B7B')};
+  padding-horizontal: 10px;
 `;
 
 export default Tabs;

@@ -1,30 +1,30 @@
-import React, { useEffect } from "react";
-import { StatusBar, TouchableOpacity } from "react-native";
-import styled from "styled-components/native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Logo from "../assets/svgs/Logo";
-import BallIcon from "../assets/svgs/BallIcon";
-import HoopIcon from "../assets/svgs/HoopIcon";
-import { useAppSelector } from "../hooks/useStore";
+import React, { useEffect } from 'react';
+import { StatusBar, TouchableOpacity } from 'react-native';
+import styled from 'styled-components/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Logo from '../assets/svgs/Logo';
+import BallIcon from '../assets/svgs/BallIcon';
+import HoopIcon from '../assets/svgs/HoopIcon';
+import { useAppSelector } from '../hooks/useStore';
 
-import { SetupStackScreenProps } from "../types";
+import { SetupStackScreenProps } from '../types';
 
-import { Paragraph, View } from "../styles/styled-elements";
+import { Paragraph, View } from '../styles/styled-elements';
 
-function SetupTypeScreen({ navigation }: SetupStackScreenProps<"ActionType">) {
+function SetupTypeScreen({ navigation }: SetupStackScreenProps<'ActionType'>) {
   const insets = useSafeAreaInsets();
-  const { newGroup } = useAppSelector((state) => state.groups);
+  const { newGroup } = useAppSelector(state => state.groups);
 
   const handleCreateGroup = () => {
-    navigation.push("CreateGroup");
+    navigation.push('CreateGroup');
   };
 
   const handleJoinGroup = () => {
-    navigation.navigate("JoinGroup");
+    navigation.navigate('JoinGroup');
   };
 
   const handleSkip = () => {
-    // navigation.push("Login");
+    navigation.push('Root');
   };
 
   // useEffect(() => {
@@ -34,9 +34,9 @@ function SetupTypeScreen({ navigation }: SetupStackScreenProps<"ActionType">) {
   // }, [newGroup]);
   return (
     <>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle='light-content' />
       <ImageBackground
-        source={require("../assets/images/bg_main.png")}
+        source={require('../assets/images/bg_main.png')}
         pt={insets.top}
         pb={insets.bottom}
         pl={24}
@@ -55,8 +55,8 @@ function SetupTypeScreen({ navigation }: SetupStackScreenProps<"ActionType">) {
             </Action>
           </Touchable>
 
-          <Touchable style={{ width: "100%" }} onPress={handleJoinGroup}>
-            <Action bg="accentPurple">
+          <Touchable style={{ width: '100%' }} onPress={handleJoinGroup}>
+            <Action bg='accentPurple'>
               <ActionIcons>
                 <HoopIcon />
               </ActionIcons>
@@ -79,14 +79,14 @@ function SetupTypeScreen({ navigation }: SetupStackScreenProps<"ActionType">) {
 
 const ImageBackground = styled.ImageBackground<{ pt: number; pb: number }>`
   padding: 0 24px;
-  padding-top: ${(props) => props.pt + "px"};
-  padding-bottom: ${(props) => props.pb + "px"};
+  padding-top: ${props => props.pt + 'px'};
+  padding-bottom: ${props => props.pb + 'px'};
   background-color: red;
   flex: 1;
 `;
 
 const ActionText = styled(Paragraph)`
-  color: ${(props) => props.theme.primary};
+  color: ${props => props.theme.primary};
   text-align: center;
   width: 100%;
   font-size: 18px;
@@ -96,12 +96,12 @@ const Bottom = styled(View)`
   /* margin-top: 262px; */
 `;
 
-const Action = styled(View)<{ bg?: "accentPurple" | "accentBlue" }>`
+const Action = styled(View)<{ bg?: 'accentPurple' | 'accentBlue' }>`
   position: relative;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  background-color: ${(props) => props.theme[props.bg || "accentBlue"]};
+  background-color: ${props => props.theme[props.bg || 'accentBlue']};
   height: 114px;
   width: 100%;
   border-radius: 4px;
@@ -120,7 +120,7 @@ const ActionIcons = styled(View)`
 
 const Touchable = styled.TouchableOpacity<{ mb: number }>`
   width: 100%;
-  margin-bottom: ${(props) => (props.mb ? props.mb + "px" : 0)};
+  margin-bottom: ${props => (props.mb ? props.mb + 'px' : 0)};
 `;
 
 export default SetupTypeScreen;
