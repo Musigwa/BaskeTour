@@ -5,7 +5,6 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import styled from "styled-components/native";
 import TopBarHeader from "../components/TopBarHeader";

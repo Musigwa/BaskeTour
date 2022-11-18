@@ -6,14 +6,12 @@ import React, { useEffect, useState } from "react";
 import { Image, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import { games } from "../constants/dummy";
+import { Horizontal } from "../styles/styled-elements";
 import { countDownTimer } from "../utils/methods";
 countDownTimer;
 
-// type Pick = {
-//   tournamentId?: string;
-//   gameId: string;
-//   teamId: string;
-// };
+type Pick = { gameId: string; teamId: string };
+type CheckEntity = "G" | "T" | undefined;
 
 const Container = styled.View`
   flex: 1;
@@ -80,21 +78,38 @@ const BoldText = styled.Text`
 const PicksScreen = () => {
   const { colors } = useTheme();
   const [timer, setTimer] = useState<number[]>(Array(4).fill(0));
-  const [picks, setPicks] = useState<any[]>([]);
+  const [picks, setPicks] = useState<Pick[]>([]);
 
   useEffect(() => {
     countDownTimer(games[0].eventDate, setTimer);
-  }, []);
+  }, [picks.toString()]);
 
-  const updatePicks = (pick) => {
-    if (picks.find((p) => JSON.stringify(p) === JSON.stringify(pick))) {
-      console.log("exists==>", picks);
-      setPicks((state) =>
-        state.filter((a) => JSON.stringify(a) !== JSON.stringify(pick))
-      );
+  const pickExists = (pick, entity: CheckEntity = undefined) => {
+    return picks.find((p) => {
+      const teamPred = p.teamId === pick.teamId;
+      const gamePred = p.gameId === pick.gameId;
+      switch (entity) {
+        case "G": // Check for only the Game
+          return gamePred;
+        case "T": // Check for only the Team
+          return teamPred;
+        default: // Check for both the Game and the Team
+          return gamePred && teamPred;
+      }
+    });
+  };
+  const updatePicks = (pick: Pick) => {
+    if (!pickExists(pick, "G")) {
+      // If the game doesn't exist, add it
+      setPicks([...picks, pick]);
+    } else if (pickExists(pick, "T")) {
+      // Else if the team exists, remove it
+      picks.splice(picks.indexOf(pickExists(pick)), 1);
+      setPicks(picks);
     } else {
-      console.log("doesn't exist==>", picks);
-      setPicks((state) => [...state, pick]);
+      // Else if the team doesn't exist, replace the team
+      picks.splice(picks.indexOf(pickExists(pick, "G")), 1, pick);
+      setPicks(picks);
     }
   };
 
@@ -129,12 +144,14 @@ const PicksScreen = () => {
               <View key={i} style={{ paddingHorizontal: 15 }}>
                 <Card
                   style={{
-                    backgroundColor: colors.card,
+                    backgroundColor: pickExists({ teamId, gameId })
+                      ? colors.primary
+                      : colors.card,
                   }}
                   activeOpacity={0.8}
-                  onPress={() => updatePicks({ teamId })}
+                  onPress={() => updatePicks({ teamId, gameId })}
                 >
-                  <HorizontalView style={{ flex: 0.86 }}>
+                  <Horizontal style={{ flex: 0.86 }}>
                     <AvatarContainer>
                       <Image
                         source={{ uri: logo }}
@@ -156,7 +173,7 @@ const PicksScreen = () => {
                         <BoldText style={{ fontSize: 18 }}>{name}</BoldText>
                       </View>
                     </View>
-                  </HorizontalView>
+                  </Horizontal>
                   <AntDesign
                     name="checksquare"
                     size={24}
@@ -177,7 +194,6 @@ const PicksScreen = () => {
     </Container>
   );
 };
-
 const Tab = createMaterialTopTabNavigator();
 
 const tabBarLabelStyle = {
