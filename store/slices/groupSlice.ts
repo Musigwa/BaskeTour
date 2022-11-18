@@ -8,7 +8,7 @@ export interface IGroupState {
   groups: Array<IGroup>;
   loading: boolean;
   error: unknown | Error;
-  newGroup: IGroup;
+  newGroup: IGroup | null;
   joinGroup: {
     data: IJoinGroup | null;
     loading: boolean;
@@ -20,7 +20,7 @@ const initialState: IGroupState = {
   groups: [],
   loading: false,
   error: null,
-  newGroup: {} as IGroup,
+  newGroup: null,
   joinGroup: {
     data: null,
     loading: false,

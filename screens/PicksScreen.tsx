@@ -1,11 +1,15 @@
+import React, { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { useGetTodosQuery } from "../store/api-queries/auth-queries";
 
 import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
-import { useEffect } from "react";
 
-export default function TabTwoScreen() {
+import { RootTabScreenProps } from "../types";
+
+export default function Picks({
+  navigation,
+}: RootTabScreenProps<"Picks">) {
   const { data, isLoading } = useGetTodosQuery();
 
   useEffect(() => {
