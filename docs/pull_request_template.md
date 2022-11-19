@@ -6,6 +6,8 @@ Please include a summary of the changes and the related issue.
 
 - [x] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality not to work as expected)
+- [ ] Bug fix (non-breaking changes which fix an issue)
+- [ ] Documentation (added or updated the documentation)
 
 ### **HOW HAS THIS BEEN TESTED?**
 
