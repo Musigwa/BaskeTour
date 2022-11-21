@@ -1,4 +1,5 @@
 import React from "react";
+import { StyleSheet } from "react-native";
 import styled from "styled-components/native";
 import { IntStyleProps } from "../types";
 
@@ -26,7 +27,6 @@ export const Container = styled.View`
   align-items: center;
   justify-content: center;
   padding: 20px;
-  padding-top: 20px;
   font-family: "space-mono";
 `;
 
@@ -115,9 +115,27 @@ export const Horizontal = styled.View`
   flex-direction: row;
 `;
 
-export const Separator = styled.View`
+export const Separator: React.FC<
+  IntStyleProps & { size: "lg" | "sm" | "md" }
+> = styled.View`
   width: 100%;
-  border: 1px solid #e9ebed;
+  border: ${(props) => {
+    let thickness = 1;
+    switch (props.size) {
+      case "sm":
+        thickness = StyleSheet.hairlineWidth;
+        break;
+      case "md":
+        thickness = 1;
+        break;
+      case "lg":
+        thickness = 1.5;
+        break;
+      default:
+        break;
+    }
+    return `${thickness}px solid #e9ebed`;
+  }};
 `;
 
 export const H2 = styled(Paragraph)`
@@ -132,6 +150,14 @@ export const H3 = styled(Paragraph)`
   font-weight: 500;
   line-height: 18px;
   letter-spacing: -0.165px;
+  text-align: center;
+`;
+
+export const H4 = styled(Paragraph)`
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: -0.16500000655651093px;
   text-align: center;
 `;
 

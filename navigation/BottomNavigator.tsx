@@ -13,6 +13,7 @@ import ChatScreen from "../screens/ChatScreen";
 import PicksScreeen from "../screens/PicksScreen";
 import RankingScreen from "../screens/RankingScreen";
 import { H2, H3 } from "../styles/styled-elements";
+import PicksNavigation from "./PicksNavigation";
 import ScoresTabNavigator from "./ScoresTabNavigator";
 
 const Touchable = styled.TouchableOpacity`
@@ -40,7 +41,7 @@ export default function BottomTab() {
       />
       <Tab.Screen
         name="Picks"
-        component={PicksScreeen}
+        component={PicksNavigation}
         options={{
           tabBarIcon: (props) => (
             <MaterialCommunityIcons name="checkbox-marked-circle" {...props} />
