@@ -53,6 +53,7 @@ const Input = ({
             onChangeText={handleChange(name)}
             placeholderTextColor={placeholderColor}
             autoCorrect={autoCorrect}
+            style={style}
           />
           <PasswordIcon onPress={handlePasswordVisibility}>
             <MaterialCommunityIcons name={rightIcon} size={18} color="black" />
@@ -91,6 +92,7 @@ const Wrapper = styled(View)`
 const TextInput = styled.TextInput`
   flex: 1;
   width: 100%;
+  font-size: 18px;
 `;
 
 const Label = styled(Paragraph)`

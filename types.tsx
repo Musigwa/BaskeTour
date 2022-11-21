@@ -29,6 +29,7 @@ export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Setup: NavigatorScreenParams<SetupStackParamList> | undefined;
   Modal: undefined;
+  GroupList: undefined;
   NotFound: undefined;
   JoinGroup: NavigatorScreenParams<JoinGroupStackParamList> | undefined;
 };
