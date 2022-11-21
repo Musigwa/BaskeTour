@@ -14,6 +14,7 @@ import PicksScreeen from "../screens/PicksScreen";
 import RankingScreen from "../screens/RankingScreen";
 import { H2, H3 } from "../styles/styled-elements";
 import PicksNavigation from "./PicksNavigation";
+import RankingNavigator from "./RankingNavigator";
 import ScoresTabNavigator from "./ScoresTabNavigator";
 
 const Touchable = styled.TouchableOpacity`
@@ -61,12 +62,13 @@ export default function BottomTab() {
       />
       <Tab.Screen
         name="Ranking"
-        component={RankingScreen}
+        component={RankingNavigator}
         options={{
           tabBarIcon: (props) => (
             <MaterialIcons name="leaderboard" {...props} />
           ),
           headerTitle: () => <H2>Leader Board</H2>,
+          headerShadowVisible: false,
         }}
       />
       <Tab.Screen
