@@ -116,7 +116,7 @@ export const Horizontal = styled.View`
 `;
 
 export const Separator: React.FC<
-  IntStyleProps & { size: "lg" | "sm" | "md" }
+  IntStyleProps & { size?: "lg" | "sm" | "md" }
 > = styled.View`
   width: 100%;
   border: ${(props) => {
@@ -132,6 +132,7 @@ export const Separator: React.FC<
         thickness = 1.5;
         break;
       default:
+        thickness = StyleSheet.hairlineWidth;
         break;
     }
     return `${thickness}px solid #e9ebed`;
@@ -142,7 +143,8 @@ export const H2 = styled(Paragraph)`
   font-size: 24px;
   font-weight: 700;
   letter-spacing: -0.165px;
-  text-align: center;
+  // text-align: center;
+  text-transform: capitalize;
 `;
 
 export const H3 = styled(Paragraph)`
@@ -150,20 +152,29 @@ export const H3 = styled(Paragraph)`
   font-weight: 500;
   line-height: 18px;
   letter-spacing: -0.165px;
-  text-align: center;
+  text-transform: capitalize;
 `;
 
 export const H4 = styled(Paragraph)`
   font-size: 16px;
   font-weight: 500;
   line-height: 18px;
-  letter-spacing: -0.16500000655651093px;
-  text-align: center;
+  letter-spacing: -0.165px;
+  text-transform: capitalize;
 `;
 
 export const H5 = styled(Paragraph)`
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: 0.8px;
+  text-transform: capitalize;
+`;
+
+export const H6 = styled(Paragraph)`
   font-size: 12px;
   font-weight: 700;
   line-height: 20px;
-  letter-spacing: 0.7799999713897705px;
+  letter-spacing: 0.8px;
+  text-transform: capitalize;
 `;

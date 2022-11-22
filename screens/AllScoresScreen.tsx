@@ -1,33 +1,55 @@
-import React, { useState } from 'react';
-import styled, { useTheme } from 'styled-components/native';
-import { Horizontal, Paragraph, Separator } from '../styles/styled-elements';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components/native";
+import { Horizontal, Paragraph, Separator } from "../styles/styled-elements";
 
-import moment from 'moment';
-import { Pressable, ScrollView, View } from 'react-native';
-import TeamContainer from '../components/scores/TeamContainer';
-import { games } from '../constants/dummy';
+import { useTheme } from "@react-navigation/native";
+import moment from "moment";
+import { Pressable, ScrollView, View } from "react-native";
+import TeamContainer from "../components/scores/TeamContainer";
+import { useGetGamesQuery } from "../store/api-queries/tournaments";
+import { GAME_STATUS } from "../types";
 
 const AllScoresScreen = () => {
-  const statuses = ['upcoming', 'live', 'complete'];
-  const { primary } = useTheme();
-  const [currentTab, setCurrentTab] = useState(statuses[0]);
+  const statuses = {
+    upcoming: "STATUS_SCHEDULED",
+    live: "LIVE",
+    complete: "STATUS_FINAL",
+  };
+
+  const { colors } = useTheme();
+  const [currentTab, setCurrentTab] = useState<GAME_STATUS>("STATUS_SCHEDULED");
+
+  const {
+    data: { data: games },
+    isLoading,
+    refetch,
+  } = useGetGamesQuery({ status: currentTab }, { refetchOnReconnect: true });
+
+  useEffect(refetch, [currentTab]);
 
   return (
     <Container>
-      <RoundBanner tintColor='red' source={require('../assets/images/roundImage.png')}>
+      <RoundBanner
+        tintColor="red"
+        source={require("../assets/images/roundImage.png")}
+      >
         <InnerBanner>
           <BannerText>Round of 64</BannerText>
         </InnerBanner>
       </RoundBanner>
       <Horizontal>
-        {statuses.map((lb, idx) => {
+        {Object.keys(statuses).map((lb, idx) => {
           return (
-            <Pressable key={idx} style={{ padding: 20 }} onPress={() => setCurrentTab(lb)}>
+            <Pressable
+              key={idx}
+              style={{ padding: 20 }}
+              onPress={() => setCurrentTab(statuses[lb])}
+            >
               <H3
                 style={{
-                  textTransform: 'capitalize',
-                  fontWeight: currentTab === lb ? '700' : '500',
-                  color: currentTab === lb ? primary : 'black',
+                  textTransform: "capitalize",
+                  fontWeight: currentTab === statuses[lb] ? "700" : "500",
+                  color: currentTab === statuses[lb] ? colors.primary : "black",
                 }}
               >
                 {lb}
@@ -43,20 +65,30 @@ const AllScoresScreen = () => {
             <View key={idx}>
               <Horizontal>
                 <TeamsWrapper
-                  style={{ flex: 0.76, borderRightWidth: 1.5, borderRightColor: '#e9ebed' }}
+                  style={{
+                    flex: 0.76,
+                    borderRightWidth: 1.5,
+                    borderRightColor: "#e9ebed",
+                  }}
                 >
                   {[teamA, teamB].map((team, idx) => (
-                    <TeamContainer key={idx} team={team} />
+                    <TeamContainer
+                      key={idx}
+                      team={team}
+                      currentTab={currentTab}
+                    />
                   ))}
                 </TeamsWrapper>
-                {currentTab === 'complete' ? (
-                  <H5>Final</H5>
+                {currentTab === "STATUS_FINAL" ? (
+                  <H6>Final</H6>
                 ) : (
                   <View>
-                    {currentTab === 'live' ? <H5 style={{ color: primary }}>10:27- 1st</H5> : null}
-                    <H5>{moment(eventDate).format('ddd, MM/YY')}</H5>
-                    <H5>{moment(eventDate).format('LT')}</H5>
-                    <H5>TCU -9.5</H5>
+                    {currentTab === "LIVE" ? (
+                      <H6 style={{ color: colors.primary }}>10:27- 1st</H6>
+                    ) : null}
+                    <H6>{moment(eventDate).format("ddd, MM/YY")}</H6>
+                    <H6>{moment(eventDate).format("LT")}</H6>
+                    {/* <H6>TCU -9.5</H6> Flagsmithed for the Nov, 24 - 27th tournament */}
                   </View>
                 )}
               </Horizontal>
@@ -101,7 +133,7 @@ const H3 = styled(Paragraph)`
   text-align: center;
 `;
 
-const H5 = styled(Paragraph)`
+const H6 = styled(Paragraph)`
   font-size: 12px;
   font-weight: 700;
   line-height: 20px;

@@ -3,7 +3,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { useNavigation, useTheme } from "@react-navigation/native";
 import React, { Fragment } from "react";
 import styled from "styled-components/native";
-import PicksScreen from "../screens/PicksScreen";
+import RankingScreen from "../screens/RankingScreen";
 import { H4 } from "../styles/styled-elements";
 
 const Tab = createMaterialTopTabNavigator();
@@ -39,11 +39,11 @@ export default () => {
           },
         }}
       >
-        {["East", "South", "Midwest", "West"].map((el, idx) => (
+        {["Round 64", "Round 32", "Sweet 16"].map((el, idx) => (
           <Tab.Screen
             key={idx}
             name={el}
-            component={PicksScreen}
+            component={RankingScreen}
             options={{
               tabBarInactiveTintColor: colors.border,
               tabBarActiveTintColor: colors.primary,
