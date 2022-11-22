@@ -1,13 +1,12 @@
+import {
+  Montserrat_500Medium,
+  Montserrat_700Bold,
+  useFonts,
+} from "@expo-google-fonts/montserrat";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
-import {
-  useFonts,
-  Montserrat_500Medium,
-  Montserrat_700Bold,
-} from "@expo-google-fonts/montserrat";
-import { Poppins_700Bold } from "@expo-google-fonts/poppins";
 
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
@@ -15,7 +14,6 @@ export default function useCachedResources() {
   let [fontsLoaded] = useFonts({
     Montserrat_500Medium,
     Montserrat_700Bold,
-    Poppins_700Bold,
   });
 
   // Load any resources or data that we need prior to rendering the app
@@ -24,7 +22,7 @@ export default function useCachedResources() {
       try {
         SplashScreen.preventAutoHideAsync();
 
-        // Load fonts
+        // Load static fonts
         await Font.loadAsync({
           ...FontAwesome.font,
           "space-mono": require("../assets/fonts/SpaceMono-Regular.ttf"),

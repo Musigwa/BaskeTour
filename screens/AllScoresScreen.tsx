@@ -1,18 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components/native";
 import { Horizontal, Paragraph, Separator } from "../styles/styled-elements";
 
+import { useTheme } from "@react-navigation/native";
 import moment from "moment";
 import { Pressable, ScrollView, View } from "react-native";
 import TeamContainer from "../components/scores/TeamContainer";
-import { games } from "../constants/dummy";
-import { useTheme } from "@react-navigation/native";
+import { useGetGamesQuery } from "../store/api-queries/tournaments";
+import { GAME_STATUS } from "../types";
 
 const AllScoresScreen = () => {
-  const statuses = ["upcoming", "live", "complete"];
+  const statuses = {
+    upcoming: "STATUS_SCHEDULED",
+    live: "LIVE",
+    complete: "STATUS_FINAL",
+  };
 
   const { colors } = useTheme();
-  const [currentTab, setCurrentTab] = useState(statuses[0]);
+  const [currentTab, setCurrentTab] = useState<GAME_STATUS>("STATUS_SCHEDULED");
+
+  const {
+    data: { data: games },
+    isLoading,
+    refetch,
+  } = useGetGamesQuery({ status: currentTab }, { refetchOnReconnect: true });
+
+  useEffect(refetch, [currentTab]);
 
   return (
     <Container>
@@ -25,18 +38,18 @@ const AllScoresScreen = () => {
         </InnerBanner>
       </RoundBanner>
       <Horizontal>
-        {statuses.map((lb, idx) => {
+        {Object.keys(statuses).map((lb, idx) => {
           return (
             <Pressable
               key={idx}
               style={{ padding: 20 }}
-              onPress={() => setCurrentTab(lb)}
+              onPress={() => setCurrentTab(statuses[lb])}
             >
               <H3
                 style={{
                   textTransform: "capitalize",
-                  fontWeight: currentTab === lb ? "700" : "500",
-                  color: currentTab === lb ? colors.primary : "black",
+                  fontWeight: currentTab === statuses[lb] ? "700" : "500",
+                  color: currentTab === statuses[lb] ? colors.primary : "black",
                 }}
               >
                 {lb}
@@ -59,19 +72,23 @@ const AllScoresScreen = () => {
                   }}
                 >
                   {[teamA, teamB].map((team, idx) => (
-                    <TeamContainer key={idx} team={team} />
+                    <TeamContainer
+                      key={idx}
+                      team={team}
+                      currentTab={currentTab}
+                    />
                   ))}
                 </TeamsWrapper>
-                {currentTab === "complete" ? (
+                {currentTab === "STATUS_FINAL" ? (
                   <H6>Final</H6>
                 ) : (
                   <View>
-                    {currentTab === "live" ? (
+                    {currentTab === "LIVE" ? (
                       <H6 style={{ color: colors.primary }}>10:27- 1st</H6>
                     ) : null}
                     <H6>{moment(eventDate).format("ddd, MM/YY")}</H6>
                     <H6>{moment(eventDate).format("LT")}</H6>
-                    <H6>TCU -9.5</H6>
+                    {/* <H6>TCU -9.5</H6> Flagsmithed for the Nov, 24 - 27th tournament */}
                   </View>
                 )}
               </Horizontal>

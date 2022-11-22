@@ -9,7 +9,7 @@ import {
   NavigatorScreenParams,
 } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { IGroup } from "./interfaces";
+import { IGroup } from "../interfaces";
 
 declare global {
   namespace ReactNavigation {
@@ -80,3 +80,5 @@ export type AuthScreenProps<Screen extends keyof AuthStackParamList> =
 export interface IntStyleProps {
   [key: string]: any;
 }
+
+export type GAME_STATUS = "STATUS_FINAL" | "STATUS_SCHEDULED" | "LIVE";

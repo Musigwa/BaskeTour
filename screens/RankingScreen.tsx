@@ -1,12 +1,6 @@
 import { useTheme } from "@react-navigation/native";
 import React from "react";
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ScrollView, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import pp from "../assets/images/pp.jpg";
 import { H2, H5, H6, Horizontal, Separator } from "../styles/styled-elements";

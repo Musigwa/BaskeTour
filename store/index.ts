@@ -1,20 +1,21 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
-  persistReducer,
-  persistStore,
   FLUSH,
-  REHYDRATE,
   PAUSE,
   PERSIST,
+  persistReducer,
+  persistStore,
   PURGE,
   REGISTER,
+  REHYDRATE,
 } from "redux-persist";
 
-import authReducer from "./slices/authSlice";
 import { authApi } from "./api-queries/auth-queries";
 import { groupApi } from "./api-queries/group-queries";
+import tournamentApi from "./api-queries/tournaments";
+import authReducer from "./slices/authSlice";
 import groupReducer from "./slices/groupSlice";
 
 const persistConfig = {
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   [authApi.reducerPath]: authApi.reducer,
   groups: groupReducer,
   [groupApi.reducerPath]: groupApi.reducer,
+  [tournamentApi.reducerPath]: tournamentApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
