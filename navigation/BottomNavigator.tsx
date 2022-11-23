@@ -47,17 +47,18 @@ export default function BottomTab() {
           tabBarIcon: (props) => (
             <MaterialCommunityIcons name="checkbox-marked-circle" {...props} />
           ),
-          headerTitle: (props) => <H2 {...props}>Picks</H2>,
-          headerRight: (props) => (
-            <Touchable
-              activeOpacity={0.5}
-              style={{ marginRight: 20 }}
-              {...props}
-            >
-              <H3 style={{ color: "#CFCFCF" }}>Save</H3>
-            </Touchable>
-          ),
-          headerShadowVisible: false,
+          // headerTitle: (props) => <H2 {...props}>Picks</H2>,
+          // headerRight: (props) => (
+          //   <Touchable
+          //     activeOpacity={0.5}
+          //     style={{ marginRight: 20 }}
+          //     {...props}
+          //   >
+          //     <H3 style={{ color: "#CFCFCF" }}>Save</H3>
+          //   </Touchable>
+          // ),
+          // headerShadowVisible: false,
+          header: () => null,
         }}
       />
       <Tab.Screen

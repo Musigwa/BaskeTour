@@ -17,11 +17,11 @@ export const createFormData = (photo: { [x: string]: string }, body = {}) => {
 };
 
 export /**
- *
- *
+ * Calculates the remaining [days, hours, minutes, seconds] to the given date/time.
  * @author Musigwa Pacifique
  * @param {(string | number | Date)} date
  * @param {*} callback
+ * @returns [days, hours, minutes, seconds]
  */
 const countDownTimer = (date: Date | string | number, callback) => {
   const x = setInterval(() => {

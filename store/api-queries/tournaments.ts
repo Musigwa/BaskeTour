@@ -5,12 +5,11 @@ import { GAME_STATUS } from "../../types";
 import { GET_GAMES, GROUPS } from "../endpoints";
 
 const tournamentApi = createApi({
-  reducerPath: "tournament",
-  baseQuery: baseQuery,
+  reducerPath: "tournamentApi",
+  baseQuery,
   endpoints: (builder) => ({
     getGames: builder.query<any, { status: GAME_STATUS }>({
-      query: ({ status, ...payload }: { status: GAME_STATUS }) =>
-        GET_GAMES(status),
+      query: ({ status }: { status: GAME_STATUS }) => GET_GAMES(status),
     }),
     createPick: builder.mutation({
       query: (body) => ({ url: GROUPS, method: "POST", body }),

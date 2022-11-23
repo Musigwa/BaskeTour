@@ -1,11 +1,17 @@
 import { useTheme } from "@react-navigation/native";
 import { Formik } from "formik";
-import _ from "lodash";
-import React, { useEffect, useState } from "react";
-import { FlatList, SafeAreaView, TouchableOpacity } from "react-native";
+import { debounce } from "lodash";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  FlatList,
+  SafeAreaView,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import styled from "styled-components/native";
 import Input from "../../components/common/Input";
 import { IGroup } from "../../interfaces";
+import { useGetProfileQuery } from "../../store/api-queries/auth-queries";
 import { useGetGroupsQuery } from "../../store/api-queries/group-queries";
 import {
   Container,
@@ -21,58 +27,68 @@ type GroupSearchProps = {
   title?: string;
   msg404?: string;
   btnText?: string;
+  groupsList?: IGroup[];
+  ownGroups?: boolean;
 };
 
-const GroupSearch: React.FC<GroupSearchProps> = ({
+const GroupSearch: React.FC<GroupSearchProps & any> = ({
   title = "Join Existing Group",
   onSelect,
   msg404 = "Group does not exist. Contact your group admin",
   btnText = "Confirm Selection",
+  groupsList,
+  ownGroups = false,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [skip, setSkip] = useState(false);
 
-  const {
-    data: groups,
-    isLoading,
-    refetch,
-  } = useGetGroupsQuery({ searchQuery: searchQuery }, { skip });
-  const [selectedItem, setSelectedItem] = useState<IGroup>();
+  // const {
+  //   data: { data: allGroups } = {},
+  //   isLoading,
+  //   refetch,
+  // } = useGetGroupsQuery({ searchQuery }, { skip });
 
+  const { data: { data: profile } = {}, isLoading } = useGetProfileQuery(
+    undefined,
+    {
+      refetchOnReconnect: true,
+    }
+  );
+
+  const [selectedItem, setSelectedItem] = useState<IGroup>();
+  const [groups, setGroups] = useState<IGroup[]>([]);
   const { colors } = useTheme();
 
   useEffect(() => {
-    if (searchQuery.length) setSkip(false);
-  }, [searchQuery]);
+    setGroups((ownGroups ? profile?.groups : []) ?? []);
+  }, []);
 
-  const debouncedUpdate = _.debounce((text) => {
-    return setSearchQuery(text), 300, { leading: true, trailing: false };
-  });
+  const handleSearch = (text: string) => {
+    if (ownGroups) {
+      const temp = groups.filter((g) =>
+        g.groupName.toLowerCase().includes(text.toLowerCase())
+      );
+      setGroups(temp);
+    }
+  };
+
+  const debouncedSearchHandler = useCallback(debounce(handleSearch, 300), []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Container style={{ justifyContent: "flex-start", paddingBottom: 0 }}>
         <Title>{title}</Title>
-        <Formik initialValues={{ searchQuery: "" }} onSubmit={refetch}>
-          {({ handleChange, values }) => {
-            debouncedUpdate(values.searchQuery);
-            return (
-              <View w-100 mb={20} mt={20}>
-                <Input
-                  placeholder="Type to search by name..."
-                  placeholderColor="gray"
-                  name="searchQuery"
-                  required
-                  handleChange={handleChange}
-                  handleBlur={() => {}}
-                  style={{ fontSize: 16 }}
-                />
-              </View>
-            );
-          }}
-        </Formik>
+        <View w-100 mb={20} mt={20}>
+          <TextInput
+            autoCapitalize="none"
+            onChangeText={debouncedSearchHandler}
+            placeholder="Type to search by name..."
+            placeholderTextColor="gray"
+            style={{ fontSize: 18 }}
+          />
+        </View>
         <FlatList
-          data={groups?.data ?? []}
+          data={groups}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }: { item: IGroup }) => (
@@ -82,7 +98,7 @@ const GroupSearch: React.FC<GroupSearchProps> = ({
                 color={colors.primary}
                 text={item.groupName}
                 onClick={(text) =>
-                  setSelectedItem(groups.data.find((g) => g.groupName === text))
+                  setSelectedItem(groups?.find((g) => g.groupName === text))
                 }
               />
             </GroupListItem>
@@ -91,10 +107,8 @@ const GroupSearch: React.FC<GroupSearchProps> = ({
             <View w-100>
               {!isLoading &&
                 groups &&
-                Array.isArray(groups.data) &&
-                groups.data.length === 0 && (
-                  <ErrorMessage>{msg404}</ErrorMessage>
-                )}
+                Array.isArray(groups) &&
+                groups.length === 0 && <ErrorMessage>{msg404}</ErrorMessage>}
             </View>
           }
         />

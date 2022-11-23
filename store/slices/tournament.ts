@@ -1,20 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { IGame, IPick } from "../../interfaces/index";
 import tournamentApi from "../api-queries/tournaments";
-import { IGame, IPick } from "./../../interfaces/index";
 
 export interface ITournamentState {
   picks: Array<IPick>;
   games: Array<IGame>;
-  loading: boolean;
-  error: unknown | Error;
 }
 
-const initialState: ITournamentState = {
-  picks: [],
-  games: [],
-  loading: false,
-  error: null,
-};
+const initialState: ITournamentState = { picks: [], games: [] };
 
 const tournamentSlice = createSlice({
   name: "tournament",
@@ -30,7 +23,7 @@ const tournamentSlice = createSlice({
     builder.addMatcher(
       tournamentApi.endpoints.getGames.matchFulfilled,
       (state, { payload }) => {
-        state.games = payload.data;
+        state.games = payload.data.data;
       }
     );
   },

@@ -3,15 +3,23 @@ import React from "react";
 import GroupSearch from "../components/common/GroupSearch";
 import { IGroup } from "../interfaces";
 
-const GroupListScreen = () => {
+const GroupListScreen = (ownGroups: boolean = true) => {
   const navigation = useNavigation();
-
-  const handleGroupSelect = (group: IGroup) => {
-    console.log("The selected group ==>", group);
-    navigation.goBack();
+  const handleGroupSelect = (selected: IGroup) => {
+    navigation.navigate({
+      params: { selected },
+      name: "Picks",
+      merge: true,
+    });
   };
 
-  return <GroupSearch onSelect={handleGroupSelect} title="Select A Group" />;
+  return (
+    <GroupSearch
+      onSelect={handleGroupSelect}
+      title="Select A Group"
+      ownGroups={ownGroups}
+    />
+  );
 };
 
 export default GroupListScreen;

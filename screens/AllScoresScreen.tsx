@@ -8,6 +8,7 @@ import { Pressable, ScrollView, View } from "react-native";
 import TeamContainer from "../components/scores/TeamContainer";
 import { useGetGamesQuery } from "../store/api-queries/tournaments";
 import { GAME_STATUS } from "../types";
+// import { games } from "../constants/dummy";
 
 const AllScoresScreen = () => {
   const statuses = {
@@ -20,7 +21,7 @@ const AllScoresScreen = () => {
   const [currentTab, setCurrentTab] = useState<GAME_STATUS>("STATUS_SCHEDULED");
 
   const {
-    data: { data: games },
+    data: { data: games } = {},
     isLoading,
     refetch,
   } = useGetGamesQuery({ status: currentTab }, { refetchOnReconnect: true });
