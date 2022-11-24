@@ -12,7 +12,7 @@ import { GAME_STATUS } from '../../../../types';
 const ScoresScreen = () => {
   const statuses = {
     upcoming: 'STATUS_SCHEDULED',
-    live: 'LIVE',
+    live: 'STATUS_IN_PROGRESS',
     complete: 'STATUS_FINAL',
   };
 
@@ -23,7 +23,7 @@ const ScoresScreen = () => {
     data: { data: games = [] } = {},
     isFetching,
     refetch,
-  } = useGetGamesQuery({ status: currentTab }, { refetchOnReconnect: true });
+  } = useGetGamesQuery({ status: currentTab }, { pollingInterval: 2000 });
 
   useEffect(refetch, [currentTab]);
 
@@ -64,7 +64,7 @@ const ScoresScreen = () => {
         />
       ) : games.length ? (
         <ScrollView contentContainerStyle={{ padding: 20, paddingTop: 0 }}>
-          {games.map(({ teamA, teamB, eventDate }, idx) => {
+          {games.map(({ teamA, teamB, eventDate, gameClock }, idx) => {
             return (
               <View key={idx}>
                 <Horizontal>
@@ -83,8 +83,8 @@ const ScoresScreen = () => {
                     <H6>Final</H6>
                   ) : (
                     <View>
-                      {currentTab === 'LIVE' ? (
-                        <H6 style={{ color: colors.primary }}>10:27- 1st</H6>
+                      {currentTab === 'STATUS_IN_PROGRESS' ? (
+                        <H6 style={{ color: colors.primary }}>{gameClock}- 1st</H6>
                       ) : null}
                       <H6>{moment(eventDate).format('ddd, MM/DD')}</H6>
                       <H6>{moment(eventDate).format('LT')}</H6>

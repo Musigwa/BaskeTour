@@ -1,24 +1,24 @@
 import React from 'react';
 import { StatusBar, TouchableOpacity } from 'react-native';
-import styled from 'styled-components/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Logo from '../../../assets/svgs/Logo';
+import styled from 'styled-components/native';
 import BallIcon from '../../../assets/svgs/BallIcon';
 import HoopIcon from '../../../assets/svgs/HoopIcon';
+import Logo from '../../../assets/svgs/Logo';
 
-import { SetupStackScreenProps } from '../../../types';
-
+import { useNavigation } from '@react-navigation/native';
 import { Paragraph, View } from '../../../styles/styled-elements';
 
-function SetupTypeScreen({ navigation }: SetupStackScreenProps<'ActionType'>) {
+function SetupTypeScreen() {
+  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
   const handleCreateGroup = () => {
-    navigation.navigate('Settings', { screen: 'CreateGroup' });
+    navigation.navigate('Groups', { screen: 'CreateGroup' });
   };
 
   const handleJoinGroup = () => {
-    navigation.navigate('Settings', { screen: 'SearchGroup' });
+    navigation.navigate('Groups', { screen: 'SearchGroup' });
   };
 
   const handleSkip = () => {

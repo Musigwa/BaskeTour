@@ -1,9 +1,8 @@
-import React from "react";
-import styled from "styled-components/native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import ImageIcon from "../assets/svgs/ImageIcon";
+import React from 'react';
+import styled from 'styled-components/native';
+import ImageIcon from '../assets/svgs/ImageIcon';
 
-import { Paragraph, View } from "../styles/styled-elements";
+import { View } from '../styles/styled-elements';
 
 const PhotoHolder = () => {
   return (

@@ -3,9 +3,7 @@
  * https://reactnavigation.org/docs/typescript/
  */
 
-import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NavigatorScreenParams } from '@react-navigation/native';
 import { IGroup } from '../interfaces';
 
 declare global {
@@ -45,36 +43,13 @@ export type JoinGroupStackParamList = {
   Success: { group: IGroup };
 };
 
-export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<
-  RootStackParamList,
-  Screen
->;
-
-export type SetupStackScreenProps<Screen extends keyof SetupStackParamList> =
-  NativeStackScreenProps<SetupStackParamList, Screen>;
-
-export type JoinGroupStackScreenProps<Screen extends keyof JoinGroupStackParamList> =
-  NativeStackScreenProps<JoinGroupStackParamList, Screen>;
-
 export type RootTabParamList = {
   Scores: undefined;
   Picks: undefined;
 };
 
-export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<
-  BottomTabScreenProps<RootTabParamList, Screen>,
-  NativeStackScreenProps<RootStackParamList>
->;
-
-export type AuthScreenProps<Screen extends keyof AuthStackParamList> = CompositeScreenProps<
-  NativeStackScreenProps<AuthStackParamList, Screen>,
-  CompositeScreenProps<
-    BottomTabScreenProps<RootTabParamList>,
-    NativeStackScreenProps<RootStackParamList>
-  >
->;
 export interface IntStyleProps {
   [key: string]: any;
 }
 
-export type GAME_STATUS = 'STATUS_FINAL' | 'STATUS_SCHEDULED' | 'LIVE';
+export type GAME_STATUS = 'STATUS_FINAL' | 'STATUS_SCHEDULED' | 'STATUS_IN_PROGRESS';

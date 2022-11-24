@@ -1,30 +1,26 @@
+import { MaterialIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  TouchableWithoutFeedback,
+} from 'react-native';
+import styled from 'styled-components';
+import Button from '../../../components/common/Buttons';
+import PinCodeInput from '../../../components/common/PinCodeInput';
+import { useJoinGroupMutation } from '../../../store/api-queries/group-queries';
 import {
   BackButtonWrapper,
   Container,
+  ErrorMessage,
   Paragraph,
   Title,
   View,
-  ErrorMessage,
 } from '../../../styles/styled-elements';
-import Button from '../../../components/common/Buttons';
-import PinCodeInput from '../../../components/common/PinCodeInput';
-import { MaterialIcons } from '@expo/vector-icons';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
-  Pressable,
-} from 'react-native';
-import { JoinGroupStackParamList } from '../../../types';
-import { useJoinGroupMutation } from '../../../store/api-queries/group-queries';
-import styled from 'styled-components';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-type IJoinGroupProps = NativeStackScreenProps<JoinGroupStackParamList, 'Join'>;
-
-const JoinGroupScreen: React.FC<IJoinGroupProps> = ({ navigation, route }) => {
+const JoinGroupScreen = ({ navigation, route }) => {
   const {
     params: { group },
   } = route;

@@ -1,5 +1,5 @@
-import { ColorSchemeName, SafeAreaView } from 'react-native';
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/native';
+import { ColorSchemeName } from 'react-native';
 
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -11,6 +11,7 @@ import LoginScreen from '../screens/auth/Login';
 import PhotoScreen from '../screens/auth/Photo';
 import SignUpScreen from '../screens/auth/SignUp';
 import BottomTabNavigator from './main/BottomTab';
+import GroupsNavigator from './main/Groups';
 import OnboardingNavigator from './main/Onboarding';
 import SettingsNavigator from './main/Settings';
 
@@ -38,6 +39,7 @@ function MainNavigator({ colorScheme }: { colorScheme: ColorSchemeName }) {
             <Stack.Screen name='Boarding' component={OnboardingNavigator} />
             <Stack.Screen name='Tabs' component={BottomTabNavigator} />
             <Stack.Screen name='Settings' component={SettingsNavigator} />
+            <Stack.Screen name='Groups' component={GroupsNavigator} />
           </Stack.Group>
         ) : (
           // Authentication & authorization screens

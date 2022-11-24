@@ -1,30 +1,35 @@
 import { AntDesign } from '@expo/vector-icons';
-import { useTheme } from '@react-navigation/native';
+import { useNavigation, useTheme } from '@react-navigation/native';
 import { findIndex, isEqual } from 'lodash';
 import moment from 'moment';
-import React, { useState } from 'react';
-import { ActivityIndicator, Alert, Image, Pressable, ScrollView, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Image, ScrollView, View } from 'react-native';
 import styled from 'styled-components/native';
 import defLogo from '../../../../assets/images/defLogo.png';
 import CountDown from '../../../../components/common/CountDown';
 import TopTab from '../../../../components/common/TopTab';
 import { useGetGamesQuery } from '../../../../store/api-queries/tournaments';
-import { H3, Horizontal, Separator } from '../../../../styles/styled-elements';
+import { Horizontal, Separator } from '../../../../styles/styled-elements';
 
 type Pick = { gameId: string; teamId: string };
 
 const statuses = [{ title: 'East' }, { title: 'South' }, { title: 'Midwest' }, { title: 'West' }];
 
-const PicksScreen = ({ route: { params } }) => {
+const PicksScreen = () => {
   const { colors } = useTheme();
   const [picks, setPicks] = useState<Pick[]>([]);
   const [limit, setLimit] = useState(3);
-  const [currentTab, setCurrentTab] = useState(statuses[0]);
 
+  const navigation = useNavigation();
   const { data: { data: games = [] } = {}, isFetching } = useGetGamesQuery(
     { status: 'STATUS_SCHEDULED' },
     { refetchOnReconnect: true }
   );
+
+  useEffect(() => {
+    const canSubmit = picks.length === limit;
+    navigation.setParams({ canSubmit, picks });
+  }, [picks.length]);
 
   const updatePicks = (pick: Pick) => {
     const temp = [...picks];
@@ -42,8 +47,6 @@ const PicksScreen = ({ route: { params } }) => {
     else temp.push(pick);
     if (!isEqual(picks, temp)) setPicks(temp);
   };
-
-  const isFocused = tabName => currentTab === tabName;
 
   return (
     <Container>
@@ -66,7 +69,7 @@ const PicksScreen = ({ route: { params } }) => {
         />
       ) : games.length ? (
         <ScrollView showsVerticalScrollIndicator={false}>
-          {games.map(({ id: gameId, teamA, teamB, eventDate }, idx) => (
+          {games.map(({ _id: gameId, teamA, teamB, eventDate }, idx) => (
             <View key={idx}>
               {[teamA, teamB].map(({ teamId, logo = defLogo, name, ranking }, i) => (
                 <View key={i} style={{ paddingHorizontal: 15 }}>

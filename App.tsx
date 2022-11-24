@@ -7,7 +7,6 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider } from 'styled-components/native';
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
-// import Navigation from './navigation';
 import Navigation from './navigation';
 import { dark, light } from './styles/theme';
 import 'react-native-gesture-handler';
@@ -16,21 +15,16 @@ export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
 
-  if (!isLoadingComplete) {
-    return null;
-  } else {
-    return (
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <ThemeProvider theme={colorScheme === 'dark' ? dark : light}>
-            <SafeAreaProvider>
-              {/* <Navigation colorScheme={colorScheme} /> */}
-              <Navigation colorScheme={colorScheme} />
-              <StatusBar />
-            </SafeAreaProvider>
-          </ThemeProvider>
-        </PersistGate>
-      </Provider>
-    );
-  }
+  return isLoadingComplete ? (
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <ThemeProvider theme={colorScheme === 'dark' ? dark : light}>
+          <SafeAreaProvider>
+            <Navigation colorScheme={colorScheme} />
+            <StatusBar />
+          </SafeAreaProvider>
+        </ThemeProvider>
+      </PersistGate>
+    </Provider>
+  ) : null;
 }

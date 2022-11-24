@@ -1,26 +1,22 @@
+import { MaterialIcons } from '@expo/vector-icons';
+import { Formik } from 'formik';
+import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
+import { FlatList, Pressable } from 'react-native';
+import styled from 'styled-components/native';
+import Input from '../../../components/common/Input';
+import { IGroup } from '../../../interfaces';
+import { useGetGroupsQuery } from '../../../store/api-queries/group-queries';
 import {
   BackButtonWrapper,
   Container,
+  ErrorMessage,
   Paragraph,
   Title,
   View,
-  ErrorMessage,
 } from '../../../styles/styled-elements';
-import Input from '../../../components/common/Input';
-import styled from 'styled-components/native';
-import { Pressable, FlatList } from 'react-native';
-import { IGroup } from '../../../interfaces';
-import { useGetGroupsQuery } from '../../../store/api-queries/group-queries';
-import { Formik } from 'formik';
-import _ from 'lodash';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { JoinGroupStackParamList } from '../../../types';
-import { MaterialIcons } from '@expo/vector-icons';
 
-type SearchGroupProps = NativeStackScreenProps<JoinGroupStackParamList, 'SearchGroup'>;
-
-const SearchGroup: React.FC<SearchGroupProps> = ({ navigation }) => {
+const SearchGroup = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [skip, setSkip] = useState(true);
   const {

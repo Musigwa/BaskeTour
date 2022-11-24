@@ -1,15 +1,10 @@
-import { NavigationProp } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import styled from 'styled-components/native';
 import WarningIcon from '../../../assets/svgs/WarningIcon';
 import Button from '../../../components/common/Buttons';
 import { Container, Paragraph, Title, View } from '../../../styles/styled-elements';
-import { JoinGroupStackParamList } from '../../../types';
 
-type FullGroupProps = NativeStackScreenProps<JoinGroupStackParamList, 'FullGroup'>;
-
-const FullGroupScreen: React.FC<FullGroupProps> = ({ navigation }) => {
+const FullGroupScreen = ({ navigation }) => {
   const gotItButtonClickHandler = () => {
     navigation.navigate('SearchGroup');
   };

@@ -11,3 +11,5 @@ export const JOIN_GROUP = (groupId: string) => `/groups/${groupId}/join-group`;
 export const GROUPS = '/groups';
 
 export const GET_GAMES = (status: GAME_STATUS) => `/tournaments/games?gameStatus=${status}`;
+export const GET_LIVE_SCORES = `/tournaments/live-scores`;
+export const PICKS = '/picks';
