@@ -1,14 +1,19 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { default as LoginScreen, default as SignUpScreen } from '../../screens/auth/Login';
+import LoginScreen from '../../screens/auth/Login';
+import SignUpScreen from '../../screens/auth/SignUp';
+import PhotoScreen from '../../screens/auth/Photo';
+import InitialScreen from '../../screens/auth/Initial';
 
 const Stack = createNativeStackNavigator();
 
 function AuthNavigator() {
   return (
-    <Stack.Group>
+    <Stack.Group screenOptions={{ headerShown: false }} navigationKey='Auth'>
+      <Stack.Screen name='Initial' component={InitialScreen} />
       <Stack.Screen name='Login' component={LoginScreen} />
       <Stack.Screen name='SignUp' component={SignUpScreen} />
+      <Stack.Screen name='Photo' component={PhotoScreen} />
     </Stack.Group>
   );
 }

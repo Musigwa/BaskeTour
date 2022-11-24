@@ -5,11 +5,11 @@
 //  */
 //  import 'react-native-gesture-handler';
 // import * as React from 'react';
-// import { ColorSchemeName } from 'react-native';
-// import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { ColorSchemeName } from 'react-native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 // import RootNavigator from './RootNavigator'
 
-// import LinkingConfiguration from './LinkingConfiguration';
+import LinkingConfiguration from './LinkingConfiguration';
 
 // export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
 //   return (
@@ -21,10 +21,12 @@
 //   );
 // }
 
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
+import { useAppSelector } from '../hooks/useStore';
+import InitialScreen from '../screens/auth/Initial';
 import LoginScreen from '../screens/auth/Login';
+import PhotoScreen from '../screens/auth/Photo';
 import SignUpScreen from '../screens/auth/SignUp';
 import BottomTabNavigator from './main/BottomTab';
 import OnboardingNavigator from './main/Onboarding';
@@ -32,10 +34,21 @@ import SettingsNavigator from './main/Settings';
 
 const Stack = createStackNavigator();
 
-function MainNavigator() {
-  const isLoggedIn = true;
+const defaultOptions = {
+  headerShown: true,
+  headerTitle: '',
+  headerBackTitleVisible: false,
+  headerShadowVisible: false,
+  headerTintColor: 'black',
+};
+
+function MainNavigator({ colorScheme }: { colorScheme: ColorSchemeName }) {
+  const { isLoggedIn } = useAppSelector(state => state.auth);
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      linking={LinkingConfiguration}
+      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+    >
       <Stack.Navigator>
         {isLoggedIn ? (
           // Screens for logged in users (Main screens)
@@ -46,9 +59,15 @@ function MainNavigator() {
           </Stack.Group>
         ) : (
           // Authentication & authorization screens
-          <Stack.Group>
-            <Stack.Screen name='SignUp' component={SignUpScreen} />
+          <Stack.Group screenOptions={defaultOptions}>
+            <Stack.Screen
+              name='Initial'
+              options={{ headerShown: false }}
+              component={InitialScreen}
+            />
             <Stack.Screen name='Login' component={LoginScreen} />
+            <Stack.Screen name='SignUp' component={SignUpScreen} />
+            <Stack.Screen name='Photo' component={PhotoScreen} />
           </Stack.Group>
         )}
       </Stack.Navigator>

@@ -1,24 +1,26 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { combineReducers } from "redux";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers } from 'redux';
 import {
-  persistReducer,
-  persistStore,
   FLUSH,
-  REHYDRATE,
   PAUSE,
   PERSIST,
+  persistReducer,
+  persistStore,
   PURGE,
   REGISTER,
-} from "redux-persist";
+  REHYDRATE,
+} from 'redux-persist';
 
-import authReducer from "./slices/authSlice";
-import { authApi } from "./api-queries/auth-queries";
-import { groupApi } from "./api-queries/group-queries";
-import groupReducer from "./slices/groupSlice";
+import { authApi } from './api-queries/auth-queries';
+import { groupApi } from './api-queries/group-queries';
+import tournamentApi from './api-queries/tournaments';
+import authReducer from './slices/authSlice';
+import groupReducer from './slices/groupSlice';
+import tournamenReducer from './slices/tournament';
 
 const persistConfig = {
-  key: "root",
+  key: 'root',
   version: 1,
   storage: AsyncStorage,
   blacklist: [authApi.reducerPath],
@@ -29,19 +31,21 @@ const rootReducer = combineReducers({
   [authApi.reducerPath]: authApi.reducer,
   groups: groupReducer,
   [groupApi.reducerPath]: groupApi.reducer,
+  tournament: tournamenReducer,
+  [tournamentApi.reducerPath]: tournamentApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,
-  middleware: (getDefaultMiddleware) =>
+  middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }).concat(authApi.middleware),
-  devTools: process.env.NODE_ENV !== "production",
+  devTools: process.env.NODE_ENV !== 'production',
 });
 
 export const persistor = persistStore(store);
