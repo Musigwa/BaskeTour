@@ -86,7 +86,7 @@ const ScoresScreen = () => {
                       {currentTab === 'LIVE' ? (
                         <H6 style={{ color: colors.primary }}>10:27- 1st</H6>
                       ) : null}
-                      <H6>{moment(eventDate).format('ddd, MM/YY')}</H6>
+                      <H6>{moment(eventDate).format('ddd, MM/DD')}</H6>
                       <H6>{moment(eventDate).format('LT')}</H6>
                       {/* <H6>TCU -9.5</H6> Flagsmithed for the Nov, 24 - 27th tournament */}
                     </View>

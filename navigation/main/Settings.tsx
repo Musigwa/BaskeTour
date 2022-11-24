@@ -4,6 +4,7 @@ import GroupsScreen from '../../screens/main/groups';
 import CreateGroupScreen from '../../screens/main/groups/Create';
 import JoinGroupScreen from '../../screens/main/groups/Join';
 import SearchGroup from '../../screens/main/groups/Search';
+import ShareGroupScreen from '../../screens/main/groups/Share';
 import SettingsScreen from '../../screens/main/settings';
 import NotificationScreen from '../../screens/main/settings/Notification';
 import ProfileScreen from '../../screens/main/settings/Profile';
@@ -25,6 +26,7 @@ function SettingsNavigator() {
         <Stack.Screen name='CreateGroup' component={CreateGroupScreen} />
         <Stack.Screen name='SearchGroup' component={SearchGroup} />
         <Stack.Screen name='JoinGroup' component={JoinGroupScreen} />
+        <Stack.Screen name='ShareGroup' component={ShareGroupScreen} />
       </Stack.Group>
       <Stack.Screen name='Notifications' component={NotificationScreen} />
       <Stack.Screen name='Profile' component={ProfileScreen} />

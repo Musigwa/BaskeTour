@@ -46,8 +46,8 @@ function PhotoScreen({ navigation }: AuthScreenProps<'Photo'>) {
   }, [token, user]);
 
   return (
-    <Container>
-      <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }}>
+      <Container>
         <IndicatorHeader
           // showBackIcon={true}
           count={2}
@@ -82,7 +82,7 @@ function PhotoScreen({ navigation }: AuthScreenProps<'Photo'>) {
                 const res = await uploadDetails(data).unwrap();
                 console.log('res---', res);
                 if (res.status === 200) {
-                  navigation.push('Onboarding');
+                  navigation.navigate('Boarding');
                 } else {
                   Alert.alert('Something went wrong');
                 }
@@ -122,8 +122,8 @@ function PhotoScreen({ navigation }: AuthScreenProps<'Photo'>) {
             )}
           </Formik>
         </View>
-      </SafeAreaView>
-    </Container>
+      </Container>
+    </SafeAreaView>
   );
 }
 

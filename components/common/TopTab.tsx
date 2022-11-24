@@ -16,7 +16,7 @@ const TopTab = ({ tabs }) => {
         return (
           <Pressable
             onPress={() => {
-              onPress(title);
+              if (onPress) onPress(title);
               setFocused(title);
             }}
           >

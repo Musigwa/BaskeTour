@@ -7,12 +7,13 @@ import { ActivityIndicator, Alert, Image, Pressable, ScrollView, View } from 're
 import styled from 'styled-components/native';
 import defLogo from '../../../../assets/images/defLogo.png';
 import CountDown from '../../../../components/common/CountDown';
+import TopTab from '../../../../components/common/TopTab';
 import { useGetGamesQuery } from '../../../../store/api-queries/tournaments';
 import { H3, Horizontal, Separator } from '../../../../styles/styled-elements';
 
 type Pick = { gameId: string; teamId: string };
 
-const statuses = ['East', 'South', 'Midwest', 'West'];
+const statuses = [{ title: 'East' }, { title: 'South' }, { title: 'Midwest' }, { title: 'West' }];
 
 const PicksScreen = ({ route: { params } }) => {
   const { colors } = useTheme();
@@ -46,36 +47,7 @@ const PicksScreen = ({ route: { params } }) => {
 
   return (
     <Container>
-      <Horizontal
-        style={{
-          marginHorizontal: 10,
-        }}
-      >
-        {statuses.map((status, idx) => {
-          return (
-            <Pressable
-              key={idx}
-              style={{
-                paddingVertical: 15,
-                paddingHorizontal: 20,
-                borderBottomColor: isFocused(status) ? colors.primary : null,
-                borderBottomWidth: isFocused(status) ? 1.5 : 0,
-              }}
-              onPress={() => setCurrentTab(status)}
-            >
-              <H3
-                style={{
-                  textTransform: 'capitalize',
-                  fontWeight: currentTab === status ? '700' : '500',
-                  color: currentTab === status ? colors.primary : 'black',
-                }}
-              >
-                {status}
-              </H3>
-            </Pressable>
-          );
-        })}
-      </Horizontal>
+      <TopTab tabs={statuses} />
       <Separator size='sm' style={{ margin: 0 }} />
       <View style={{ padding: 15 }}>
         <Headline style={{ color: colors.primary }}>Time remaining to make picks</Headline>
