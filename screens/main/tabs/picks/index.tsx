@@ -3,19 +3,22 @@ import { useTheme } from '@react-navigation/native';
 import { findIndex, isEqual } from 'lodash';
 import moment from 'moment';
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, Image, ScrollView, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Pressable, ScrollView, View } from 'react-native';
 import styled from 'styled-components/native';
 import defLogo from '../../../../assets/images/defLogo.png';
 import CountDown from '../../../../components/common/CountDown';
 import { useGetGamesQuery } from '../../../../store/api-queries/tournaments';
-import { Horizontal } from '../../../../styles/styled-elements';
+import { H3, Horizontal, Separator } from '../../../../styles/styled-elements';
 
 type Pick = { gameId: string; teamId: string };
+
+const statuses = ['East', 'South', 'Midwest', 'West'];
 
 const PicksScreen = ({ route: { params } }) => {
   const { colors } = useTheme();
   const [picks, setPicks] = useState<Pick[]>([]);
   const [limit, setLimit] = useState(3);
+  const [currentTab, setCurrentTab] = useState(statuses[0]);
 
   const { data: { data: games = [] } = {}, isFetching } = useGetGamesQuery(
     { status: 'STATUS_SCHEDULED' },
@@ -39,8 +42,41 @@ const PicksScreen = ({ route: { params } }) => {
     if (!isEqual(picks, temp)) setPicks(temp);
   };
 
+  const isFocused = tabName => currentTab === tabName;
+
   return (
     <Container>
+      <Horizontal
+        style={{
+          marginHorizontal: 10,
+        }}
+      >
+        {statuses.map((status, idx) => {
+          return (
+            <Pressable
+              key={idx}
+              style={{
+                paddingVertical: 15,
+                paddingHorizontal: 20,
+                borderBottomColor: isFocused(status) ? colors.primary : null,
+                borderBottomWidth: isFocused(status) ? 1.5 : 0,
+              }}
+              onPress={() => setCurrentTab(status)}
+            >
+              <H3
+                style={{
+                  textTransform: 'capitalize',
+                  fontWeight: currentTab === status ? '700' : '500',
+                  color: currentTab === status ? colors.primary : 'black',
+                }}
+              >
+                {status}
+              </H3>
+            </Pressable>
+          );
+        })}
+      </Horizontal>
+      <Separator size='sm' style={{ margin: 0 }} />
       <View style={{ padding: 15 }}>
         <Headline style={{ color: colors.primary }}>Time remaining to make picks</Headline>
         <CountDown date={games[0].eventDate} />
@@ -51,7 +87,11 @@ const PicksScreen = ({ route: { params } }) => {
         </Headline>
       </View>
       {isFetching ? (
-        <ActivityIndicator color={colors.primary} size='large' />
+        <ActivityIndicator
+          color={colors.primary}
+          size='large'
+          style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}
+        />
       ) : games.length ? (
         <ScrollView showsVerticalScrollIndicator={false}>
           {games.map(({ id: gameId, teamA, teamB, eventDate }, idx) => (
@@ -125,11 +165,6 @@ const HorizontalView = styled.TouchableOpacity`
   justify-content: space-between;
   align-items: center;
   flex-direction: row;
-`;
-
-const Separator = styled.View`
-  border: 1px solid #e9ebed;
-  margin-vertical: 5px;
 `;
 
 const MedBoldText = styled.Text`

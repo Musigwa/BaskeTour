@@ -1,35 +1,13 @@
-// import { StyleSheet, Button, Text, View } from 'react-native';
-// import React from 'react';
-// import { useNavigation } from '@react-navigation/native';
-
-// const ScoresScreen = () => {
-//   const navigation = useNavigation();
-//   return (
-//     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-//       <Text>ScoresScreen</Text>
-//       <Button
-//         title='Go to Notifications'
-//         onPress={() => navigation.navigate('Settings', { screen: 'Notifications' })}
-//       />
-//     </View>
-//   );
-// };
-
-// export default ScoresScreen;
-
-// const styles = StyleSheet.create({});
-
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import { Horizontal, Paragraph, Separator } from '../../../../styles/styled-elements';
 
 import { useTheme } from '@react-navigation/native';
 import moment from 'moment';
-import { Pressable, ScrollView, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
 import TeamContainer from '../../../../components/scores/TeamContainer';
 import { useGetGamesQuery } from '../../../../store/api-queries/tournaments';
 import { GAME_STATUS } from '../../../../types';
-// import { games } from '../../../../constants/dummy';
 
 const ScoresScreen = () => {
   const statuses = {
@@ -43,7 +21,7 @@ const ScoresScreen = () => {
 
   const {
     data: { data: games = [] } = {},
-    isLoading,
+    isFetching,
     refetch,
   } = useGetGamesQuery({ status: currentTab }, { refetchOnReconnect: true });
 
@@ -77,41 +55,49 @@ const ScoresScreen = () => {
           );
         })}
       </Horizontal>
-      <Separator />
-      <ScrollView contentContainerStyle={{ padding: 20, paddingTop: 0 }}>
-        {games.map(({ teamA, teamB, eventDate }, idx) => {
-          return (
-            <View key={idx}>
-              <Horizontal>
-                <TeamsWrapper
-                  style={{
-                    flex: 0.76,
-                    borderRightWidth: 1.5,
-                    borderRightColor: '#e9ebed',
-                  }}
-                >
-                  {[teamA, teamB].map((team, idx) => (
-                    <TeamContainer key={idx} team={team} currentTab={currentTab} />
-                  ))}
-                </TeamsWrapper>
-                {currentTab === 'STATUS_FINAL' ? (
-                  <H6>Final</H6>
-                ) : (
-                  <View>
-                    {currentTab === 'LIVE' ? (
-                      <H6 style={{ color: colors.primary }}>10:27- 1st</H6>
-                    ) : null}
-                    <H6>{moment(eventDate).format('ddd, MM/YY')}</H6>
-                    <H6>{moment(eventDate).format('LT')}</H6>
-                    {/* <H6>TCU -9.5</H6> Flagsmithed for the Nov, 24 - 27th tournament */}
-                  </View>
-                )}
-              </Horizontal>
-              <Separator />
-            </View>
-          );
-        })}
-      </ScrollView>
+      <Separator size='md' />
+      {isFetching ? (
+        <ActivityIndicator
+          style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}
+          color={colors.primary}
+          size='large'
+        />
+      ) : games.length ? (
+        <ScrollView contentContainerStyle={{ padding: 20, paddingTop: 0 }}>
+          {games.map(({ teamA, teamB, eventDate }, idx) => {
+            return (
+              <View key={idx}>
+                <Horizontal>
+                  <TeamsWrapper
+                    style={{
+                      flex: 0.76,
+                      borderRightWidth: 1.5,
+                      borderRightColor: '#e9ebed',
+                    }}
+                  >
+                    {[teamA, teamB].map((team, idx) => (
+                      <TeamContainer key={idx} team={team} currentTab={currentTab} />
+                    ))}
+                  </TeamsWrapper>
+                  {currentTab === 'STATUS_FINAL' ? (
+                    <H6>Final</H6>
+                  ) : (
+                    <View>
+                      {currentTab === 'LIVE' ? (
+                        <H6 style={{ color: colors.primary }}>10:27- 1st</H6>
+                      ) : null}
+                      <H6>{moment(eventDate).format('ddd, MM/YY')}</H6>
+                      <H6>{moment(eventDate).format('LT')}</H6>
+                      {/* <H6>TCU -9.5</H6> Flagsmithed for the Nov, 24 - 27th tournament */}
+                    </View>
+                  )}
+                </Horizontal>
+                <Separator />
+              </View>
+            );
+          })}
+        </ScrollView>
+      ) : null}
     </Container>
   );
 };

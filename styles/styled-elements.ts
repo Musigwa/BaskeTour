@@ -123,7 +123,7 @@ export const H2 = styled(Paragraph)`
 export const H3 = styled(Paragraph)`
   font-size: 18px;
   font-weight: 500;
-  line-height: 18px;
+  // line-height: 18px;
   letter-spacing: -0.165px;
   text-transform: capitalize;
 `;
@@ -131,7 +131,7 @@ export const H3 = styled(Paragraph)`
 export const H4 = styled(Paragraph)`
   font-size: 16px;
   font-weight: 500;
-  line-height: 18px;
+  // line-height: 18px;
   letter-spacing: -0.165px;
   text-transform: capitalize;
 `;
@@ -139,7 +139,7 @@ export const H4 = styled(Paragraph)`
 export const H5 = styled(Paragraph)`
   font-size: 14px;
   font-weight: 700;
-  line-height: 20px;
+  // line-height: 20px;
   letter-spacing: 0.8px;
   text-transform: capitalize;
 `;
@@ -147,7 +147,7 @@ export const H5 = styled(Paragraph)`
 export const H6 = styled(Paragraph)`
   font-size: 12px;
   font-weight: 700;
-  line-height: 20px;
+  // line-height: 20px;
   letter-spacing: 0.8px;
   text-transform: capitalize;
 `;
