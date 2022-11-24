@@ -5,7 +5,7 @@ import { Formik } from 'formik';
 import { createFormData } from '../../utils/methods';
 import * as Yup from 'yup';
 
-import { useAppSelector } from '../../hooks/useStore';
+import { useAppDispatch, useAppSelector } from '../../hooks/useStore';
 import { useUploadProfileDetailsMutation } from '../../store/api-queries/auth-queries';
 
 import IndicatorHeader from '../../components/Indicator';
@@ -17,18 +17,20 @@ import { AuthScreenProps } from '../../types';
 
 import { Paragraph, View } from '../../styles/styled-elements';
 import { Alert, SafeAreaView } from 'react-native';
+import { hasLoggedIn } from '../../store/slices/authSlice';
+import { useNavigation } from '@react-navigation/native';
 
-function PhotoScreen({ navigation }: AuthScreenProps<'Photo'>) {
+function PhotoScreen() {
   const [photo, setPhoto] = useState<any>();
   const insets = useSafeAreaInsets();
-
+  const dispatch = useAppDispatch();
   const { token, user, completedOnboarding } = useAppSelector(state => state.auth);
-
+  const navigation = useNavigation();
   const [uploadDetails, { isLoading }] = useUploadProfileDetailsMutation();
 
-  const handleGetStarted = () => {
-    navigation.push('Onboarding');
-  };
+  // const handleGetStarted = () => {
+  //   navigation.navigate('Boarding');
+  // };
 
   const onImageSelect = (image: any) => {
     setPhoto(image);
@@ -39,11 +41,11 @@ function PhotoScreen({ navigation }: AuthScreenProps<'Photo'>) {
     lastName: Yup.string().min(2, 'Too Short').required('Field is required'),
   });
 
-  useEffect(() => {
-    if (token && user.profilePic && !completedOnboarding) {
-      navigation.push('Onboarding');
-    }
-  }, [token, user]);
+  // useEffect(() => {
+  //   if (token && user.profilePic && !completedOnboarding) {
+  //     navigation.navigate('Boarding');
+  //   }
+  // }, [token, user]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -81,11 +83,8 @@ function PhotoScreen({ navigation }: AuthScreenProps<'Photo'>) {
 
                 const res = await uploadDetails(data).unwrap();
                 console.log('res---', res);
-                if (res.status === 200) {
-                  navigation.navigate('Boarding');
-                } else {
-                  Alert.alert('Something went wrong');
-                }
+                if (res.status === 200) dispatch(hasLoggedIn(true));
+                else Alert.alert('Something went wrong');
               } catch (error) {
                 console.log('error', error);
               }

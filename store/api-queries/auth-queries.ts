@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import baseQuery from './baseQuery';
 
-import { LOGIN, SIGN_UP, TODOS, USERS } from '../endpoints';
+import { CURRENT_USER, LOGIN, SIGN_UP, TODOS } from '../endpoints';
 
 export const authApi = createApi({
   reducerPath: 'authApi',
@@ -17,7 +17,10 @@ export const authApi = createApi({
       query: body => ({ url: LOGIN, method: 'POST', body }),
     }),
     uploadProfileDetails: builder.mutation({
-      query: body => ({ url: USERS, method: 'PUT', body }),
+      query: body => {
+        console.log('The body ==>', body);
+        return { url: CURRENT_USER, method: 'PUT', body };
+      },
     }),
   }),
 });
