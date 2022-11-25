@@ -51,6 +51,7 @@
     "react-native-safe-area-context": "4.3.1",
     "react-native-screens": "~3.15.0",
     "react-native-svg": "12.3.0",
+    "react-native-toast-banner": "^1.1.0",
     "react-native-web": "~0.18.7",
     "react-redux": "^8.0.4",
     "redux-persist": "^6.0.0",

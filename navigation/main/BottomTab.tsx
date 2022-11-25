@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React from 'react';
+import React, { useEffect } from 'react';
 import BracketScreen from '../../screens/main/tabs/bracket';
 import ChatScreen from '../../screens/main/tabs/chat';
 import PicksScreen from '../../screens/main/tabs/picks';
@@ -8,12 +8,13 @@ import ScoresScreen from '../../screens/main/tabs/scores';
 
 import { FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation, useTheme } from '@react-navigation/native';
-import { SafeAreaView, View } from 'react-native';
+import { ActivityIndicator, SafeAreaView, Text, View } from 'react-native';
 import styled from 'styled-components/native';
 import TopTab from '../../components/common/TopTab';
 import { defaultScreenOptions } from '../../constants';
 import { useCreatePickMutation } from '../../store/api-queries/tournaments';
-import { H2, H3, Horizontal } from '../../styles/styled-elements';
+import { H2, H3, H4, Horizontal } from '../../styles/styled-elements';
+import { useToastBannerToggler } from 'react-native-toast-banner';
 
 const Touchable = styled.Pressable`
   border-width: 2px;
@@ -26,9 +27,22 @@ const Tab = createBottomTabNavigator();
 
 function BottomTabNavigator() {
   const { colors } = useTheme();
-  const [savePicks, { isLoading, isSuccess, error }] = useCreatePickMutation();
+  const [savePicks, { isLoading, isError, error }] = useCreatePickMutation();
   const navigation = useNavigation();
-  console.log('The status,', isSuccess, isLoading, error);
+  const { showBanner, hideBanner } = useToastBannerToggler();
+
+  useEffect(() => {
+    if (isError)
+      showBanner({
+        contentView: (
+          <H4 style={{ padding: 20, color: 'white', textAlign: 'center' }}>
+            {error?.data?.message}
+          </H4>
+        ),
+        duration: 3000,
+        backgroundColor: 'red',
+      });
+  }, [isError, error]);
 
   const goToSettings = () => {
     navigation.navigate('Settings', { screen: 'SettingList' });
@@ -84,21 +98,28 @@ function BottomTabNavigator() {
         name='Picks'
         component={PicksScreen}
         options={{
-          header: ({ route: { params: { canSubmit = false, picks = [] } = {} } }) => (
-            <SafeAreaView style={{ backgroundColor: 'white' }}>
-              <Horizontal style={{ marginRight: 20 }}>
-                <View style={{ flex: 0.4 }} />
-                <H2>Picks</H2>
-                <Touchable
-                  style={{ borderColor: canSubmit ? colors.primary : '#CFCFCF' }}
-                  disabled={!canSubmit}
-                  onPress={() => savePicks(picks)}
-                >
-                  <H3 style={{ color: canSubmit ? colors.primary : '#CFCFCF' }}>Save</H3>
-                </Touchable>
-              </Horizontal>
-            </SafeAreaView>
-          ),
+          header: ({ route: { params: { picks = [], groupId } = {} } }) => {
+            const canSubmit = picks.length && groupId && !isLoading;
+            return (
+              <SafeAreaView style={{ backgroundColor: 'white' }}>
+                <Horizontal style={{ marginRight: 20 }}>
+                  <View style={{ flex: 0.4 }} />
+                  <H2>Picks</H2>
+                  <Touchable
+                    style={{ borderColor: canSubmit ? colors.primary : '#CFCFCF' }}
+                    disabled={!canSubmit}
+                    onPress={() => savePicks({ picks, groupId })}
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator color={colors.primary} />
+                    ) : (
+                      <H3 style={{ color: canSubmit ? colors.primary : '#CFCFCF' }}>Save</H3>
+                    )}
+                  </Touchable>
+                </Horizontal>
+              </SafeAreaView>
+            );
+          },
           tabBarIcon: props => <MaterialCommunityIcons name='checkbox-marked-circle' {...props} />,
         }}
       />

@@ -2,23 +2,25 @@ import { AntDesign } from '@expo/vector-icons';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import { findIndex, isEqual } from 'lodash';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, ScrollView, View } from 'react-native';
 import styled from 'styled-components/native';
 import defLogo from '../../../../assets/images/defLogo.png';
 import CountDown from '../../../../components/common/CountDown';
 import GroupSelector from '../../../../components/common/GroupSelector';
 import TopTab from '../../../../components/common/TopTab';
+import { IGroup } from '../../../../interfaces';
 import { useGetGamesQuery } from '../../../../store/api-queries/tournaments';
 import { H2, Horizontal, Separator } from '../../../../styles/styled-elements';
 
-type Pick = { gameId: string; teamId: string };
+type Pick = { eventId: string; teamId: string };
 const statuses = [{ title: 'East' }, { title: 'South' }, { title: 'Midwest' }, { title: 'West' }];
 
 const PicksScreen = () => {
   const { colors } = useTheme();
   const [picks, setPicks] = useState<Pick[]>([]);
   const [limit, setLimit] = useState(3);
+  const [selectedGroup, setSelectedGroup] = useState<IGroup>();
 
   const navigation = useNavigation();
   const { data: { data: games = [] } = {}, isFetching } = useGetGamesQuery(
@@ -26,16 +28,15 @@ const PicksScreen = () => {
     { refetchOnReconnect: true }
   );
 
-  useEffect(() => {
-    const canSubmit = picks.length === limit;
-    navigation.setParams({ canSubmit, picks });
-  }, [picks.length]);
+  useLayoutEffect(() => {
+    navigation.setParams({ groupId: selectedGroup?._id, picks });
+  }, [picks.length, selectedGroup?._id]);
 
   const updatePicks = (pick: Pick) => {
     const temp = [...picks];
     const peIdx = findIndex(picks, pick);
     const pickExists = peIdx !== -1;
-    const geIdx = picks.findIndex(p => p.gameId === pick.gameId);
+    const geIdx = picks.findIndex(p => p.eventId === pick.eventId);
     const gameExists = geIdx !== -1;
     // If the given pick exists, revoke the selection
     if (pickExists) temp.splice(peIdx, 1);
@@ -48,9 +49,16 @@ const PicksScreen = () => {
     if (!isEqual(picks, temp)) setPicks(temp);
   };
 
+  const handleGroupSelect = group => {
+    setSelectedGroup(group);
+  };
+
   return (
     <Container>
-      <GroupSelector />
+      <GroupSelector
+        title={selectedGroup?.groupName ?? 'Select a group'}
+        onGroupSelect={handleGroupSelect}
+      />
       <TopTab tabs={statuses} />
       <Separator size='sm' style={{ margin: 0 }} />
       <View style={{ padding: 15 }}>
@@ -70,17 +78,17 @@ const PicksScreen = () => {
         />
       ) : games.length ? (
         <ScrollView showsVerticalScrollIndicator={false}>
-          {games.map(({ _id: gameId, teamA, teamB, eventDate }, idx) => (
+          {games.map(({ _id: eventId, teamA, teamB, eventDate }, idx) => (
             <View key={idx}>
               {[teamA, teamB].map(({ teamId, logo = defLogo, name, ranking }, i) => (
                 <View key={i} style={{ paddingHorizontal: 15 }}>
                   <Card
                     style={{
                       backgroundColor:
-                        findIndex(picks, { teamId, gameId }) !== -1 ? colors.primary : colors.card,
+                        findIndex(picks, { teamId, eventId }) !== -1 ? colors.primary : colors.card,
                     }}
                     activeOpacity={0.8}
-                    onPress={() => updatePicks({ teamId, gameId })}
+                    onPress={() => updatePicks({ teamId, eventId })}
                   >
                     <Horizontal style={{ flex: 0.86 }}>
                       <AvatarContainer>

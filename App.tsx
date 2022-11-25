@@ -9,6 +9,8 @@ import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import { dark, light } from './styles/theme';
+import { ToastBannerProvider, ToastBannerPresenter, Transition } from 'react-native-toast-banner';
+
 import 'react-native-gesture-handler';
 
 export default function App() {
@@ -20,7 +22,10 @@ export default function App() {
       <PersistGate loading={null} persistor={persistor}>
         <ThemeProvider theme={colorScheme === 'dark' ? dark : light}>
           <SafeAreaProvider>
-            <Navigation colorScheme={colorScheme} />
+            <ToastBannerProvider>
+              <Navigation colorScheme={colorScheme} />
+              <ToastBannerPresenter />
+            </ToastBannerProvider>
             <StatusBar />
           </SafeAreaProvider>
         </ThemeProvider>

@@ -62,6 +62,11 @@ const SearchGroup = () => {
     if (searchQuery.length) setSkip(false);
   }, [searchQuery]);
 
+  const handleSelect = () => {
+    navigation.goBack();
+    onPress(selectedItem);
+  };
+
   return (
     <Container>
       <SafeAreaView style={{ alignItems: 'center' }}>
@@ -117,7 +122,7 @@ const SearchGroup = () => {
             borderRadius: 10,
             marginTop: 10,
           }}
-          onPress={() => onPress(selectedItem)}
+          onPress={handleSelect}
           disabled={!selectedItem}
         >
           <H3 style={{ color: 'white' }}>{text}</H3>

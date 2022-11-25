@@ -1,6 +1,6 @@
 export interface IGroup {
   groupName: string;
-  id: string;
+  _id: string;
   createdAt: string;
   creator: IUser;
   updatedAd: string;
