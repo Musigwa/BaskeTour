@@ -11,7 +11,7 @@ const JoinGroupSuccessScreen = ({ navigation, route }) => {
   } = route;
 
   const gotItButtonClickHandler = () => {
-    navigation.navigate('SearchGroup');
+    navigation.navigate('Tabs');
   };
 
   return (

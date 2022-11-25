@@ -50,9 +50,7 @@ const JoinGroupScreen = ({ navigation, route }) => {
         groupId: group.id,
         groupPIN: PIN,
       }).unwrap();
-      navigation.navigate('Success', {
-        group,
-      });
+      navigation.navigate('Groups', { screen: 'SuccessGroup', params: { group } });
     } catch (error) {
       setError(error.data.message);
     }
@@ -60,47 +58,45 @@ const JoinGroupScreen = ({ navigation, route }) => {
 
   const PINValueChangeHandler = (pin: string) => setPIN(pin);
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <Container
-          style={{
-            justifyContent: 'flex-start',
-          }}
-        >
-          <>
-            <View w-100 flex={keyboardVisible ? 0.8 : 1} items-center>
-              <Title>Join Existing Group </Title>
+    // <KeyboardAvoidingView
+    //   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    //   style={{ flex: 1 }}
+    // >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <Container
+        style={{
+          justifyContent: 'flex-start',
+        }}
+      >
+        <View w-100 flex={keyboardVisible ? 0.8 : 1} items-center>
+          <Title>Join Existing Group </Title>
 
-              <View w-100 mt={40}>
-                <GroupNameContainer w-100>
-                  <GroupNameLabel>Group name</GroupNameLabel>
-                  <GroupName>{group?.groupName}</GroupName>
-                </GroupNameContainer>
-              </View>
+          <View w-100 mt={40}>
+            <GroupNameContainer w-100>
+              <GroupNameLabel>Group name</GroupNameLabel>
+              <GroupName>{group?.groupName}</GroupName>
+            </GroupNameContainer>
+          </View>
 
-              <View w-100 mb={30} mt={40}>
-                <PinCodeInput value={PIN} onChangeText={PINValueChangeHandler} />
-              </View>
-              <View w-100 flex-row justify-center align-center>
-                {error && <ErrorMessage w-100>{error}</ErrorMessage>}
-              </View>
-            </View>
+          <View w-100 mb={30} mt={40}>
+            <PinCodeInput value={PIN} onChangeText={PINValueChangeHandler} />
+          </View>
+          <View w-100 flex-row justify-center align-center>
+            {error && <ErrorMessage w-100>{error}</ErrorMessage>}
+          </View>
+        </View>
 
-            <View w-100 mb={30}>
-              <Button
-                text='Join'
-                onPress={handleSubmit}
-                loading={isLoading}
-                disabled={isLoading || PIN.length < 4}
-              />
-            </View>
-          </>
-        </Container>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+        <View w-100 mb={30}>
+          <Button
+            text='Join'
+            onPress={handleSubmit}
+            loading={isLoading}
+            disabled={isLoading || PIN.length < 4}
+          />
+        </View>
+      </Container>
+    </TouchableWithoutFeedback>
+    // </KeyboardAvoidingView>
   );
 };
 

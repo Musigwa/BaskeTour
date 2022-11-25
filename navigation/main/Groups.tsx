@@ -1,6 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import { defaultHeaderOptions } from '../../constants';
+import { defaultScreenOptions } from '../../constants';
 import CreateGroupScreen from '../../screens/main/groups/Create';
 import JoinGroupScreen from '../../screens/main/groups/Join';
 import JoinGroupSuccessScreen from '../../screens/main/groups/JoinSuccess';
@@ -12,9 +12,8 @@ const Stack = createStackNavigator();
 function GroupsNavigator() {
   return (
     <Stack.Navigator>
-      <Stack.Group navigationKey='Groups' screenOptions={{ ...defaultHeaderOptions, title: '' }}>
+      <Stack.Group navigationKey='Groups' screenOptions={{ ...defaultScreenOptions, title: '' }}>
         <Stack.Screen name='CreateGroup' component={CreateGroupScreen} />
-        <Stack.Screen name='SearchGroup' component={SearchGroup} />
         <Stack.Screen name='JoinGroup' component={JoinGroupScreen} />
         <Stack.Screen name='ShareGroup' component={ShareGroupScreen} />
         <Stack.Screen name='SuccessGroup' component={JoinGroupSuccessScreen} />

@@ -17,8 +17,17 @@ function SetupTypeScreen() {
     navigation.navigate('Groups', { screen: 'CreateGroup' });
   };
 
-  const handleJoinGroup = () => {
-    navigation.navigate('Groups', { screen: 'SearchGroup' });
+  const handleJoinGroup = (group: IGroup) => {
+    navigation.navigate('Groups', {
+      screen: group.availableSpots ? 'JoinGroup' : 'FullGroup',
+      params: { group },
+    });
+  };
+
+  const params = { confirmBtn: { onPress: handleJoinGroup, text: 'Join Group' } };
+
+  const searchGroup = () => {
+    navigation.navigate('SearchGroup', params);
   };
 
   const handleSkip = () => {
@@ -47,12 +56,11 @@ function SetupTypeScreen() {
             </Action>
           </Touchable>
 
-          <Touchable style={{ width: '100%' }} onPress={handleJoinGroup}>
+          <Touchable style={{ width: '100%' }} onPress={searchGroup}>
             <Action bg='accentPurple'>
               <ActionIcons>
                 <HoopIcon />
               </ActionIcons>
-
               <ActionButtonText>Join Existing Group</ActionButtonText>
             </Action>
           </Touchable>

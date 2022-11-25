@@ -14,16 +14,10 @@ import BottomTabNavigator from './main/BottomTab';
 import GroupsNavigator from './main/Groups';
 import OnboardingNavigator from './main/Onboarding';
 import SettingsNavigator from './main/Settings';
+import SearchGroup from '../screens/main/groups/Search';
+import { defaultScreenOptions } from '../constants';
 
 const Stack = createStackNavigator();
-
-const defaultOptions = {
-  headerShown: true,
-  headerTitle: '',
-  headerBackTitleVisible: false,
-  headerShadowVisible: false,
-  headerTintColor: 'black',
-};
 
 function MainNavigator({ colorScheme }: { colorScheme: ColorSchemeName }) {
   const { isLoggedIn } = useAppSelector(state => state.auth);
@@ -43,7 +37,7 @@ function MainNavigator({ colorScheme }: { colorScheme: ColorSchemeName }) {
           </Stack.Group>
         ) : (
           // Authentication & authorization screens
-          <Stack.Group screenOptions={defaultOptions}>
+          <Stack.Group screenOptions={defaultScreenOptions}>
             <Stack.Screen
               name='Initial'
               options={{ headerShown: false }}
@@ -54,6 +48,13 @@ function MainNavigator({ colorScheme }: { colorScheme: ColorSchemeName }) {
             <Stack.Screen name='Photo' component={PhotoScreen} />
           </Stack.Group>
         )}
+        <Stack.Group screenOptions={{ presentation: 'modal', ...defaultScreenOptions, title: '' }}>
+          <Stack.Screen
+            name='SearchGroup'
+            component={SearchGroup}
+            options={{ presentation: 'modal' }}
+          />
+        </Stack.Group>
       </Stack.Navigator>
     </NavigationContainer>
   );

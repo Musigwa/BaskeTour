@@ -7,12 +7,12 @@ import { ActivityIndicator, Alert, Image, ScrollView, View } from 'react-native'
 import styled from 'styled-components/native';
 import defLogo from '../../../../assets/images/defLogo.png';
 import CountDown from '../../../../components/common/CountDown';
+import GroupSelector from '../../../../components/common/GroupSelector';
 import TopTab from '../../../../components/common/TopTab';
 import { useGetGamesQuery } from '../../../../store/api-queries/tournaments';
-import { Horizontal, Separator } from '../../../../styles/styled-elements';
+import { H2, Horizontal, Separator } from '../../../../styles/styled-elements';
 
 type Pick = { gameId: string; teamId: string };
-
 const statuses = [{ title: 'East' }, { title: 'South' }, { title: 'Midwest' }, { title: 'West' }];
 
 const PicksScreen = () => {
@@ -50,16 +50,17 @@ const PicksScreen = () => {
 
   return (
     <Container>
+      <GroupSelector />
       <TopTab tabs={statuses} />
       <Separator size='sm' style={{ margin: 0 }} />
       <View style={{ padding: 15 }}>
         <Headline style={{ color: colors.primary }}>Time remaining to make picks</Headline>
         <CountDown date={games[0].eventDate} />
         <Separator />
-        <MedBoldText style={{ marginTop: 35, marginBottom: 10 }}>Pick teams to win</MedBoldText>
-        <Headline style={{ color: colors.primary, marginBottom: 15 }}>
-          Select 3 teams for Round of 64
-        </Headline>
+        <H2 style={{ marginTop: 35, marginBottom: 10, textTransform: 'normal' }}>
+          Pick teams to win
+        </H2>
+        <Headline style={{ color: colors.primary }}>Select 3 teams for Round of 64</Headline>
       </View>
       {isFetching ? (
         <ActivityIndicator
@@ -144,13 +145,6 @@ const HorizontalView = styled.TouchableOpacity`
 
 const MedBoldText = styled.Text`
   font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  text-align: left;
-`;
-
-const SMBoldText = styled.Text`
-  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.8px;
   text-align: left;

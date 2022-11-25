@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react';
 import { StatusBar, TouchableOpacity } from 'react-native';
-import styled from 'styled-components/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import styled from 'styled-components/native';
 import { useAppSelector } from '../../hooks/useStore';
 
-import Button from '../../components/common/Buttons';
 import Logo from '../../assets/svgs/Logo';
+import Button from '../../components/common/Buttons';
 
-import { AuthScreenProps } from '../../types';
-
+import { useNavigation } from '@react-navigation/native';
 import { Paragraph, View } from '../../styles/styled-elements';
 
-function InitialScreen({ navigation }: AuthScreenProps<'Initial'>) {
+function InitialScreen() {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
   const { token, user } = useAppSelector(state => state.auth);
 
   const handleGetStarted = () => {
@@ -24,9 +24,7 @@ function InitialScreen({ navigation }: AuthScreenProps<'Initial'>) {
   };
 
   useEffect(() => {
-    if (token && !user.profilePic) {
-      navigation.push('Photo');
-    }
+    if (token && !user.profilePic) navigation.navigate('Photo');
   }, [token, user]);
   return (
     <>

@@ -27,7 +27,7 @@ export const Container = styled.View`
 export const Paragraph: React.FC<IntStyleProps> = styled.Text`
   font-weight: 500;
   font-size: ${(props: IntStyleProps) => (props.size ? props.size + 'px' : '12px')};
-  font-family: Montserrat_500Medium;
+  font-family: Poppins_500Medium;
   color: ${(props: IntStyleProps) => (props.color ? props.color : props.theme['text'])};
   margin-left: ${(props: IntStyleProps) => (props.ml ? props.ml + 'px' : '0px')};
   margin-right: ${(props: IntStyleProps) => (props.mr ? props.mr + 'px' : '0px')};

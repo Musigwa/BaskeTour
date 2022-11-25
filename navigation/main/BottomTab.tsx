@@ -11,21 +11,22 @@ import { useNavigation, useTheme } from '@react-navigation/native';
 import { SafeAreaView, View } from 'react-native';
 import styled from 'styled-components/native';
 import TopTab from '../../components/common/TopTab';
+import { defaultScreenOptions } from '../../constants';
 import { useCreatePickMutation } from '../../store/api-queries/tournaments';
 import { H2, H3, Horizontal } from '../../styles/styled-elements';
 
-const Touchable = styled.TouchableOpacity`
+const Touchable = styled.Pressable`
   border-width: 2px;
+  border-radius: 8px;
   padding-horizontal: 20px;
   padding-vertical: 8px;
-  border-radius: 8px;
 `;
 
 const Tab = createBottomTabNavigator();
 
 function BottomTabNavigator() {
   const { colors } = useTheme();
-  const [savePicks, { isLoading, status, isSuccess, error }] = useCreatePickMutation();
+  const [savePicks, { isLoading, isSuccess, error }] = useCreatePickMutation();
   const navigation = useNavigation();
   console.log('The status,', isSuccess, isLoading, error);
 
@@ -54,21 +55,14 @@ function BottomTabNavigator() {
             onPress={goToSettings}
           />
         ),
-        headerTitleStyle: {
-          fontSize: 24,
-          fontWeight: '700',
-          fontFamily: 'Montserrat_500Medium',
-          letterSpacing: -0.165,
-          // text-align: center;
-          textTransform: 'capitalize',
-        },
+        headerTitleStyle: defaultScreenOptions.headerTitleStyle,
       }}
     >
       <Tab.Screen
         name='Scores'
         component={ScoresScreen}
         options={{
-          header: ({ navigation, route }) => (
+          header: () => (
             <SafeAreaView>
               <Horizontal>
                 <TopTab tabs={headerParts} />
@@ -92,12 +86,11 @@ function BottomTabNavigator() {
         options={{
           header: ({ route: { params: { canSubmit = false, picks = [] } = {} } }) => (
             <SafeAreaView style={{ backgroundColor: 'white' }}>
-              <Horizontal>
-                <View style={{ flex: 0.3 }} />
+              <Horizontal style={{ marginRight: 20 }}>
+                <View style={{ flex: 0.4 }} />
                 <H2>Picks</H2>
                 <Touchable
-                  activeOpacity={0.5}
-                  style={{ marginRight: 20, borderColor: canSubmit ? colors.primary : '#CFCFCF' }}
+                  style={{ borderColor: canSubmit ? colors.primary : '#CFCFCF' }}
                   disabled={!canSubmit}
                   onPress={() => savePicks(picks)}
                 >
@@ -114,23 +107,18 @@ function BottomTabNavigator() {
         component={RankingScreen}
         options={{
           tabBarIcon: props => <MaterialIcons name='leaderboard' {...props} />,
-          title: 'Leader Board',
+          headerTitle: 'Leader Board',
         }}
       />
       <Tab.Screen
         name='Chat'
         component={ChatScreen}
-        options={{
-          tabBarIcon: props => <Ionicons name='chatbubbles' {...props} />,
-        }}
+        options={{ tabBarIcon: props => <Ionicons name='chatbubbles' {...props} /> }}
       />
       <Tab.Screen
         name='Bracket'
         component={BracketScreen}
-        options={{
-          tabBarIcon: props => <FontAwesome name='sitemap' {...props} />,
-          // headerTitle: () => <H2>Bracket</H2>,
-        }}
+        options={{ tabBarIcon: props => <FontAwesome name='sitemap' {...props} /> }}
       />
     </Tab.Navigator>
   );
