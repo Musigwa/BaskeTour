@@ -4,28 +4,28 @@ import React, { useState } from 'react';
 import { Pressable } from 'react-native';
 import { H3, Horizontal } from '../../styles/styled-elements';
 
-const TopTab = ({ tabs }) => {
+const TopTab = ({ tabs, onTabPress = (title: string) => {}, shadowVisible = true }) => {
   const [focused, setFocused] = useState(tabs[0].title);
   const { colors } = useTheme();
 
   const isFocused = title => title === focused;
 
+  const handleTabPress = title => {
+    setFocused(title);
+    onTabPress(title);
+  };
+
   return (
     <Horizontal>
-      {tabs.map(({ iconName, onPress, title }, idx) => {
+      {tabs.map(({ iconName, title }, idx) => {
         return (
-          <Pressable
-            onPress={() => {
-              if (onPress) onPress(title);
-              setFocused(title);
-            }}
-          >
+          <Pressable onPress={() => handleTabPress(title)}>
             <Horizontal
               style={{
                 paddingVertical: 15,
                 paddingHorizontal: 20,
-                borderBottomColor: isFocused(title) ? colors.primary : null,
-                borderBottomWidth: isFocused(title) ? 1.5 : 0,
+                borderBottomColor: shadowVisible && isFocused(title) ? colors.primary : null,
+                borderBottomWidth: shadowVisible && isFocused(title) ? 1.5 : 0,
               }}
               key={idx}
             >

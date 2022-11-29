@@ -6,12 +6,13 @@ import BallIcon from '../../../assets/svgs/BallIcon';
 import HoopIcon from '../../../assets/svgs/HoopIcon';
 import Logo from '../../../assets/svgs/Logo';
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useTheme } from '@react-navigation/native';
 import { Paragraph, View } from '../../../styles/styled-elements';
 
 function SetupTypeScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
 
   const handleCreateGroup = () => {
     navigation.navigate('Groups', { screen: 'CreateGroup' });
@@ -48,7 +49,7 @@ function SetupTypeScreen() {
         </View>
         <View mt={100} w-100>
           <Touchable mb={23} onPress={handleCreateGroup}>
-            <Action>
+            <Action bg='#4833B5'>
               <ActionIcons>
                 <BallIcon />
               </ActionIcons>
@@ -57,7 +58,7 @@ function SetupTypeScreen() {
           </Touchable>
 
           <Touchable style={{ width: '100%' }} onPress={searchGroup}>
-            <Action bg='accentPurple'>
+            <Action bg='#9C49CF'>
               <ActionIcons>
                 <HoopIcon />
               </ActionIcons>
@@ -101,7 +102,7 @@ const Action = styled(View)<{ bg?: 'accentPurple' | 'accentBlue' }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  background-color: ${props => props.theme[props.bg || 'accentBlue']};
+  background-color: ${props => props.bg};
   height: 114px;
   width: 100%;
   border-radius: 4px;

@@ -4,7 +4,8 @@ import { H4, Horizontal, Paragraph, Separator } from '../../../../styles/styled-
 
 import { useTheme } from '@react-navigation/native';
 import moment from 'moment';
-import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
+import { ActivityIndicator, ScrollView, View } from 'react-native';
+import TopTab from '../../../../components/common/TopTab';
 import TeamContainer from '../../../../components/scores/TeamContainer';
 import { useGetGamesQuery } from '../../../../store/api-queries/tournaments';
 import { GAME_STATUS } from '../../../../types';
@@ -30,33 +31,17 @@ const ScoresScreen = () => {
 
   return (
     <Container>
-      <RoundBanner tintColor='red' source={require('../../../../assets/images/roundImage.png')}>
+      <RoundBanner source={require('../../../../assets/images/roundImage.png')}>
         <InnerBanner>
-          <BannerText>Round of 64</BannerText>
+          <H3 style={{ color: colors.card }}>Round of 64</H3>
         </InnerBanner>
       </RoundBanner>
-      <Horizontal>
-        {Object.keys(statuses).map((lb, idx) => {
-          return (
-            <Pressable
-              key={idx}
-              style={{ padding: 20 }}
-              onPress={() => setCurrentTab(statuses[lb])}
-            >
-              <H3
-                style={{
-                  textTransform: 'capitalize',
-                  fontWeight: currentTab === statuses[lb] ? '700' : '500',
-                  color: currentTab === statuses[lb] ? colors.primary : 'black',
-                }}
-              >
-                {lb}
-              </H3>
-            </Pressable>
-          );
-        })}
-      </Horizontal>
-      <Separator size='md' />
+      <TopTab
+        tabs={Object.keys(statuses).map(title => ({ title }))}
+        shadowVisible={false}
+        onTabPress={title => setCurrentTab(statuses[title])}
+      />
+      <Separator size='sm' />
       {isFetching ? (
         <ActivityIndicator
           style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}
@@ -116,6 +101,7 @@ const TeamsWrapper = styled.View`
 const Container = styled(View)`
   flex: 1;
   width: 100%;
+  background-color: white;
 `;
 
 const RoundBanner = styled.ImageBackground`
@@ -134,7 +120,7 @@ const InnerBanner = styled(View)`
 const H3 = styled(Paragraph)`
   font-size: 18px;
   font-weight: 500;
-  line-height: 18px;
+  // line-height: 18px;
   letter-spacing: -0.165px;
   text-align: center;
 `;

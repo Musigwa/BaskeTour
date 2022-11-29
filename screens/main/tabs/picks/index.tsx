@@ -59,8 +59,9 @@ const PicksScreen = () => {
         title={selectedGroup?.groupName ?? 'Select a group'}
         onGroupSelect={handleGroupSelect}
       />
+      <Separator size='sm' />
       <TopTab tabs={statuses} />
-      <Separator size='sm' style={{ margin: 0 }} />
+      <Separator size='sm' />
       {isFetching ? (
         <ActivityIndicator
           color={colors.primary}

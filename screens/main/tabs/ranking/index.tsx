@@ -1,15 +1,32 @@
-import { useTheme } from '@react-navigation/native';
-import React from 'react';
+import { useNavigation, useTheme } from '@react-navigation/native';
+import React, { useLayoutEffect, useState } from 'react';
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components/native';
 import pp from '../../../../assets/images/pp.jpg';
 import { H2, H5, H6, Horizontal, Separator } from '../../../../styles/styled-elements';
+import TopTab from '../../../../components/common/TopTab';
+import GroupSelector from '../../../../components/common/GroupSelector';
+import { IGroup } from '../../../../interfaces';
 
 const RankingScreen = () => {
   const { colors } = useTheme();
   const data = Array(10).fill(0);
+  const navigation = useNavigation();
+  const [selectedGroup, setSelectedGroup] = useState<IGroup>();
+
+  const handleGroupSelect = group => {
+    setSelectedGroup(group);
+  };
+
   return (
     <Container>
+      <GroupSelector
+        title={selectedGroup?.groupName ?? 'Select a group'}
+        onGroupSelect={handleGroupSelect}
+      />
+      <Separator size='sm' />
+      <TopTab tabs={[{ title: 'Round 64' }, { title: 'Round 32' }, { title: 'Sweet 16' }]} />
+      <Separator size='sm' />
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ marginBottom: 30 }}

@@ -15,10 +15,11 @@ import { useSignupMutation } from '../../store/api-queries/auth-queries';
 import { AuthScreenProps } from '../../types';
 import { Paragraph, View } from '../../styles/styled-elements';
 import { Alert, Pressable } from 'react-native';
+import { useTheme } from '@react-navigation/native';
 
 function SignUpScreen({ navigation }: AuthScreenProps<'SignUp'>) {
   const insets = useSafeAreaInsets();
-
+  const { colors } = useTheme();
   const { token, user } = useAppSelector(state => state.auth);
 
   // mutations
@@ -147,7 +148,7 @@ function SignUpScreen({ navigation }: AuthScreenProps<'SignUp'>) {
               <BottomText>
                 <Paragraph>By using Ulli you agree to our </Paragraph>
                 <Pressable>
-                  <Terms>Terms & Conditions</Terms>
+                  <Terms style={{ color: colors.primary }}>Terms & Conditions</Terms>
                 </Pressable>
               </BottomText>
             </View>

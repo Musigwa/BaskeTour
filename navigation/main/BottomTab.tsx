@@ -69,7 +69,7 @@ function BottomTabNavigator() {
             onPress={goToSettings}
           />
         ),
-        headerTitleStyle: defaultScreenOptions.headerTitleStyle,
+        ...defaultScreenOptions,
       }}
     >
       <Tab.Screen
@@ -109,7 +109,6 @@ function BottomTabNavigator() {
                     style={{ borderColor: canSubmit ? colors.primary : '#CFCFCF' }}
                     disabled={!canSubmit}
                     onPress={() => {
-                      console.log('The picks and giD', { picks, groupId });
                       savePicks({ picks, groupId });
                     }}
                   >
@@ -137,12 +136,18 @@ function BottomTabNavigator() {
       <Tab.Screen
         name='Chat'
         component={ChatScreen}
-        options={{ tabBarIcon: props => <Ionicons name='chatbubbles' {...props} /> }}
+        options={{
+          tabBarIcon: props => <Ionicons name='chatbubbles' {...props} />,
+          headerShadowVisible: true,
+        }}
       />
       <Tab.Screen
         name='Bracket'
         component={BracketScreen}
-        options={{ tabBarIcon: props => <FontAwesome name='sitemap' {...props} /> }}
+        options={{
+          tabBarIcon: props => <FontAwesome name='sitemap' {...props} />,
+          headerShadowVisible: true,
+        }}
       />
     </Tab.Navigator>
   );
