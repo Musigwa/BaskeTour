@@ -11,7 +11,7 @@ import GroupSelector from '../../../../components/common/GroupSelector';
 import TopTab from '../../../../components/common/TopTab';
 import { IGroup } from '../../../../interfaces';
 import { useGetGamesQuery } from '../../../../store/api-queries/tournaments';
-import { H2, Horizontal, Separator } from '../../../../styles/styled-elements';
+import { H2, H3, H4, Horizontal, Separator } from '../../../../styles/styled-elements';
 
 type Pick = { eventId: string; teamId: string };
 const statuses = [{ title: 'East' }, { title: 'South' }, { title: 'Midwest' }, { title: 'West' }];
@@ -61,15 +61,6 @@ const PicksScreen = () => {
       />
       <TopTab tabs={statuses} />
       <Separator size='sm' style={{ margin: 0 }} />
-      <View style={{ padding: 15 }}>
-        <Headline style={{ color: colors.primary }}>Time remaining to make picks</Headline>
-        <CountDown date={games[0].eventDate} />
-        <Separator />
-        <H2 style={{ marginTop: 35, marginBottom: 10, textTransform: 'normal' }}>
-          Pick teams to win
-        </H2>
-        <Headline style={{ color: colors.primary }}>Select 3 teams for Round of 64</Headline>
-      </View>
       {isFetching ? (
         <ActivityIndicator
           color={colors.primary}
@@ -77,57 +68,74 @@ const PicksScreen = () => {
           style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}
         />
       ) : games.length ? (
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {games.map(({ _id: eventId, teamA, teamB, eventDate }, idx) => (
-            <View key={idx}>
-              {[teamA, teamB].map(({ teamId, logo = defLogo, name, ranking }, i) => (
-                <View key={i} style={{ paddingHorizontal: 15 }}>
-                  <Card
-                    style={{
-                      backgroundColor:
-                        findIndex(picks, { teamId, eventId }) !== -1 ? colors.primary : colors.card,
-                    }}
-                    activeOpacity={0.8}
-                    onPress={() => updatePicks({ teamId, eventId })}
-                  >
-                    <Horizontal style={{ flex: 0.86 }}>
-                      <AvatarContainer>
-                        <Image
-                          source={logo}
-                          resizeMode='contain'
-                          resizeMethod='auto'
-                          style={{ width: 35, height: 35 }}
-                        />
-                      </AvatarContainer>
-                      <View>
-                        <BoldText style={{ fontSize: 12 }}>
-                          {moment(eventDate).format('ddd, MM/D/YYYY, h:mm A')}
-                        </BoldText>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <BoldText style={{ fontSize: 14, color: '#979797' }}>
-                            ({ranking})
+        <>
+          <View style={{ padding: 15 }}>
+            <Headline style={{ color: colors.primary }}>Time remaining to make picks</Headline>
+            <CountDown date={games[0].eventDate} />
+            <Separator />
+            <H2 style={{ marginTop: 35, marginBottom: 10, textTransform: 'normal' }}>
+              Pick teams to win
+            </H2>
+            <Headline style={{ color: colors.primary }}>Select 3 teams for Round of 64</Headline>
+          </View>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {games.map(({ _id: eventId, teamA, teamB, eventDate }, idx) => (
+              <View key={idx}>
+                {[teamA, teamB].map(({ teamId, logo = defLogo, name, ranking }, i) => (
+                  <View key={i} style={{ paddingHorizontal: 15 }}>
+                    <Card
+                      style={{
+                        backgroundColor:
+                          findIndex(picks, { teamId, eventId }) !== -1
+                            ? colors.primary
+                            : colors.card,
+                      }}
+                      activeOpacity={0.8}
+                      onPress={() => updatePicks({ teamId, eventId })}
+                    >
+                      <Horizontal style={{ flex: 0.86 }}>
+                        <AvatarContainer>
+                          <Image
+                            source={logo}
+                            resizeMode='contain'
+                            resizeMethod='auto'
+                            style={{ width: 35, height: 35 }}
+                          />
+                        </AvatarContainer>
+                        <View>
+                          <BoldText style={{ fontSize: 12 }}>
+                            {moment(eventDate).format('ddd, MM/D/YYYY, h:mm A')}
                           </BoldText>
-                          <BoldText style={{ fontSize: 18 }}>{name}</BoldText>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <BoldText style={{ fontSize: 14, color: '#979797' }}>
+                              ({ranking})
+                            </BoldText>
+                            <BoldText style={{ fontSize: 18 }}>{name}</BoldText>
+                          </View>
                         </View>
-                      </View>
-                    </Horizontal>
-                    <AntDesign name='checksquare' size={24} color={colors.background} />
-                  </Card>
-                  {!i ? (
-                    <BoldText style={{ fontSize: 12, textAlign: 'center' }}>VS</BoldText>
-                  ) : null}
-                </View>
-              ))}
-              {idx !== games.length - 1 ? <Separator /> : null}
-            </View>
-          ))}
-        </ScrollView>
-      ) : null}
+                      </Horizontal>
+                      <AntDesign name='checksquare' size={24} color={colors.background} />
+                    </Card>
+                    {!i ? (
+                      <BoldText style={{ fontSize: 12, textAlign: 'center' }}>VS</BoldText>
+                    ) : null}
+                  </View>
+                ))}
+                {idx !== games.length - 1 ? <Separator /> : null}
+              </View>
+            ))}
+          </ScrollView>
+        </>
+      ) : (
+        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+          <H4>No scheduled games yet to pick from!</H4>
+        </View>
+      )}
     </Container>
   );
 };

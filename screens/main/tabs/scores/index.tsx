@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
-import { Horizontal, Paragraph, Separator } from '../../../../styles/styled-elements';
+import { H4, Horizontal, Paragraph, Separator } from '../../../../styles/styled-elements';
 
 import { useTheme } from '@react-navigation/native';
 import moment from 'moment';
@@ -20,11 +20,12 @@ const ScoresScreen = () => {
   const [currentTab, setCurrentTab] = useState<GAME_STATUS>('STATUS_SCHEDULED');
 
   const {
-    data: { data: games = [] } = {},
+    data = {},
     isFetching,
     refetch,
   } = useGetGamesQuery({ status: currentTab }, { pollingInterval: 2000 });
 
+  const { data: games } = data;
   useEffect(refetch, [currentTab]);
 
   return (
@@ -97,7 +98,11 @@ const ScoresScreen = () => {
             );
           })}
         </ScrollView>
-      ) : null}
+      ) : (
+        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+          <H4>No games matching your search!</H4>
+        </View>
+      )}
     </Container>
   );
 };

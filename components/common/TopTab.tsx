@@ -37,14 +37,7 @@ const TopTab = ({ tabs }) => {
                 />
               ) : null}
               {title ? (
-                <H3
-                  style={{
-                    marginLeft: 10,
-                    color: isFocused(title) ? colors.primary : 'black',
-                  }}
-                >
-                  {title}
-                </H3>
+                <H3 style={{ color: isFocused(title) ? colors.primary : 'black' }}>{title}</H3>
               ) : null}
             </Horizontal>
           </Pressable>

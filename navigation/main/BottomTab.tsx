@@ -8,13 +8,13 @@ import ScoresScreen from '../../screens/main/tabs/scores';
 
 import { FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation, useTheme } from '@react-navigation/native';
-import { ActivityIndicator, SafeAreaView, Text, View } from 'react-native';
+import { ActivityIndicator, SafeAreaView, View } from 'react-native';
+import { useToastBannerToggler } from 'react-native-toast-banner';
 import styled from 'styled-components/native';
 import TopTab from '../../components/common/TopTab';
 import { defaultScreenOptions } from '../../constants';
 import { useCreatePickMutation } from '../../store/api-queries/tournaments';
 import { H2, H3, H4, Horizontal } from '../../styles/styled-elements';
-import { useToastBannerToggler } from 'react-native-toast-banner';
 
 const Touchable = styled.Pressable`
   border-width: 2px;
@@ -108,7 +108,10 @@ function BottomTabNavigator() {
                   <Touchable
                     style={{ borderColor: canSubmit ? colors.primary : '#CFCFCF' }}
                     disabled={!canSubmit}
-                    onPress={() => savePicks({ picks, groupId })}
+                    onPress={() => {
+                      console.log('The picks and giD', { picks, groupId });
+                      savePicks({ picks, groupId });
+                    }}
                   >
                     {isLoading ? (
                       <ActivityIndicator color={colors.primary} />
