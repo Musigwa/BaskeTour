@@ -1,1 +1,1 @@
-declare module "react-native-pin-code";
+declare module 'react-native-pin-code';

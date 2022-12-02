@@ -1,22 +1,38 @@
 import { useNavigation, useTheme } from '@react-navigation/native';
 import React, { useLayoutEffect, useState } from 'react';
-import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components/native';
 import pp from '../../../../assets/images/pp.jpg';
 import { H2, H5, H6, Horizontal, Separator } from '../../../../styles/styled-elements';
 import TopTab from '../../../../components/common/TopTab';
 import GroupSelector from '../../../../components/common/GroupSelector';
 import { IGroup } from '../../../../interfaces';
+import {
+  useGetGRankingsQuery,
+  useGetGroupsQuery,
+} from '../../../../store/api-queries/group-queries';
 
 const RankingScreen = () => {
   const { colors } = useTheme();
   const data = Array(10).fill(0);
   const navigation = useNavigation();
+
   const [selectedGroup, setSelectedGroup] = useState<IGroup>();
 
   const handleGroupSelect = group => {
     setSelectedGroup(group);
   };
+
+  const { data: { data: games = [] } = {}, isFetching } = useGetGRankingsQuery(
+    { groupId: selectedGroup?._id, tourRoundId: 'sdfghtdf' },
+    { refetchOnReconnect: true }
+  );
+
+  <ActivityIndicator
+    color={colors.primary}
+    size='large'
+    style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}
+  />;
 
   return (
     <Container>

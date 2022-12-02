@@ -5,11 +5,15 @@ export const SIGN_UP = '/users/sign-up';
 export const LOGIN = 'users/login';
 export const CURRENT_USER = '/users/me';
 
-export const GET_GROUPS = (groupName = '') => `/groups?searchQuery=${groupName}`;
-
-export const JOIN_GROUP = (groupId: string) => `/groups/${groupId}/join-group`;
+// Groups endpoints
 export const GROUPS = '/groups';
+export const SINGLE_GROUP = groupId => `${GROUPS}/${groupId}`;
+export const GET_GROUPS = (groupName = '') => `${GROUPS}?searchQuery=${groupName}`;
+export const GROUP_RANKING = (groupId, tournamentRoundId) =>
+  `${SINGLE_GROUP}/leader-board/${tournamentRoundId}`;
+export const JOIN_GROUP = (groupId: string) => `${SINGLE_GROUP(groupId)}/join-group`;
 
+// Games endpoints
 export const GET_GAMES = (status: GAME_STATUS) => `/tournaments/games?gameStatus=${status}`;
 export const GET_LIVE_SCORES = `/tournaments/live-scores`;
 export const PICKS = '/picks';

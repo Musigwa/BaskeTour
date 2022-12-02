@@ -2,8 +2,9 @@ import { AntDesign } from '@expo/vector-icons';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import { findIndex, isEqual } from 'lodash';
 import moment from 'moment';
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, ScrollView, View } from 'react-native';
+import { useToast } from 'react-native-toast-notifications';
 import styled from 'styled-components/native';
 import defLogo from '../../../../assets/images/defLogo.png';
 import CountDown from '../../../../components/common/CountDown';
@@ -23,10 +24,21 @@ const PicksScreen = () => {
   const [selectedGroup, setSelectedGroup] = useState<IGroup>();
 
   const navigation = useNavigation();
-  const { data: { data: games = [] } = {}, isFetching } = useGetGamesQuery(
-    { status: 'STATUS_SCHEDULED' },
-    { refetchOnReconnect: true }
-  );
+  const {
+    data: { data: games = [] } = {},
+    isFetching,
+    isError,
+    error: err,
+  } = useGetGamesQuery({ status: 'STATUS_SCHEDULED' }, { refetchOnReconnect: true });
+
+  const toast = useToast();
+  useEffect(() => {
+    if (isError) {
+      let { message } = err?.data;
+      if (err.data.errors) message = JSON.stringify(err.data.errors);
+      toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
+    }
+  }, [isError, err]);
 
   useLayoutEffect(() => {
     navigation.setParams({ groupId: selectedGroup?._id, picks });

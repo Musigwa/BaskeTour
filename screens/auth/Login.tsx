@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { Formik } from 'formik';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import * as Yup from 'yup';
 
@@ -15,16 +15,24 @@ import { Alert, Pressable } from 'react-native';
 import { Paragraph, View } from '../../styles/styled-elements';
 import { AuthScreenProps } from '../../types';
 
-import { useLoginMutation } from '../../store/api-queries/auth-queries';
+import { useToast } from 'react-native-toast-notifications';
 import { useAppDispatch } from '../../hooks/useStore';
+import { useLoginMutation } from '../../store/api-queries/auth-queries';
 import { hasLoggedIn } from '../../store/slices/authSlice';
 
 function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   const [isChecked, setChecked] = useState(false);
   const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
-  //mutations
-  const [loginUser, { isLoading }] = useLoginMutation();
+
+  const [loginUser, { isLoading, isError, error }] = useLoginMutation();
+  const toast = useToast();
+  useEffect(() => {
+    if (isError) {
+      const { message } = error?.data;
+      toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
+    }
+  }, [isError, error]);
 
   const handleGetStarted = () => {
     navigation.push('Photo');

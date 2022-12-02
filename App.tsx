@@ -3,7 +3,6 @@ import React from 'react';
 import { ActivityIndicator } from 'react-native';
 import 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ToastBannerPresenter, ToastBannerProvider } from 'react-native-toast-banner';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider } from 'styled-components/native';
@@ -23,10 +22,7 @@ export default function App() {
       <PersistGate loading={null} persistor={persistor}>
         <ThemeProvider theme={theme.colors}>
           <SafeAreaProvider>
-            <ToastBannerProvider>
-              <ToastBannerPresenter />
-              <Navigation colorScheme={colorScheme} />
-            </ToastBannerProvider>
+            <Navigation colorScheme={colorScheme} />
             <StatusBar />
           </SafeAreaProvider>
         </ThemeProvider>

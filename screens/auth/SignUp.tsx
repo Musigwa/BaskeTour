@@ -16,6 +16,7 @@ import { AuthScreenProps } from '../../types';
 import { Paragraph, View } from '../../styles/styled-elements';
 import { Alert, Pressable } from 'react-native';
 import { useTheme } from '@react-navigation/native';
+import { useToast } from 'react-native-toast-notifications';
 
 function SignUpScreen({ navigation }: AuthScreenProps<'SignUp'>) {
   const insets = useSafeAreaInsets();
@@ -23,7 +24,16 @@ function SignUpScreen({ navigation }: AuthScreenProps<'SignUp'>) {
   const { token, user } = useAppSelector(state => state.auth);
 
   // mutations
-  const [signUp, { isLoading }] = useSignupMutation();
+  const [signUp, { isLoading, error, isError }] = useSignupMutation();
+
+  const toast = useToast();
+  useEffect(() => {
+    if (isError) {
+      let { message } = error?.data;
+      if (error.data.errors) message = JSON.stringify(error.data.errors);
+      toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
+    }
+  }, [isError, error]);
 
   const SignUpScreenSchema = Yup.object().shape({
     email: Yup.string().email().required('Field is required'),

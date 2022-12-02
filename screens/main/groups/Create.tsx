@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import styled from 'styled-components/native';
@@ -15,12 +15,22 @@ import Loader from '../../../components/common/Loader';
 
 import { Paragraph, View } from '../../../styles/styled-elements';
 import { SetupStackScreenProps } from '../../../types';
+import { useToast } from 'react-native-toast-notifications';
 
 const CreateGroupScreen = ({ navigation }: SetupStackScreenProps<'CreateGroup'>) => {
   const [error, setError] = useState('');
   const insets = useSafeAreaInsets();
 
-  const [createGroup, { isLoading }] = useCreateGroupMutation();
+  const [createGroup, { isLoading, error: err, isError }] = useCreateGroupMutation();
+
+  const toast = useToast();
+  useEffect(() => {
+    if (isError) {
+      let { message } = err?.data;
+      if (err.data.errors) message = JSON.stringify(err.data.errors);
+      toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
+    }
+  }, [isError, err]);
 
   const GroupSchema = Yup.object().shape({
     name: Yup.string().required('Group name is required'),

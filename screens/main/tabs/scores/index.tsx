@@ -9,6 +9,7 @@ import TopTab from '../../../../components/common/TopTab';
 import TeamContainer from '../../../../components/scores/TeamContainer';
 import { useGetGamesQuery } from '../../../../store/api-queries/tournaments';
 import { GAME_STATUS } from '../../../../types';
+import { useToast } from 'react-native-toast-notifications';
 
 const ScoresScreen = () => {
   const statuses = {
@@ -24,7 +25,18 @@ const ScoresScreen = () => {
     data = {},
     isFetching,
     refetch,
+    isError,
+    error: err,
   } = useGetGamesQuery({ status: currentTab }, { pollingInterval: 2000 });
+
+  const toast = useToast();
+  useEffect(() => {
+    if (isError) {
+      let { message } = err?.data;
+      if (err.data.errors) message = JSON.stringify(err.data.errors);
+      toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
+    }
+  }, [isError, err]);
 
   const { data: games } = data;
   useEffect(refetch, [currentTab]);

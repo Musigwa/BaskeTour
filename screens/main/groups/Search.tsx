@@ -21,6 +21,7 @@ import { Formik } from 'formik';
 import { debounce } from 'lodash';
 import { JoinGroupStackParamList } from '../../../types';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useToast } from 'react-native-toast-notifications';
 
 type GroupSearchProps = {
   onSelect: (group: IGroup) => void;
@@ -47,7 +48,18 @@ const SearchGroup = () => {
     data: groups,
     isLoading,
     refetch,
+    isError,
+    error: err,
   } = useGetGroupsQuery({ searchQuery: searchQuery }, { skip });
+
+  const toast = useToast();
+  useEffect(() => {
+    if (isError) {
+      let { message } = err?.data;
+      if (err.data.errors) message = JSON.stringify(err.data.errors);
+      toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
+    }
+  }, [isError, err]);
 
   const handleJoinGroup = (group: IGroup) => {
     navigation.navigate(group.availableSpots ? 'JoinGroup' : 'FullGroup', { group });

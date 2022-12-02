@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import baseQuery from './baseQuery';
 
-import { GET_GROUPS, GROUPS, JOIN_GROUP } from '../endpoints';
+import { GET_GROUPS, GROUPS, GROUP_RANKING, JOIN_GROUP } from '../endpoints';
 
 export const groupApi = createApi({
   reducerPath: 'groupApi',
@@ -24,7 +24,15 @@ export const groupApi = createApi({
         body: { groupPIN: payload.groupPIN },
       }),
     }),
+    getGRankings: builder.query<any, { groupId: string; tourRoundId: string }>({
+      query: ({ groupId, tourRoundId }) => GROUP_RANKING(groupId, tourRoundId),
+    }),
   }),
 });
 
-export const { useGetGroupsQuery, useJoinGroupMutation, useCreateGroupMutation } = groupApi;
+export const {
+  useGetGroupsQuery,
+  useGetGRankingsQuery,
+  useJoinGroupMutation,
+  useCreateGroupMutation,
+} = groupApi;

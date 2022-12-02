@@ -1,5 +1,5 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { ColorSchemeName } from 'react-native';
+import { ColorSchemeName, View } from 'react-native';
 
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -17,47 +17,52 @@ import BottomTabNavigator from './main/BottomTab';
 import GroupsNavigator from './main/Groups';
 import OnboardingNavigator from './main/Onboarding';
 import SettingsNavigator from './main/Settings';
+import { ToastProvider } from 'react-native-toast-notifications';
 
 const Stack = createStackNavigator();
 
 function MainNavigator({ colorScheme }: { colorScheme: ColorSchemeName }) {
   const { isLoggedIn } = useAppSelector(state => state.auth);
   return (
-    <NavigationContainer
-      linking={LinkingConfiguration}
-      theme={colorScheme === 'dark' ? AppDarkTheme : AppDefaultTheme}
-    >
-      <Stack.Navigator>
-        {isLoggedIn ? (
-          // Screens for logged in users (Main screens)
-          <Stack.Group screenOptions={{ headerShown: false }}>
-            <Stack.Screen name='Boarding' component={OnboardingNavigator} />
-            <Stack.Screen name='Tabs' component={BottomTabNavigator} />
-            <Stack.Screen name='Settings' component={SettingsNavigator} />
-            <Stack.Screen name='Groups' component={GroupsNavigator} />
-          </Stack.Group>
-        ) : (
-          // Authentication & authorization screens
-          <Stack.Group screenOptions={{ ...defaultScreenOptions, headerTitle: '' }}>
+    <ToastProvider textStyle={{ fontSize: 18 }}>
+      <NavigationContainer
+        linking={LinkingConfiguration}
+        theme={colorScheme === 'dark' ? AppDarkTheme : AppDefaultTheme}
+      >
+        <Stack.Navigator>
+          {isLoggedIn ? (
+            // Screens for logged in users (Main screens)
+            <Stack.Group screenOptions={{ headerShown: false }}>
+              <Stack.Screen name='Boarding' component={OnboardingNavigator} />
+              <Stack.Screen name='Tabs' component={BottomTabNavigator} />
+              <Stack.Screen name='Settings' component={SettingsNavigator} />
+              <Stack.Screen name='Groups' component={GroupsNavigator} />
+            </Stack.Group>
+          ) : (
+            // Authentication & authorization screens
+            <Stack.Group screenOptions={{ ...defaultScreenOptions, headerTitle: '' }}>
+              <Stack.Screen
+                name='Initial'
+                options={{ headerShown: false }}
+                component={InitialScreen}
+              />
+              <Stack.Screen name='Login' component={LoginScreen} />
+              <Stack.Screen name='SignUp' component={SignUpScreen} />
+              <Stack.Screen name='Photo' component={PhotoScreen} />
+            </Stack.Group>
+          )}
+          <Stack.Group
+            screenOptions={{ presentation: 'modal', ...defaultScreenOptions, title: '' }}
+          >
             <Stack.Screen
-              name='Initial'
-              options={{ headerShown: false }}
-              component={InitialScreen}
+              name='SearchGroup'
+              component={SearchGroup}
+              options={{ presentation: 'modal' }}
             />
-            <Stack.Screen name='Login' component={LoginScreen} />
-            <Stack.Screen name='SignUp' component={SignUpScreen} />
-            <Stack.Screen name='Photo' component={PhotoScreen} />
           </Stack.Group>
-        )}
-        <Stack.Group screenOptions={{ presentation: 'modal', ...defaultScreenOptions, title: '' }}>
-          <Stack.Screen
-            name='SearchGroup'
-            component={SearchGroup}
-            options={{ presentation: 'modal' }}
-          />
-        </Stack.Group>
-      </Stack.Navigator>
-    </NavigationContainer>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ToastProvider>
   );
 }
 

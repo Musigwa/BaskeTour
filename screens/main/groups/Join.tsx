@@ -7,6 +7,7 @@ import {
   Pressable,
   TouchableWithoutFeedback,
 } from 'react-native';
+import { useToast } from 'react-native-toast-notifications';
 import styled from 'styled-components';
 import Button from '../../../components/common/Buttons';
 import PinCodeInput from '../../../components/common/PinCodeInput';
@@ -25,7 +26,16 @@ const JoinGroupScreen = ({ navigation, route }) => {
     params: { group },
   } = route;
 
-  const [joinGroup, { isLoading }] = useJoinGroupMutation();
+  const [joinGroup, { isLoading, error: err, isError }] = useJoinGroupMutation();
+
+  const toast = useToast();
+  useEffect(() => {
+    if (isError) {
+      let { message } = err?.data;
+      if (err.data.errors) message = JSON.stringify(err.data.errors);
+      toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
+    }
+  }, [isError, err]);
 
   const [PIN, setPIN] = useState<string>('');
   const [keyboardVisible, setKeyboardVisible] = useState(false);

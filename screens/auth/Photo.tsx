@@ -19,6 +19,7 @@ import { Paragraph, View } from '../../styles/styled-elements';
 import { Alert, SafeAreaView } from 'react-native';
 import { hasLoggedIn } from '../../store/slices/authSlice';
 import { useNavigation } from '@react-navigation/native';
+import { useToast } from 'react-native-toast-notifications';
 
 function PhotoScreen() {
   const [photo, setPhoto] = useState<any>();
@@ -26,7 +27,7 @@ function PhotoScreen() {
   const dispatch = useAppDispatch();
   const { token, user, completedOnboarding } = useAppSelector(state => state.auth);
   const navigation = useNavigation();
-  const [uploadDetails, { isLoading }] = useUploadProfileDetailsMutation();
+  const [uploadDetails, { isLoading, error, isError }] = useUploadProfileDetailsMutation();
 
   // const handleGetStarted = () => {
   //   navigation.navigate('Boarding');
@@ -35,6 +36,15 @@ function PhotoScreen() {
   const onImageSelect = (image: any) => {
     setPhoto(image);
   };
+
+  const toast = useToast();
+  useEffect(() => {
+    if (isError) {
+      let { message } = error?.data;
+      if (error.data.errors) message = JSON.stringify(error.data.errors);
+      toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
+    }
+  }, [isError, error]);
 
   const ProfileSchema = Yup.object().shape({
     firstName: Yup.string().min(2, 'Too Short').required('Field is required'),

@@ -7369,6 +7369,11 @@ react-native-toast-banner@^1.1.0:
   resolved "https://registry.yarnpkg.com/react-native-toast-banner/-/react-native-toast-banner-1.1.0.tgz#0afb54d9a1a6754cc2a9a307b04d72ba4008a4e5"
   integrity sha512-qxBuy+pqSt4SDY8UD/kjrsrAhEeqbGpLBQcKqqbOGvzfvXkeKA9HMVa0dZ46qZEv1djLHTkRk9PlpjzXlks2eQ==
 
+react-native-toast-notifications@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-toast-notifications/-/react-native-toast-notifications-3.3.1.tgz#c3d6f3b63a4df81c2912560d27878ea056672981"
+  integrity sha512-yc1Q2nOdIYvAf0GAIlmg8q42hiwpEHnLxkxJ6P+tN6jpcKZ1qzMXlgnmNdyF9cm9VOyHQexEP8952IKNAv1Olw==
+
 react-native-web@~0.18.7:
   version "0.18.9"
   resolved "https://registry.yarnpkg.com/react-native-web/-/react-native-web-0.18.9.tgz#f5032e0b32ebe99c0ab22d13dbd8ca2944b08f12"

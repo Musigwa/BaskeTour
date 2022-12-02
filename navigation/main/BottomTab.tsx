@@ -9,12 +9,12 @@ import ScoresScreen from '../../screens/main/tabs/scores';
 import { FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import { ActivityIndicator, SafeAreaView, View } from 'react-native';
-import { useToastBannerToggler } from 'react-native-toast-banner';
+import { useToast } from 'react-native-toast-notifications';
 import styled from 'styled-components/native';
 import TopTab from '../../components/common/TopTab';
 import { defaultScreenOptions } from '../../constants';
 import { useCreatePickMutation } from '../../store/api-queries/tournaments';
-import { H2, H3, H4, Horizontal } from '../../styles/styled-elements';
+import { H2, H3, Horizontal } from '../../styles/styled-elements';
 
 const Touchable = styled.Pressable`
   border-width: 2px;
@@ -29,19 +29,12 @@ function BottomTabNavigator() {
   const { colors } = useTheme();
   const [savePicks, { isLoading, isError, error }] = useCreatePickMutation();
   const navigation = useNavigation();
-  const { showBanner, hideBanner } = useToastBannerToggler();
-
+  const toast = useToast();
   useEffect(() => {
-    if (isError)
-      showBanner({
-        contentView: (
-          <H4 style={{ padding: 20, color: 'white', textAlign: 'center' }}>
-            {error?.data?.message}
-          </H4>
-        ),
-        duration: 3000,
-        backgroundColor: 'red',
-      });
+    if (isError) {
+      const { message } = error?.data;
+      toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
+    }
   }, [isError, error]);
 
   const goToSettings = () => {
