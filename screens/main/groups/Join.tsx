@@ -1,16 +1,12 @@
 import { MaterialIcons } from '@expo/vector-icons';
+import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import { Keyboard, Pressable, TouchableWithoutFeedback } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
 import styled from 'styled-components';
 import Button from '../../../components/common/Buttons';
 import PinCodeInput from '../../../components/common/PinCodeInput';
+import { useAppSelector } from '../../../hooks/useStore';
 import { useJoinGroupMutation } from '../../../store/api-queries/group-queries';
 import {
   BackButtonWrapper,
@@ -21,13 +17,9 @@ import {
   View,
 } from '../../../styles/styled-elements';
 
-const JoinGroupScreen = ({ navigation, route }) => {
-  const {
-    params: { group },
-  } = route;
-
+const JoinGroupScreen = ({ navigation }) => {
+  const group = useAppSelector(({ groups }) => groups.selectedGroup);
   const [joinGroup, { isLoading, error: err, isError }] = useJoinGroupMutation();
-
   const toast = useToast();
   useEffect(() => {
     if (isError) {
@@ -56,17 +48,15 @@ const JoinGroupScreen = ({ navigation, route }) => {
 
   const handleSubmit = async () => {
     try {
-      await joinGroup({
-        groupId: group.id,
-        groupPIN: PIN,
-      }).unwrap();
-      navigation.navigate('Groups', { screen: 'SuccessGroup', params: { group } });
+      await joinGroup({ groupId: group.id, groupPIN: PIN }).unwrap();
+      navigation.navigate('SuccessGroup', { group });
     } catch (error) {
       setError(error.data.message);
     }
   };
 
   const PINValueChangeHandler = (pin: string) => setPIN(pin);
+
   return (
     // <KeyboardAvoidingView
     //   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -109,24 +99,6 @@ const JoinGroupScreen = ({ navigation, route }) => {
     // </KeyboardAvoidingView>
   );
 };
-
-export const joinGroupScreenOptions = ({ navigation }) => ({
-  headerShown: true,
-  headerTitle: '',
-  headerStyle: {
-    elevation: 0,
-    shadowOpacity: 0,
-    backgroundColor: '#fff',
-  },
-
-  headerLeft: props => (
-    <BackButtonWrapper>
-      <Pressable onPress={navigation.goBack} {...props}>
-        <MaterialIcons name='arrow-back-ios' size={24} color='black' />
-      </Pressable>
-    </BackButtonWrapper>
-  ),
-});
 
 const GroupNameContainer = styled(View)`
   border-top-width: 1px;

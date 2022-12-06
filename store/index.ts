@@ -17,7 +17,6 @@ import { groupApi } from './api-queries/group-queries';
 import tournamentApi from './api-queries/tournaments';
 import authReducer from './slices/authSlice';
 import groupReducer from './slices/groupSlice';
-import tournamenReducer from './slices/tournament';
 
 const persistConfig = {
   key: 'root',
@@ -31,7 +30,6 @@ const rootReducer = combineReducers({
   [authApi.reducerPath]: authApi.reducer,
   groups: groupReducer,
   [groupApi.reducerPath]: groupApi.reducer,
-  tournament: tournamenReducer,
   [tournamentApi.reducerPath]: tournamentApi.reducer,
 });
 
@@ -44,7 +42,10 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(authApi.middleware),
+    })
+      .concat(authApi.middleware)
+      .concat(tournamentApi.middleware)
+      .concat(groupApi.middleware),
   devTools: process.env.NODE_ENV !== 'production',
 });
 

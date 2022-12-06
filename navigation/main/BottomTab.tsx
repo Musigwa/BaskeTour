@@ -17,7 +17,7 @@ import { useCreatePickMutation } from '../../store/api-queries/tournaments';
 import { H2, H3, Horizontal } from '../../styles/styled-elements';
 
 const Touchable = styled.Pressable`
-  border-width: 2px;
+  border-width: 1px;
   border-radius: 8px;
   padding-horizontal: 20px;
   padding-vertical: 8px;
@@ -25,7 +25,7 @@ const Touchable = styled.Pressable`
 
 const Tab = createBottomTabNavigator();
 
-function BottomTabNavigator() {
+const BottomTabNavigator = () => {
   const { colors } = useTheme();
   const [savePicks, { isLoading, isError, error }] = useCreatePickMutation();
   const navigation = useNavigation();
@@ -38,7 +38,7 @@ function BottomTabNavigator() {
   }, [isError, error]);
 
   const goToSettings = () => {
-    navigation.navigate('Settings', { screen: 'SettingList' });
+    navigation.navigate('SettingList');
   };
 
   const handlePress = title => {
@@ -144,6 +144,6 @@ function BottomTabNavigator() {
       />
     </Tab.Navigator>
   );
-}
+};
 
 export default BottomTabNavigator;

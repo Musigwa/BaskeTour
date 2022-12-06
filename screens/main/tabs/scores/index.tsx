@@ -20,14 +20,9 @@ const ScoresScreen = () => {
 
   const { colors } = useTheme();
   const [currentTab, setCurrentTab] = useState<GAME_STATUS>('STATUS_SCHEDULED');
-
-  const {
-    data = {},
-    isFetching,
-    refetch,
-    isError,
-    error: err,
-  } = useGetGamesQuery({ status: currentTab }, { pollingInterval: 2000 });
+  const options = currentTab === 'STATUS_IN_PROGRESS' ? { pollingInterval: 5000 } : undefined;
+  const response = useGetGamesQuery({ status: currentTab }, options);
+  const { data = {}, isFetching, refetch, isError, error: err } = response;
 
   const toast = useToast();
   useEffect(() => {

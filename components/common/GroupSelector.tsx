@@ -1,14 +1,17 @@
 import { Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable } from 'react-native';
+import { useAppSelector } from '../../hooks/useStore';
 import { H4, Horizontal, Separator } from '../../styles/styled-elements';
 
-const GroupSelector = ({ title, onGroupSelect }) => {
+const GroupSelector = () => {
+  const { selectedGroup } = useAppSelector(({ groups }) => groups);
   const navigation = useNavigation();
+  const title = selectedGroup.groupName ?? 'Select a group';
 
   const handlePress = () => {
-    navigation.navigate('SearchGroup', { confirmBtn: { onPress: onGroupSelect } });
+    navigation.navigate('SearchGroup', { title });
   };
 
   return (

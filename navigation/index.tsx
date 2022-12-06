@@ -18,11 +18,22 @@ import GroupsNavigator from './main/Groups';
 import OnboardingNavigator from './main/Onboarding';
 import SettingsNavigator from './main/Settings';
 import { ToastProvider } from 'react-native-toast-notifications';
+import SelectTourScreen from '../screens/main/onboarding/SelectTour';
+import CreateGroupScreen from '../screens/main/groups/Create';
+import JoinGroupScreen from '../screens/main/groups/Join';
+import ShareGroupScreen from '../screens/main/groups/Share';
+import JoinGroupSuccessScreen from '../screens/main/groups/JoinSuccess';
+import SetupTypeScreen from '../screens/main/onboarding/SetupType';
+import SliderScreen from '../screens/main/onboarding/Slider';
+import SettingsScreen from '../screens/main/settings';
+import NotificationScreen from '../screens/main/settings/Notification';
+import ProfileScreen from '../screens/main/settings/Profile';
 
 const Stack = createStackNavigator();
 
 function MainNavigator({ colorScheme }: { colorScheme: ColorSchemeName }) {
   const { isLoggedIn } = useAppSelector(state => state.auth);
+  const isOnboarded = useAppSelector(({ auth }) => auth.completedOnboarding);
   return (
     <ToastProvider textStyle={{ fontSize: 18 }}>
       <NavigationContainer
@@ -31,12 +42,33 @@ function MainNavigator({ colorScheme }: { colorScheme: ColorSchemeName }) {
       >
         <Stack.Navigator>
           {isLoggedIn ? (
-            // Screens for logged in users (Main screens)
             <Stack.Group screenOptions={{ headerShown: false }}>
-              <Stack.Screen name='Boarding' component={OnboardingNavigator} />
+              {/* The onboarding entity screens */}
+              <Stack.Group screenOptions={{ headerShown: false }}>
+                {isOnboarded ? (
+                  <Stack.Screen name='Slider' component={SliderScreen} />
+                ) : (
+                  <Stack.Screen name='SetupType' component={SetupTypeScreen} />
+                )}
+              </Stack.Group>
               <Stack.Screen name='Tabs' component={BottomTabNavigator} />
-              <Stack.Screen name='Settings' component={SettingsNavigator} />
-              <Stack.Screen name='Groups' component={GroupsNavigator} />
+              {/* The user | settings entity screens */}
+              <Stack.Group screenOptions={defaultScreenOptions}>
+                <Stack.Screen
+                  name='SettingList'
+                  component={SettingsScreen}
+                  options={{ title: 'Settings' }}
+                />
+                <Stack.Screen name='Notifications' component={NotificationScreen} />
+                <Stack.Screen name='Profile' component={ProfileScreen} />
+              </Stack.Group>
+              {/* The groups entity screens */}
+              <Stack.Group screenOptions={{ ...defaultScreenOptions, title: '' }}>
+                <Stack.Screen name='CreateGroup' component={CreateGroupScreen} />
+                <Stack.Screen name='JoinGroup' component={JoinGroupScreen} />
+                <Stack.Screen name='ShareGroup' component={ShareGroupScreen} />
+                <Stack.Screen name='SuccessGroup' component={JoinGroupSuccessScreen} />
+              </Stack.Group>
             </Stack.Group>
           ) : (
             // Authentication & authorization screens
@@ -59,6 +91,7 @@ function MainNavigator({ colorScheme }: { colorScheme: ColorSchemeName }) {
               component={SearchGroup}
               options={{ presentation: 'modal' }}
             />
+            <Stack.Screen name='SelectTour' component={SelectTourScreen} />
           </Stack.Group>
         </Stack.Navigator>
       </NavigationContainer>

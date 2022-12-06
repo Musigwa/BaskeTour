@@ -19,7 +19,7 @@ const TopTab = ({ tabs, onTabPress = (title: string) => {}, shadowVisible = true
     <Horizontal>
       {tabs.map(({ iconName, title }, idx) => {
         return (
-          <Pressable onPress={() => handleTabPress(title)}>
+          <Pressable onPress={() => handleTabPress(title)} key={idx}>
             <Horizontal
               style={{
                 paddingVertical: 15,
@@ -27,7 +27,6 @@ const TopTab = ({ tabs, onTabPress = (title: string) => {}, shadowVisible = true
                 borderBottomColor: shadowVisible && isFocused(title) ? colors.primary : null,
                 borderBottomWidth: shadowVisible && isFocused(title) ? 1.5 : 0,
               }}
-              key={idx}
             >
               {iconName ? (
                 <Ionicons

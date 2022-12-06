@@ -1,10 +1,10 @@
-import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
-import { useNavigation, useTheme } from '@react-navigation/native';
-import { H3, H4, Horizontal } from '../../../styles/styled-elements';
 import { Entypo } from '@expo/vector-icons';
-import { loggedOut } from '../../../store/slices/authSlice';
+import { useNavigation, useTheme } from '@react-navigation/native';
+import React from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useAppDispatch } from '../../../hooks/useStore';
+import { loggedOut } from '../../../store/slices/authSlice';
+import { H4, Horizontal } from '../../../styles/styled-elements';
 
 const options = [
   { title: 'Groups' },
@@ -55,7 +55,6 @@ const SettingsScreen = () => {
           </Horizontal>
         </TouchableOpacity>
       ))}
-      {/* <Button title='Go to Notification' onPress={() => navigation.navigate('Notifications')} /> */}
     </View>
   );
 };

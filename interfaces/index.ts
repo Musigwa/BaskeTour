@@ -80,3 +80,14 @@ export interface IPick {
   gameId: string;
   teamId: string;
 }
+
+export interface ITournament {
+  name: string;
+  startDate: string;
+  endDate: string;
+  hasSeed: boolean;
+  ignoreLostTeams: boolean;
+  isActive: boolean;
+  rounds: any;
+  id: string;
+}

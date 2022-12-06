@@ -14,6 +14,7 @@ export const GROUP_RANKING = (groupId, tournamentRoundId) =>
 export const JOIN_GROUP = (groupId: string) => `${SINGLE_GROUP(groupId)}/join-group`;
 
 // Games endpoints
-export const GET_GAMES = (status: GAME_STATUS) => `/tournaments/games?gameStatus=${status}`;
-export const GET_LIVE_SCORES = `/tournaments/live-scores`;
+export const TOURNAMENTS = `/tournaments`;
+export const GET_GAMES = (status: GAME_STATUS) => `${TOURNAMENTS}/games?gameStatus=${status}`;
+export const GET_LIVE_SCORES = `${TOURNAMENTS}/live-scores`;
 export const PICKS = '/picks';

@@ -9,6 +9,7 @@ export interface IGroupState {
   error: unknown | Error;
   newGroup: IGroup;
   rankings: any[];
+  selectedGroup: IGroup;
   joinGroup: {
     data: IJoinGroup | null;
     loading: boolean;
@@ -21,6 +22,7 @@ const initialState: IGroupState = {
   loading: false,
   error: null,
   newGroup: {} as IGroup,
+  selectedGroup: {} as IGroup,
   rankings: [],
   joinGroup: {
     data: null,
@@ -32,7 +34,11 @@ const initialState: IGroupState = {
 const groupSlice = createSlice({
   name: 'groups',
   initialState,
-  reducers: {},
+  reducers: {
+    selectGroup: (state, { payload }: { payload: IGroup } & any) => {
+      state.selectedGroup = payload;
+    },
+  },
   extraReducers: builder => {
     builder.addMatcher(groupApi.endpoints.getGroups.matchFulfilled, (state, { payload }) => {
       state.groups = payload.data;
@@ -52,5 +58,7 @@ const groupSlice = createSlice({
     });
   },
 });
+
+export const { selectGroup } = groupSlice.actions;
 
 export default groupSlice.reducer;

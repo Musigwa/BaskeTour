@@ -61,17 +61,14 @@ const PicksScreen = () => {
     if (!isEqual(picks, temp)) setPicks(temp);
   };
 
-  const handleGroupSelect = group => {
-    setSelectedGroup(group);
-  };
-
   return (
     <Container>
-      <GroupSelector
-        title={selectedGroup?.groupName ?? 'Select a group'}
-        onGroupSelect={handleGroupSelect}
-      />
-      <Separator size='sm' />
+      {picks.length === limit ? (
+        <>
+          <GroupSelector />
+          <Separator size='sm' />
+        </>
+      ) : null}
       <TopTab tabs={statuses} />
       <Separator size='sm' />
       {isFetching ? (

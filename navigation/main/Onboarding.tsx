@@ -1,6 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { useAppSelector } from '../../hooks/useStore';
+import SelectTourScreen from '../../screens/main/onboarding/SelectTour';
 import SetupTypeScreen from '../../screens/main/onboarding/SetupType';
 import SliderScreen from '../../screens/main/onboarding/Slider';
 

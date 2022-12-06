@@ -16,7 +16,7 @@ const RadioButton = ({
   color,
   style,
   selected = false,
-  text = 'Group name',
+  text,
   onClick,
 }: RadioButtonProps) => {
   return (

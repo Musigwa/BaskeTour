@@ -36,10 +36,7 @@ const RankingScreen = () => {
 
   return (
     <Container>
-      <GroupSelector
-        title={selectedGroup?.groupName ?? 'Select a group'}
-        onGroupSelect={handleGroupSelect}
-      />
+      <GroupSelector />
       <Separator size='sm' />
       <TopTab tabs={[{ title: 'Round 64' }, { title: 'Round 32' }, { title: 'Sweet 16' }]} />
       <Separator size='sm' />

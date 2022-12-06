@@ -29,10 +29,6 @@ function PhotoScreen() {
   const navigation = useNavigation();
   const [uploadDetails, { isLoading, error, isError }] = useUploadProfileDetailsMutation();
 
-  // const handleGetStarted = () => {
-  //   navigation.navigate('Boarding');
-  // };
-
   const onImageSelect = (image: any) => {
     setPhoto(image);
   };
@@ -50,12 +46,6 @@ function PhotoScreen() {
     firstName: Yup.string().min(2, 'Too Short').required('Field is required'),
     lastName: Yup.string().min(2, 'Too Short').required('Field is required'),
   });
-
-  // useEffect(() => {
-  //   if (token && user.profilePic && !completedOnboarding) {
-  //     navigation.navigate('Boarding');
-  //   }
-  // }, [token, user]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

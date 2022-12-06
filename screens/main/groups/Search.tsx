@@ -1,27 +1,24 @@
-import { useNavigation, useRoute, useTheme } from '@react-navigation/native';
-import { FlatList, Pressable, SafeAreaView, TextInput, TouchableOpacity } from 'react-native';
+import { useNavigation, useNavigationState, useRoute, useTheme } from '@react-navigation/native';
+import { FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import RadioButton from '../../../components/common/RadioButton';
 import {
-  BackButtonWrapper,
   Container,
   ErrorMessage,
   H3,
-  Paragraph,
+  ListItem,
   Title,
   View,
 } from '../../../styles/styled-elements';
 
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import Input from '../../../components/common/Input';
-import styled from 'styled-components/native';
-import { IGroup } from '../../../interfaces';
-import { useGetGroupsQuery } from '../../../store/api-queries/group-queries';
 import { Formik } from 'formik';
 import { debounce } from 'lodash';
-import { JoinGroupStackParamList } from '../../../types';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useToast } from 'react-native-toast-notifications';
+import Input from '../../../components/common/Input';
+import { useAppDispatch } from '../../../hooks/useStore';
+import { IGroup } from '../../../interfaces';
+import { useGetGroupsQuery } from '../../../store/api-queries/group-queries';
+import { selectGroup } from '../../../store/slices/groupSlice';
 
 type GroupSearchProps = {
   onSelect: (group: IGroup) => void;
@@ -30,40 +27,29 @@ type GroupSearchProps = {
   btnText?: string;
 };
 
-const SearchGroup = () => {
+const SearchGroup = ({}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [skip, setSkip] = useState(true);
   const [selectedItem, setSelectedItem] = useState<IGroup>();
   const { colors } = useTheme();
   const navigation = useNavigation();
-  const { params } = useRoute();
+  const dispatch = useAppDispatch();
+  const { params } = useRoute<{ params: GroupSearchProps } & any>();
+  const navState = useNavigationState(state => state);
+
   const {
     title = 'Join Existing Group',
     confirmBtn = {},
     msg404 = 'Group does not exist. Contact your group admin',
   } = params ?? {};
-  const { text = 'Confirm Selection', onPress = () => {} } = confirmBtn;
+  const { text = 'Confirm Selection' } = confirmBtn;
 
   const {
     data: groups,
-    isLoading,
     refetch,
     isError,
     error: err,
   } = useGetGroupsQuery({ searchQuery: searchQuery }, { skip });
-
-  const toast = useToast();
-  useEffect(() => {
-    if (isError) {
-      let { message } = err?.data;
-      if (err.data.errors) message = JSON.stringify(err.data.errors);
-      toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
-    }
-  }, [isError, err]);
-
-  const handleJoinGroup = (group: IGroup) => {
-    navigation.navigate(group.availableSpots ? 'JoinGroup' : 'FullGroup', { group });
-  };
 
   const debouncedUpdate = debounce(text => setSearchQuery(text), 300, {
     leading: true,
@@ -75,20 +61,17 @@ const SearchGroup = () => {
   }, [searchQuery]);
 
   const handleSelect = () => {
-    navigation.goBack();
-    onPress(selectedItem);
+    dispatch(selectGroup(selectedItem));
+    const { routes } = navigation.getState();
+    const prevRoute = routes[routes.length - 2];
+    navigation.navigate(prevRoute.name, { group: selectedItem });
   };
 
   return (
     <Container>
       <SafeAreaView style={{ alignItems: 'center' }}>
-        <Title>Join existing Group</Title>
-        <Formik
-          initialValues={{
-            searchQuery: '',
-          }}
-          onSubmit={refetch}
-        >
+        <Title style={{ textTransform: 'capitalize' }}>{title}</Title>
+        <Formik initialValues={{ searchQuery: '' }} onSubmit={refetch}>
           {({ handleChange, values }) => {
             debouncedUpdate(values.searchQuery);
             return (
@@ -104,26 +87,23 @@ const SearchGroup = () => {
             );
           }}
         </Formik>
-        {/* </View> */}
         <FlatList
           data={groups?.data ?? []}
           showsVerticalScrollIndicator={false}
           keyExtractor={item => item.id}
           renderItem={({ item }: { item: IGroup }) => (
-            <GroupListItem key={item.id}>
+            <ListItem key={item.id}>
               <RadioButton
                 selected={selectedItem?.id === item.id}
                 color={colors.primary}
                 text={item.groupName}
                 onClick={text => setSelectedItem(item)}
               />
-            </GroupListItem>
+            </ListItem>
           )}
           ListFooterComponent={
             <View>
-              {!isLoading && groups && Array.isArray(groups.data) && groups.data.length === 0 && (
-                <ErrorMessage>{msg404}</ErrorMessage>
-              )}
+              <ErrorMessage>{isError && err ? JSON.stringify(err) : msg404}</ErrorMessage>
             </View>
           }
         />
@@ -143,26 +123,5 @@ const SearchGroup = () => {
     </Container>
   );
 };
-
-export const searchGroupScreenOptions = ({ navigation }) => ({
-  headerShown: true,
-  headerTitle: '',
-  headerStyle: { elevation: 0, shadowOpacity: 0, backgroundColor: '#fff' },
-
-  headerLeft: props => (
-    <BackButtonWrapper>
-      <Pressable onPress={navigation.goBack} {...props}>
-        <MaterialIcons name='arrow-back-ios' size={24} color='black' />
-      </Pressable>
-    </BackButtonWrapper>
-  ),
-});
-
-const GroupListItem = styled(View)`
-  padding: 12px 0;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-`;
 
 export default SearchGroup;

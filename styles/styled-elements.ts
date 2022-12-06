@@ -151,3 +151,10 @@ export const H6 = styled(Paragraph)`
   letter-spacing: 0.8px;
   text-transform: capitalize;
 `;
+
+export const ListItem = styled(View)`
+  padding: 12px 0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;

@@ -6,34 +6,26 @@ import BallIcon from '../../../assets/svgs/BallIcon';
 import HoopIcon from '../../../assets/svgs/HoopIcon';
 import Logo from '../../../assets/svgs/Logo';
 
-import { useNavigation, useTheme } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useAppSelector } from '../../../hooks/useStore';
 import { Paragraph, View } from '../../../styles/styled-elements';
 
-function SetupTypeScreen() {
+function SetupTypeScreen({ route }) {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { colors } = useTheme();
+  const { params } = useRoute();
 
-  const handleCreateGroup = () => {
-    navigation.navigate('Groups', { screen: 'CreateGroup' });
+  React.useEffect(() => {
+    if (params?.group) {
+      const { group } = params;
+      navigation.navigate('JoinGroup', { group });
+    }
+  }, [params?.group]);
+
+  const handleNext = (routeName, params = {}) => {
+    navigation.navigate(routeName, params);
   };
 
-  const handleJoinGroup = (group: IGroup) => {
-    navigation.navigate('Groups', {
-      screen: group.availableSpots ? 'JoinGroup' : 'FullGroup',
-      params: { group },
-    });
-  };
-
-  const params = { confirmBtn: { onPress: handleJoinGroup, text: 'Join Group' } };
-
-  const searchGroup = () => {
-    navigation.navigate('SearchGroup', params);
-  };
-
-  const handleSkip = () => {
-    navigation.navigate('Tabs');
-  };
   return (
     <>
       <StatusBar barStyle='light-content' />
@@ -48,7 +40,7 @@ function SetupTypeScreen() {
           <Logo />
         </View>
         <View mt={100} w-100>
-          <Touchable mb={23} onPress={handleCreateGroup}>
+          <Touchable mb={23} onPress={() => handleNext('Groups', { screen: 'CreateGroup' })}>
             <Action bg='#4833B5'>
               <ActionIcons>
                 <BallIcon />
@@ -57,7 +49,10 @@ function SetupTypeScreen() {
             </Action>
           </Touchable>
 
-          <Touchable style={{ width: '100%' }} onPress={searchGroup}>
+          <Touchable
+            style={{ width: '100%' }}
+            onPress={() => handleNext('SearchGroup', { btnText: 'Join Group' })}
+          >
             <Action bg='#9C49CF'>
               <ActionIcons>
                 <HoopIcon />
@@ -69,7 +64,7 @@ function SetupTypeScreen() {
 
         <Bottom items-center>
           {/* <Button text="Get Started" onPress={handleGetStarted} /> */}
-          <TouchableOpacity onPress={handleSkip}>
+          <TouchableOpacity onPress={() => handleNext('Tabs')}>
             <ActionText mt={50}>Skip For Now</ActionText>
           </TouchableOpacity>
         </Bottom>
