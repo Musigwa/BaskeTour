@@ -12,9 +12,9 @@ const tournamentApi = createApi({
       query: () => TOURNAMENTS,
       transformResponse: (response: any) => response.data,
     }),
-    getGames: builder.query<any, { status: GAME_STATUS }>({
-      query: ({ status }: { status: GAME_STATUS }) =>
-        status === 'STATUS_IN_PROGRESS' ? GET_LIVE_SCORES : GET_GAMES(status),
+    getGames: builder.query<any, { status: GAME_STATUS; myScores: boolean }>({
+      query: ({ status, myScores }: { status: GAME_STATUS; myScores: boolean }) =>
+        status === 'STATUS_IN_PROGRESS' ? GET_LIVE_SCORES(myScores) : GET_GAMES(status),
     }),
     createPick: builder.mutation({
       query: body => ({ url: PICKS, method: 'POST', body }),

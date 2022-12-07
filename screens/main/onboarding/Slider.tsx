@@ -10,6 +10,7 @@ import { useAppDispatch } from '../../../hooks/useStore';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Paragraph, View } from '../../../styles/styled-elements';
 import { AuthScreenProps } from '../../../types';
+import { completedOnboarding } from '../../../store/slices/authSlice';
 
 function OnboardingScreen({ navigation }: AuthScreenProps<'Onboarding'>) {
   const [currentStep, setCurrentStep] = useState(0);
@@ -19,7 +20,10 @@ function OnboardingScreen({ navigation }: AuthScreenProps<'Onboarding'>) {
 
   const handleGetStarted = () => {
     if (currentStep < 5) setCurrentStep(prevState => prevState + 1);
-    else handleSkip();
+    else {
+      dispatch(completedOnboarding(true));
+      handleSkip();
+    }
   };
 
   const handleBack = () => {
@@ -27,7 +31,7 @@ function OnboardingScreen({ navigation }: AuthScreenProps<'Onboarding'>) {
   };
 
   const handleSkip = () => {
-    navigation.navigate('SetupType');
+    dispatch(completedOnboarding(true));
   };
 
   const steps = [

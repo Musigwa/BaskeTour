@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import { H4, Horizontal, Paragraph, Separator } from '../../../../styles/styled-elements';
 
-import { useTheme } from '@react-navigation/native';
+import { useNavigation, useRoute, useTheme } from '@react-navigation/native';
 import moment from 'moment';
 import { ActivityIndicator, ScrollView, View } from 'react-native';
 import TopTab from '../../../../components/common/TopTab';
@@ -11,7 +11,7 @@ import { useGetGamesQuery } from '../../../../store/api-queries/tournaments';
 import { GAME_STATUS } from '../../../../types';
 import { useToast } from 'react-native-toast-notifications';
 
-const ScoresScreen = () => {
+const ScoresScreen = ({ route }) => {
   const statuses = {
     upcoming: 'STATUS_SCHEDULED',
     live: 'STATUS_IN_PROGRESS',
@@ -20,8 +20,10 @@ const ScoresScreen = () => {
 
   const { colors } = useTheme();
   const [currentTab, setCurrentTab] = useState<GAME_STATUS>('STATUS_SCHEDULED');
+  const { params } = route;
+  const myScores = !!params?.scoreType?.toLowerCase().includes('my score');
   const options = currentTab === 'STATUS_IN_PROGRESS' ? { pollingInterval: 5000 } : undefined;
-  const response = useGetGamesQuery({ status: currentTab }, options);
+  const response = useGetGamesQuery({ status: currentTab, myScores }, options);
   const { data = {}, isFetching, refetch, isError, error: err } = response;
 
   const toast = useToast();
@@ -34,7 +36,8 @@ const ScoresScreen = () => {
   }, [isError, err]);
 
   const { data: games } = data;
-  useEffect(refetch, [currentTab]);
+
+  useEffect(refetch, [currentTab, myScores]);
 
   return (
     <Container>

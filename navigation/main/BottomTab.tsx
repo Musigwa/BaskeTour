@@ -42,6 +42,8 @@ const BottomTabNavigator = () => {
   };
 
   const handlePress = title => {
+    // console.log('The tobtab pressed', title);
+    navigation.setParams({ screen: 'Scores', params: { scoreType: title } });
     // Update the params to refrect changes on the screens
   };
 
@@ -72,7 +74,7 @@ const BottomTabNavigator = () => {
           header: () => (
             <SafeAreaView>
               <Horizontal>
-                <TopTab tabs={headerParts} />
+                <TopTab tabs={headerParts} onTabPress={handlePress} />
                 <Ionicons
                   name='settings'
                   size={24}
