@@ -1,25 +1,29 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { FC, PropsWithChildren, useCallback, useState } from 'react';
 import { Pressable } from 'react-native';
 import { H3, Horizontal } from '../../styles/styled-elements';
 
-const TopTab = ({ tabs, onTabPress = (title: string) => {}, shadowVisible = true }) => {
+const TopTab: FC<
+  PropsWithChildren<{ tabs: []; onTabPress?: Function; showVisible?: boolean } & any>
+> = ({ tabs, onTabPress, shadowVisible = true }) => {
   const [focused, setFocused] = useState(tabs[0].title);
   const { colors } = useTheme();
 
-  const isFocused = title => title === focused;
-
-  const handleTabPress = title => {
-    setFocused(title);
-    onTabPress(title);
-  };
+  const isFocused = useCallback(title => title === focused, [focused]);
 
   return (
     <Horizontal>
-      {tabs.map(({ iconName, title }, idx) => {
+      {tabs.map((tab, idx) => {
+        const { iconName, title } = tab;
         return (
-          <Pressable onPress={() => handleTabPress(title)} key={idx}>
+          <Pressable
+            onPress={() => {
+              setFocused(tab.title);
+              onTabPress?.(tab);
+            }}
+            key={idx}
+          >
             <Horizontal
               style={{
                 paddingVertical: 15,

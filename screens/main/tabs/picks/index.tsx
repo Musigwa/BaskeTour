@@ -10,8 +10,12 @@ import defLogo from '../../../../assets/images/defLogo.png';
 import CountDown from '../../../../components/common/CountDown';
 import GroupSelector from '../../../../components/common/GroupSelector';
 import TopTab from '../../../../components/common/TopTab';
+import { useAppSelector } from '../../../../hooks/useStore';
 import { IGroup } from '../../../../interfaces';
-import { useGetGamesQuery } from '../../../../store/api-queries/tournaments';
+import {
+  useGetGamesQuery,
+  useGetTournamentsQuery,
+} from '../../../../store/api-queries/tournaments';
 import { H2, H3, H4, Horizontal, Separator } from '../../../../styles/styled-elements';
 
 type Pick = { eventId: string; teamId: string };
@@ -21,8 +25,7 @@ const PicksScreen = () => {
   const { colors } = useTheme();
   const [picks, setPicks] = useState<Pick[]>([]);
   const [limit, setLimit] = useState(3);
-  const [selectedGroup, setSelectedGroup] = useState<IGroup>();
-
+  const selectedGroup = useAppSelector(({ groups }) => groups.selectedGroup);
   const navigation = useNavigation();
   const {
     data: { data: games = [] } = {},
@@ -63,12 +66,8 @@ const PicksScreen = () => {
 
   return (
     <Container>
-      {picks.length === limit ? (
-        <>
-          <GroupSelector />
-          <Separator size='sm' />
-        </>
-      ) : null}
+      <GroupSelector />
+      <Separator size='sm' />
       <TopTab tabs={statuses} />
       <Separator size='sm' />
       {isFetching ? (

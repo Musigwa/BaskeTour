@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StatusBar, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -7,15 +7,16 @@ import HoopIcon from '../../../assets/svgs/HoopIcon';
 import Logo from '../../../assets/svgs/Logo';
 
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useAppSelector } from '../../../hooks/useStore';
+import { useGetTournamentsQuery } from '../../../store/api-queries/tournaments';
 import { Paragraph, View } from '../../../styles/styled-elements';
 
 function SetupTypeScreen({ route }) {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { params } = useRoute();
+  useGetTournamentsQuery();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (params?.group) {
       const { group } = params;
       navigation.navigate('JoinGroup', { group });

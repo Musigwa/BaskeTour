@@ -1,15 +1,15 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import { H4, Horizontal, Paragraph, Separator } from '../../../../styles/styled-elements';
 
-import { useNavigation, useRoute, useTheme } from '@react-navigation/native';
+import { useTheme } from '@react-navigation/native';
 import moment from 'moment';
 import { ActivityIndicator, ScrollView, View } from 'react-native';
+import { useToast } from 'react-native-toast-notifications';
 import TopTab from '../../../../components/common/TopTab';
 import TeamContainer from '../../../../components/scores/TeamContainer';
 import { useGetGamesQuery } from '../../../../store/api-queries/tournaments';
 import { GAME_STATUS } from '../../../../types';
-import { useToast } from 'react-native-toast-notifications';
 
 const ScoresScreen = ({ route }) => {
   const statuses = {
@@ -49,7 +49,7 @@ const ScoresScreen = ({ route }) => {
       <TopTab
         tabs={Object.keys(statuses).map(title => ({ title }))}
         shadowVisible={false}
-        onTabPress={title => setCurrentTab(statuses[title])}
+        onTabPress={({ title }) => setCurrentTab(statuses[title])}
       />
       <Separator size='sm' />
       {isFetching ? (

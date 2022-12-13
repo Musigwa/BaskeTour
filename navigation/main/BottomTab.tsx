@@ -41,7 +41,7 @@ const BottomTabNavigator = () => {
     navigation.navigate('SettingList');
   };
 
-  const handlePress = title => {
+  const handlePress = ({ title }) => {
     // console.log('The tobtab pressed', title);
     navigation.setParams({ screen: 'Scores', params: { scoreType: title } });
     // Update the params to refrect changes on the screens

@@ -24,7 +24,7 @@ export const groupApi = createApi({
         body: { groupPIN: payload.groupPIN },
       }),
     }),
-    getGRankings: builder.query<any, { groupId: string; tourRoundId: string }>({
+    getGRankings: builder.query<any, { groupId: string; tourRoundId?: string }>({
       query: ({ groupId, tourRoundId }) => GROUP_RANKING(groupId, tourRoundId),
     }),
   }),

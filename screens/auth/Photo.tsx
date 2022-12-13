@@ -20,6 +20,7 @@ import { Alert, SafeAreaView } from 'react-native';
 import { hasLoggedIn } from '../../store/slices/authSlice';
 import { useNavigation } from '@react-navigation/native';
 import { useToast } from 'react-native-toast-notifications';
+import KeyboardAvoid from '../../components/common/KeyboardAvoid';
 
 function PhotoScreen() {
   const [photo, setPhoto] = useState<any>();
@@ -49,14 +50,14 @@ function PhotoScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Container>
+      <KeyboardAvoid style={{ paddingHorizontal: 20 }}>
         <IndicatorHeader
           // showBackIcon={true}
           count={2}
           currentStep={2}
           // handleBackPress={() => navigation.goBack()}
         />
-        <View items-center w-100 mt={50} mb={70}>
+        <View items-center w-100 mb={20} mt={20}>
           <Title>Profile photo</Title>
         </View>
 
@@ -121,7 +122,7 @@ function PhotoScreen() {
             )}
           </Formik>
         </View>
-      </Container>
+      </KeyboardAvoid>
     </SafeAreaView>
   );
 }

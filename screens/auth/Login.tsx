@@ -42,8 +42,9 @@ function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
     try {
       const res = await loginUser({ accountIdentifier, password }).unwrap();
       console.log('RES---', res);
-      if (res.status === 200) dispatch(hasLoggedIn(true));
-      else Alert.alert('Something went wrong');
+      if (res.status === 200) {
+        dispatch(hasLoggedIn(true));
+      } else Alert.alert('Something went wrong');
     } catch (error) {
       console.log('error', error);
     }
