@@ -11,12 +11,11 @@ import CountDown from '../../../../components/common/CountDown';
 import GroupSelector from '../../../../components/common/GroupSelector';
 import TopTab from '../../../../components/common/TopTab';
 import { useAppSelector } from '../../../../hooks/useStore';
-import { IGroup } from '../../../../interfaces';
 import {
   useGetGamesQuery,
   useGetTournamentsQuery,
 } from '../../../../store/api-queries/tournaments';
-import { H2, H3, H4, Horizontal, Separator } from '../../../../styles/styled-elements';
+import { H2, H4, Horizontal, Separator } from '../../../../styles/styled-elements';
 
 type Pick = { eventId: string; teamId: string };
 const statuses = [{ title: 'East' }, { title: 'South' }, { title: 'Midwest' }, { title: 'West' }];
@@ -24,17 +23,20 @@ const statuses = [{ title: 'East' }, { title: 'South' }, { title: 'Midwest' }, {
 const PicksScreen = () => {
   const { colors } = useTheme();
   const [picks, setPicks] = useState<Pick[]>([]);
-  const [limit, setLimit] = useState(3);
   const selectedGroup = useAppSelector(({ groups }) => groups.selectedGroup);
   const navigation = useNavigation();
+  const toast = useToast();
+
   const {
     data: { data: games = [] } = {},
     isFetching,
     isError,
     error: err,
   } = useGetGamesQuery({ status: 'STATUS_SCHEDULED' }, { refetchOnReconnect: true });
+  const { data: [tournament] = [] } = useGetTournamentsQuery();
+  const [round] = tournament?.rounds ?? [null];
+  const [limit] = useState(round?.allowedPicks ?? 3);
 
-  const toast = useToast();
   useEffect(() => {
     if (isError) {
       let { message } = err?.data;
@@ -44,8 +46,13 @@ const PicksScreen = () => {
   }, [isError, err]);
 
   useLayoutEffect(() => {
-    navigation.setParams({ groupId: selectedGroup?._id, picks });
-  }, [picks.length, selectedGroup?._id]);
+    navigation.setParams({
+      picks,
+      roundId: round?.id,
+      groupId: selectedGroup?.id,
+      canSubmit: picks.length === limit,
+    });
+  }, [picks.length, selectedGroup?.id]);
 
   const updatePicks = (pick: Pick) => {
     const temp = [...picks];
@@ -85,59 +92,65 @@ const PicksScreen = () => {
             <H2 style={{ marginTop: 35, marginBottom: 10, textTransform: 'normal' }}>
               Pick teams to win
             </H2>
-            <Headline style={{ color: colors.primary }}>Select 3 teams for Round of 64</Headline>
+            <Headline style={{ color: colors.primary }}>
+              Select {limit} teams for {round?.name}
+            </Headline>
           </View>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {games.map(({ _id: eventId, teamA, teamB, eventDate }, idx) => (
-              <View key={idx}>
-                {[teamA, teamB].map(({ teamId, logo = defLogo, name, ranking }, i) => (
-                  <View key={i} style={{ paddingHorizontal: 15 }}>
-                    <Card
-                      style={{
-                        backgroundColor:
-                          findIndex(picks, { teamId, eventId }) !== -1
-                            ? colors.primary
-                            : colors.card,
-                      }}
-                      activeOpacity={0.8}
-                      onPress={() => updatePicks({ teamId, eventId })}
-                    >
-                      <Horizontal style={{ flex: 0.86 }}>
-                        <AvatarContainer>
-                          <Image
-                            source={logo}
-                            resizeMode='contain'
-                            resizeMethod='auto'
-                            style={{ width: 35, height: 35 }}
-                          />
-                        </AvatarContainer>
-                        <View>
-                          <BoldText style={{ fontSize: 12 }}>
-                            {moment(eventDate).format('ddd, MM/D/YYYY, h:mm A')}
-                          </BoldText>
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                            }}
-                          >
-                            <BoldText style={{ fontSize: 14, color: '#979797' }}>
-                              ({ranking})
+            {games.map((event, idx) => {
+              const { id, teamA, teamB, eventDate } = event;
+              const eventId = event.eventId ?? id;
+              return (
+                <View key={idx}>
+                  {[teamA, teamB].map(({ teamId, logo = defLogo, name, ranking }, i) => (
+                    <View key={i} style={{ paddingHorizontal: 15 }}>
+                      <Card
+                        style={{
+                          backgroundColor:
+                            findIndex(picks, { teamId, eventId }) !== -1
+                              ? colors.primary
+                              : colors.card,
+                        }}
+                        activeOpacity={0.8}
+                        onPress={() => updatePicks({ teamId, eventId })}
+                      >
+                        <Horizontal style={{ flex: 0.86 }}>
+                          <AvatarContainer>
+                            <Image
+                              source={logo}
+                              resizeMode='contain'
+                              resizeMethod='auto'
+                              style={{ width: 35, height: 35 }}
+                            />
+                          </AvatarContainer>
+                          <View>
+                            <BoldText style={{ fontSize: 12 }}>
+                              {moment(eventDate).format('ddd, MM/D/YYYY, h:mm A')}
                             </BoldText>
-                            <BoldText style={{ fontSize: 18 }}>{name}</BoldText>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <BoldText style={{ fontSize: 14, color: '#979797' }}>
+                                ({ranking})
+                              </BoldText>
+                              <BoldText style={{ fontSize: 18 }}>{name}</BoldText>
+                            </View>
                           </View>
-                        </View>
-                      </Horizontal>
-                      <AntDesign name='checksquare' size={24} color={colors.background} />
-                    </Card>
-                    {!i ? (
-                      <BoldText style={{ fontSize: 12, textAlign: 'center' }}>VS</BoldText>
-                    ) : null}
-                  </View>
-                ))}
-                {idx !== games.length - 1 ? <Separator /> : null}
-              </View>
-            ))}
+                        </Horizontal>
+                        <AntDesign name='checksquare' size={24} color={colors.background} />
+                      </Card>
+                      {!i ? (
+                        <BoldText style={{ fontSize: 12, textAlign: 'center' }}>VS</BoldText>
+                      ) : null}
+                    </View>
+                  ))}
+                  {idx !== games.length - 1 ? <Separator /> : null}
+                </View>
+              );
+            })}
           </ScrollView>
         </>
       ) : (

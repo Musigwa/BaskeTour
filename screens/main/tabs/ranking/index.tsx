@@ -31,10 +31,12 @@ const RankingScreen = () => {
     <Container>
       <GroupSelector />
       <Separator size='sm' />
-      <TopTab
-        tabs={tournament?.rounds?.map(r => ({ title: r.name, ...r }))}
-        onTabPress={setRound}
-      />
+      {tournament.rounds.length ? (
+        <TopTab
+          tabs={tournament?.rounds?.map(r => ({ title: r.name, ...r }))}
+          onTabPress={setRound}
+        />
+      ) : null}
       <Separator size='sm' />
       {isLoading || isFetching ? (
         <ActivityIndicator

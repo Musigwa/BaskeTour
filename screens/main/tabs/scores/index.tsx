@@ -8,7 +8,10 @@ import { ActivityIndicator, ScrollView, View } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
 import TopTab from '../../../../components/common/TopTab';
 import TeamContainer from '../../../../components/scores/TeamContainer';
-import { useGetGamesQuery } from '../../../../store/api-queries/tournaments';
+import {
+  useGetGamesQuery,
+  useGetTournamentsQuery,
+} from '../../../../store/api-queries/tournaments';
 import { GAME_STATUS } from '../../../../types';
 
 const ScoresScreen = ({ route }) => {
@@ -21,10 +24,13 @@ const ScoresScreen = ({ route }) => {
   const { colors } = useTheme();
   const [currentTab, setCurrentTab] = useState<GAME_STATUS>('STATUS_SCHEDULED');
   const { params } = route;
+
   const myScores = !!params?.scoreType?.toLowerCase().includes('my score');
   const options = currentTab === 'STATUS_IN_PROGRESS' ? { pollingInterval: 5000 } : undefined;
   const response = useGetGamesQuery({ status: currentTab, myScores }, options);
   const { data = {}, isFetching, refetch, isError, error: err } = response;
+  const { data: [tournament] = [] } = useGetTournamentsQuery();
+  const [round] = tournament?.rounds ?? [null];
 
   const toast = useToast();
   useEffect(() => {
@@ -43,7 +49,7 @@ const ScoresScreen = ({ route }) => {
     <Container>
       <RoundBanner source={require('../../../../assets/images/roundImage.png')}>
         <InnerBanner>
-          <H3 style={{ color: colors.card }}>Round of 64</H3>
+          <H3 style={{ color: colors.card }}>{round?.name}</H3>
         </InnerBanner>
       </RoundBanner>
       <TopTab

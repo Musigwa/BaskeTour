@@ -27,9 +27,10 @@ const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
   const { colors } = useTheme();
-  const [savePicks, { isLoading, isError, error }] = useCreatePickMutation();
   const navigation = useNavigation();
   const toast = useToast();
+  const [savePicks, { isLoading, isError, error }] = useCreatePickMutation();
+
   useEffect(() => {
     if (isError) {
       const { message } = error?.data;
@@ -93,24 +94,25 @@ const BottomTabNavigator = () => {
         name='Picks'
         component={PicksScreen}
         options={{
-          header: ({ route: { params: { picks = [], groupId } = {} } }) => {
-            const canSubmit = picks.length && groupId && !isLoading;
+          header: ({ route: { params } }) => {
+            const { picks = [], roundId, canSubmit, groupId } = params ?? {};
+            const shouldSubmit = canSubmit && !isLoading;
             return (
               <SafeAreaView style={{ backgroundColor: 'white' }}>
                 <Horizontal style={{ marginRight: 20 }}>
                   <View style={{ flex: 0.4 }} />
                   <H2>Picks</H2>
                   <Touchable
-                    style={{ borderColor: canSubmit ? colors.primary : '#CFCFCF' }}
-                    disabled={!canSubmit}
+                    style={{ borderColor: shouldSubmit ? colors.primary : '#CFCFCF' }}
+                    disabled={!shouldSubmit}
                     onPress={() => {
-                      savePicks({ picks, groupId });
+                      savePicks({ picks, roundId, groupId });
                     }}
                   >
                     {isLoading ? (
                       <ActivityIndicator color={colors.primary} />
                     ) : (
-                      <H3 style={{ color: canSubmit ? colors.primary : '#CFCFCF' }}>Save</H3>
+                      <H3 style={{ color: shouldSubmit ? colors.primary : '#CFCFCF' }}>Save</H3>
                     )}
                   </Touchable>
                 </Horizontal>

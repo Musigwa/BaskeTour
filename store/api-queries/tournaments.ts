@@ -13,7 +13,7 @@ const tournamentApi = createApi({
       transformResponse: (response: any) => response.data,
     }),
     getGames: builder.query<any, { status: GAME_STATUS; myScores?: boolean }>({
-      query: ({ status, myScores }: { status: GAME_STATUS; myScores?: boolean }) =>
+      query: ({ status, myScores = false }: { status: GAME_STATUS; myScores?: boolean }) =>
         status === 'STATUS_IN_PROGRESS' ? GET_LIVE_SCORES(myScores) : GET_GAMES(status),
     }),
     createPick: builder.mutation({

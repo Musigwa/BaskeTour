@@ -15,7 +15,12 @@ export const JOIN_GROUP = (groupId: string) => `${SINGLE_GROUP(groupId)}/join-gr
 
 // Games endpoints
 export const TOURNAMENTS = `/tournaments`;
-export const GET_GAMES = (status: GAME_STATUS) => `${TOURNAMENTS}/games?gameStatus=${status}`;
-export const GET_LIVE_SCORES = myScores =>
-  `${TOURNAMENTS}/live-scores${!!myScores ? `?myScores=${myScores}` : ''}`;
+export const GET_GAMES = (status: GAME_STATUS) => {
+  console.log('the endpoint==>', `${TOURNAMENTS}/games?gameStatus=${status}`);
+  return `${TOURNAMENTS}/games?gameStatus=${status}`;
+};
+export const GET_LIVE_SCORES = (myScores = false) => {
+  console.log('the endpoint ==>', `${TOURNAMENTS}/live-scores?myScores=${myScores}`);
+  return `${TOURNAMENTS}/live-scores?myScores=${myScores}`;
+};
 export const PICKS = '/picks';

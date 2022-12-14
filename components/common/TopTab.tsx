@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import React, { FC, PropsWithChildren, useCallback, useState } from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, ScrollView } from 'react-native';
 import { H3, Horizontal } from '../../styles/styled-elements';
 
 const TopTab: FC<
@@ -14,6 +14,7 @@ const TopTab: FC<
 
   return (
     <Horizontal>
+      {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}> */}
       {tabs.map((tab, idx) => {
         const { iconName, title } = tab;
         return (
@@ -46,6 +47,7 @@ const TopTab: FC<
           </Pressable>
         );
       })}
+      {/* </ScrollView> */}
     </Horizontal>
   );
 };
