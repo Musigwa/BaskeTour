@@ -8,11 +8,7 @@ export const groupApi = createApi({
   baseQuery: baseQuery,
   endpoints: builder => ({
     createGroup: builder.mutation({
-      query: payload => ({
-        url: GROUPS,
-        method: 'POST',
-        body: payload,
-      }),
+      query: payload => ({ url: GROUPS, method: 'POST', body: payload }),
     }),
     getGroups: builder.query<any, { searchQuery: string }>({
       query: (payload: { searchQuery: string }) => GET_GROUPS(payload.searchQuery),
@@ -24,8 +20,8 @@ export const groupApi = createApi({
         body: { groupPIN: payload.groupPIN },
       }),
     }),
-    getGRankings: builder.query<any, { groupId: string; tourRoundId?: string }>({
-      query: ({ groupId, tourRoundId }) => GROUP_RANKING(groupId, tourRoundId),
+    getGRankings: builder.query<any, { groupId: string; roundId?: string }>({
+      query: ({ groupId, roundId }) => GROUP_RANKING(groupId, roundId),
     }),
   }),
 });

@@ -8,6 +8,7 @@ export const AppDarkTheme: typeof DefaultTheme = {
     text: '#000',
     background: '#fff',
     notification: '#ff6347',
+    pink: 'rgba(156, 73, 207, 0.08)',
   },
 };
 
@@ -19,5 +20,6 @@ export const AppDefaultTheme: typeof DarkTheme = {
     text: '#000',
     background: '#fff',
     notification: '#ff6347',
+    pink: 'rgba(156, 73, 207, 0.08)',
   },
 };
