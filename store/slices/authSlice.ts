@@ -43,8 +43,6 @@ const authSlice = createSlice({
     });
 
     builder.addCase(fetchUsers.fulfilled, (state, action) => {
-      //   state.userList = action.payload;
-      console.log('payload', action.payload);
       state.loading = false;
     });
 

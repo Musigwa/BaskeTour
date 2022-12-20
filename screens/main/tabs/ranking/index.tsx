@@ -1,42 +1,48 @@
-import { useNavigation, useTheme } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, ScrollView, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  View as RNView,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import styled from 'styled-components/native';
-import pp from '../../../../assets/images/pp.jpg';
 import GroupSelector from '../../../../components/common/GroupSelector';
 import TopTab from '../../../../components/common/TopTab';
-import { IGroup } from '../../../../interfaces';
+import { useAppSelector } from '../../../../hooks/useStore';
 import { useGetGRankingsQuery } from '../../../../store/api-queries/group-queries';
 import { useGetTournamentsQuery } from '../../../../store/api-queries/tournaments';
 import { H2, H4, H5, H6, Horizontal, Separator } from '../../../../styles/styled-elements';
 
 const RankingScreen = () => {
   const { colors } = useTheme();
-  const navigation = useNavigation();
 
   const { data: [tournament] = [], isLoading } = useGetTournamentsQuery();
+  const selectedGroup = useAppSelector(({ groups }) => groups.selectedGroup);
+  const rounds = tournament?.rounds?.map(r => ({ title: r.name, ...r }));
+  const [round, setRound] = useState<any>(rounds[0]);
 
-  const [selectedGroup] = useState<IGroup>();
-  const [round, setRound] = useState<any>();
-
-  const response = useGetGRankingsQuery(
-    { groupId: selectedGroup?._id, tourRoundId: round?.id },
+  const {
+    data: { data = [] } = {},
+    isFetching,
+    refetch,
+    isError,
+    error: err,
+  } = useGetGRankingsQuery(
+    { groupId: selectedGroup?.id, roundId: round?.id },
     { refetchOnReconnect: true }
   );
-  const { data = Array(0).fill(0), isFetching, refetch, isError, error: err } = response;
 
-  useEffect(refetch, [round]);
+  useEffect(refetch, [round, selectedGroup]);
 
   return (
     <Container>
       <GroupSelector />
       <Separator size='sm' />
-      {tournament.rounds.length ? (
-        <TopTab
-          tabs={tournament?.rounds?.map(r => ({ title: r.name, ...r }))}
-          onTabPress={setRound}
-        />
-      ) : null}
+      {rounds?.length ? <TopTab tabs={rounds} onTabPress={setRound} /> : null}
       <Separator size='sm' />
       {isLoading || isFetching ? (
         <ActivityIndicator
@@ -50,48 +56,77 @@ const RankingScreen = () => {
           style={{ marginBottom: 30 }}
           contentContainerStyle={{ paddingVertical: 10 }}
         >
-          {data.map((player, idx) => (
-            <TouchableOpacity key={idx} activeOpacity={0.8}>
-              <View style={{ padding: 15 }}>
-                <Horizontal>
-                  <View>
-                    <Horizontal>
-                      <Image
-                        source={pp}
-                        style={{
-                          width: 48,
-                          height: 48,
-                          borderRadius: 24,
-                          marginRight: 10,
-                        }}
-                        resizeMode='cover'
-                      />
+          {data.map((player, idx) => {
+            const picks = player?.picks ? [...player.picks] : [];
+            return (
+              <TouchableOpacity
+                key={idx}
+                activeOpacity={0.8}
+                style={{ backgroundColor: 0 === idx && colors.pink }}
+              >
+                <View style={{ padding: 15 }}>
+                  <Horizontal>
+                    <View>
+                      <Horizontal>
+                        {player.profilePic ? (
+                          <Image
+                            source={{ uri: player.profilePic }}
+                            style={{ width: 48, height: 48, borderRadius: 24, marginRight: 10 }}
+                            resizeMode='cover'
+                          />
+                        ) : (
+                          <RNView
+                            style={{
+                              padding: 10,
+                              borderRadius: 50,
+                              borderWidth: 0.5,
+                              borderColor: 'gray',
+                              marginRight: 10,
+                            }}
+                          >
+                            <MaterialIcons name='no-photography' size={30} color='gray' />
+                          </RNView>
+                        )}
+
+                        <View>
+                          <H5>{player.firstName}</H5>
+                          <H5>{player.lastName}</H5>
+                        </View>
+                      </Horizontal>
+                    </View>
+                    <View>
                       <View>
-                        <H5>dennis</H5>
-                        <H5>rodman</H5>
+                        <H2>{player.totalPoints}</H2>
+                        <H6>Total points</H6>
                       </View>
-                    </Horizontal>
-                    <H6 style={{ alignSelf: 'flex-end', marginTop: 10 }}>1. TTU(12)</H6>
-                  </View>
-                  <View>
-                    <View>
-                      <H2>52</H2>
-                      <H6>Total points</H6>
                     </View>
-                    <H6 style={{ marginTop: 10 }}>2. OR(12)</H6>
-                  </View>
-                  <View>
                     <View>
-                      <H2>1</H2>
-                      <H6>Loss</H6>
+                      <View>
+                        <H2>{player.totalLosses}</H2>
+                        <H6 style={{ textTransform: 'normal' }}>Losses</H6>
+                      </View>
                     </View>
-                    <H6 style={{ marginTop: 10 }}>3. Nova(6)</H6>
-                  </View>
-                </Horizontal>
-              </View>
-              <Separator />
-            </TouchableOpacity>
-          ))}
+                  </Horizontal>
+                  <RNView
+                    style={{
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      justifyContent: 'space-between',
+                      marginTop: 13,
+                      marginLeft: 50,
+                    }}
+                  >
+                    {picks.map((pick, idx) => (
+                      <H6 key={idx} style={{}}>
+                        {idx + 1}. ({pick.team.ranking}) {pick.team.abbreviation}
+                      </H6>
+                    ))}
+                  </RNView>
+                </View>
+                <Separator />
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
       ) : (
         <View
