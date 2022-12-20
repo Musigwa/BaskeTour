@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { TextInput } from "react-native";
+import { TextInput, Keyboard } from "react-native";
 import styled from "styled-components/native";
 import { Paragraph, View } from "../../styles/styled-elements";
 
@@ -17,6 +17,12 @@ const PinCodeInput: React.FC<IPinCodeInputProps> = ({
   const digitRefs = useRef<Array<TextInput>>([]);
   const [digitWithFocus, setDigitWithFocus] = useState(0);
   const [defaultInputValues, setDefaultInputValues] = useState({});
+
+  useEffect(() => {
+    if (value?.length === numberOfInputs) {
+      Keyboard.dismiss();
+    }
+  }, [value, numberOfInputs]);
 
   useEffect(() => {
     const INPUT_VALUES = {};
@@ -45,7 +51,7 @@ const PinCodeInput: React.FC<IPinCodeInputProps> = ({
 
   const handleValueChange = useCallback(
     (name: string) => (value: string) => {
-      if (+value || value === "") {
+      if (+value >= 0 || value === "") {
         setInputValues((prevValues) => {
           return {
             ...prevValues,
@@ -103,7 +109,7 @@ const PinCodeInput: React.FC<IPinCodeInputProps> = ({
             key={inputName}
             value={inputValues[inputName]}
             keyboardType="numeric"
-            secureTextEntry={true}
+            returnKeyType="done"
           />
         ))}
       </PinRow>
