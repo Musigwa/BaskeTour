@@ -2,7 +2,17 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import baseQuery from './baseQuery';
 
 import { GAME_STATUS } from '../../types';
-import { GET_GAMES, GET_LIVE_SCORES, PICKS, TOURNAMENTS } from '../endpoints';
+import {
+  GET_ALL_SCORES,
+  GET_LIVE_SCORES,
+  GET_MY_SCORES,
+  MY_PICKS,
+  PICKS,
+  TOURNAMENTS,
+} from '../endpoints';
+
+type GQueryParamsType = { roundId: string; status: GAME_STATUS; myScores?: boolean };
+type GPicksQueryParams = { tournamentId: string; roundId: string };
 
 const tournamentApi = createApi({
   reducerPath: 'tournament',
@@ -12,16 +22,24 @@ const tournamentApi = createApi({
       query: () => TOURNAMENTS,
       transformResponse: (response: any) => response.data,
     }),
-    getGames: builder.query<any, { status: GAME_STATUS; myScores?: boolean }>({
-      query: ({ status, myScores = false }: { status: GAME_STATUS; myScores?: boolean }) =>
-        status === 'STATUS_IN_PROGRESS' ? GET_LIVE_SCORES(myScores) : GET_GAMES(status),
+    getGames: builder.query<any, GQueryParamsType>({
+      query: ({ roundId, status, myScores = false }: GQueryParamsType) => {
+        if (myScores) return GET_MY_SCORES(roundId, status);
+        return status === 'STATUS_IN_PROGRESS'
+          ? GET_LIVE_SCORES(myScores)
+          : GET_ALL_SCORES(roundId, status);
+      },
     }),
     createPick: builder.mutation({
       query: body => ({ url: PICKS, method: 'POST', body }),
     }),
+    getPicks: builder.query<any, GPicksQueryParams>({
+      query: ({ tournamentId, roundId }: GPicksQueryParams) => MY_PICKS(tournamentId, roundId),
+    }),
   }),
 });
 
-export const { useGetGamesQuery, useGetTournamentsQuery, useCreatePickMutation } = tournamentApi;
+export const { useGetGamesQuery, useGetPicksQuery, useGetTournamentsQuery, useCreatePickMutation } =
+  tournamentApi;
 
 export default tournamentApi;
