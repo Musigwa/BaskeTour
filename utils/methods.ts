@@ -37,3 +37,21 @@ const countDownTimer = (date: Date | string | number, callback) => {
     return callback([days, hours, minutes, seconds]);
   }, 1000);
 };
+
+/**
+ * Look up the active tournament's rounds
+ * @author Musigwa Pacifique
+ * @param {*} tournament
+ * @return {*} activeRound
+ */
+export const getActiveRound = tournament => {
+  if (tournament?.rounds && tournament.rounds.length) {
+    const { rounds } = tournament;
+    const uncompleted = rounds
+      .filter(r => new Date(r.endDate) > new Date())
+      .sort((a, b) => +(a.startDate < b.startDate));
+    const [activeRound] = uncompleted;
+    return activeRound;
+  }
+  return {};
+};

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components/native';
 import { H4, Horizontal, Paragraph, Separator } from '../../../../styles/styled-elements';
 
@@ -13,6 +13,7 @@ import {
   useGetTournamentsQuery,
 } from '../../../../store/api-queries/tournaments';
 import { GAME_STATUS } from '../../../../types';
+import { getActiveRound } from '../../../../utils/methods';
 
 const ScoresScreen = ({ route }) => {
   const statuses = {
@@ -27,12 +28,13 @@ const ScoresScreen = ({ route }) => {
 
   const myScores = !!params?.scoreType?.toLowerCase().includes('my score');
   const options = currentTab === 'STATUS_IN_PROGRESS' ? { pollingInterval: 5000 } : undefined;
-  const response = useGetGamesQuery({ status: currentTab, myScores }, options);
-  const { data = {}, isFetching, refetch, isError, error: err } = response;
   const { data: [tournament] = [] } = useGetTournamentsQuery();
-  const [round] = tournament?.rounds ?? [null];
-
   const toast = useToast();
+
+  const round = useMemo(() => getActiveRound(tournament), [tournament]);
+  const response = useGetGamesQuery({ roundId: round?.id, status: currentTab, myScores }, options);
+  const { data = {}, isFetching, refetch, isError, error: err } = response;
+
   useEffect(() => {
     if (isError) {
       let { message } = err?.data;

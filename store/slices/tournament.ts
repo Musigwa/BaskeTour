@@ -32,6 +32,10 @@ const tournamentSlice = createSlice({
       state.games = payload.data;
     });
 
+    builder.addMatcher(tournamentApi.endpoints.getPicks.matchFulfilled, (state, { payload }) => {
+      state.picks = payload.picks;
+    });
+
     builder.addMatcher(
       tournamentApi.endpoints.getTournaments.matchFulfilled,
       (state, { payload }) => {
