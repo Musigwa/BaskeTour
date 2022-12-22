@@ -1,20 +1,28 @@
 import React, { useEffect } from 'react';
-import { StatusBar, TouchableOpacity } from 'react-native';
+import {
+  ImageBackground,
+  View as RNView,
+  StatusBar,
+  StyleSheet,
+  TouchableOpacity,
+  useWindowDimensions,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import styled from 'styled-components/native';
 import BallIcon from '../../../assets/svgs/BallIcon';
 import HoopIcon from '../../../assets/svgs/HoopIcon';
 import Logo from '../../../assets/svgs/Logo';
 
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, useTheme } from '@react-navigation/native';
 import { useGetTournamentsQuery } from '../../../store/api-queries/tournaments';
-import { Paragraph, View } from '../../../styles/styled-elements';
+import { H3, H4 } from '../../../styles/styled-elements';
 
-function SetupTypeScreen({ route }) {
+const SetupTypeScreen = ({ route }) => {
   const navigation = useNavigation();
-  const insets = useSafeAreaInsets();
-  const { params } = useRoute();
+  const { bottom: paddingBottom, top: paddingTop } = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   useGetTournamentsQuery();
+  const { colors } = useTheme();
+  const { params } = route;
 
   useEffect(() => {
     if (params?.group) {
@@ -28,96 +36,57 @@ function SetupTypeScreen({ route }) {
   };
 
   return (
-    <>
+    <ImageBackground
+      source={require(' ../../../assets/images/bg_main.png')}
+      style={[style.container, { width, paddingBottom, paddingTop }]}
+    >
       <StatusBar barStyle='light-content' />
-      <ImageBackground
-        source={require(' ../../../assets/images/bg_main.png')}
-        pt={insets.top}
-        pb={insets.bottom}
-        pl={24}
-        pr={24}
-      >
-        <View w-100 items-center mt={169}>
-          <Logo />
-        </View>
-        <View mt={100} w-100>
-          <Touchable mb={23} onPress={() => handleNext('CreateGroup')}>
-            <Action bg='#4833B5'>
-              <ActionIcons>
-                <BallIcon />
-              </ActionIcons>
-              <ActionButtonText>Create New Group</ActionButtonText>
-            </Action>
-          </Touchable>
+      <Logo />
+      <RNView style={style.btnContainer}>
+        <TouchableOpacity
+          onPress={() => handleNext('CreateGroup')}
+          style={[style.button, { backgroundColor: '#4833B5' }]}
+        >
+          <BallIcon />
+          <H3 style={{ color: 'white' }}>Create New Group</H3>
+        </TouchableOpacity>
 
-          <Touchable
-            style={{ width: '100%' }}
-            onPress={() => handleNext('SearchGroup', { btnText: 'Join Group' })}
-          >
-            <Action bg='#9C49CF'>
-              <ActionIcons>
-                <HoopIcon />
-              </ActionIcons>
-              <ActionButtonText>Join Existing Group</ActionButtonText>
-            </Action>
-          </Touchable>
-        </View>
+        <TouchableOpacity
+          style={[style.button, { backgroundColor: '#9C49CF' }]}
+          onPress={() => handleNext('SearchGroup', { btnText: 'Join Group' })}
+        >
+          <HoopIcon />
+          <H3 style={{ color: 'white' }}>Join Existing Group</H3>
+        </TouchableOpacity>
+      </RNView>
 
-        <Bottom items-center>
-          {/* <Button text="Get Started" onPress={handleGetStarted} /> */}
-          <TouchableOpacity onPress={() => handleNext('Tabs')}>
-            <ActionText mt={50}>Skip For Now</ActionText>
-          </TouchableOpacity>
-        </Bottom>
-      </ImageBackground>
-    </>
+      <TouchableOpacity onPress={() => handleNext('Tabs')}>
+        <H4 style={{ color: colors.primary }}>Skip For Now</H4>
+      </TouchableOpacity>
+    </ImageBackground>
   );
-}
+};
 
-const ImageBackground = styled.ImageBackground<{ pt: number; pb: number }>`
-  padding: 0 24px;
-  padding-top: ${props => props.pt + 'px'};
-  padding-bottom: ${props => props.pb + 'px'};
-  background-color: red;
-  flex: 1;
-`;
-
-const ActionText = styled(Paragraph)`
-  color: ${props => props.theme.primary};
-  text-align: center;
-  width: 100%;
-  font-size: 18px;
-`;
-
-const Bottom = styled(View)`
-  /* margin-top: 262px; */
-`;
-
-const Action = styled(View)<{ bg?: 'accentPurple' | 'accentBlue' }>`
-  position: relative;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  background-color: ${props => props.bg};
-  height: 114px;
-  width: 100%;
-  border-radius: 4px;
-`;
-
-const ActionButtonText = styled(Paragraph)`
-  color: white;
-  font-size: 18px;
-  font-weight: 600;
-`;
-
-const ActionIcons = styled(View)`
-  position: absolute;
-  left: 31px;
-`;
-
-const Touchable = styled.TouchableOpacity<{ mb: number }>`
-  width: 100%;
-  margin-bottom: ${props => (props.mb ? props.mb + 'px' : 0)};
-`;
+const style = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+  },
+  btnContainer: {
+    flex: 0.4,
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    width: '85%',
+  },
+  button: {
+    borderRadius: 5,
+    padding: 25,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    width: '100%',
+  },
+});
 
 export default SetupTypeScreen;
