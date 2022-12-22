@@ -5,6 +5,7 @@ import defLogo from '../../assets/images/defLogo.png';
 import { GAME_STATUS } from '../../types';
 import { useTheme } from '@react-navigation/native';
 import { Iteam } from '../../interfaces';
+import { MaterialIcons } from '@expo/vector-icons';
 
 type TeamProps = {
   team: Iteam;
@@ -16,11 +17,20 @@ const TeamContainer = ({ team, currentTab }: TeamProps) => {
   return (
     <Horizontal>
       <Horizontal style={{ justifyContent: 'flex-start' }}>
-        <Image
-          source={team.logo ? { uri: team.logo } : defLogo}
-          style={{ width: 30, height: 30, marginRight: 15, borderRadius: 15 }}
-          resizeMode='contain'
-        />
+        {team.logo ? (
+          <Image
+            source={team.logo ? { uri: team.logo } : defLogo}
+            style={{ width: 30, height: 30, marginRight: 10, borderRadius: 15 }}
+            resizeMode='contain'
+          />
+        ) : (
+          <MaterialIcons
+            style={{ width: 30, height: 30, borderRadius: 15, marginRight: 10 }}
+            name='no-photography'
+            size={24}
+            color='rgb(210, 212, 214)'
+          />
+        )}
         <H6 style={{ color: '#CBB7B7' }}>
           {`${team?.ranking}\u0020`}
           <H6 style={{ color: '#000' }}>{team.name}</H6>
