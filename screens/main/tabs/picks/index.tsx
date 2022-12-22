@@ -1,4 +1,4 @@
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import _ from 'lodash';
 import moment from 'moment';
@@ -26,15 +26,14 @@ const PicksScreen = () => {
   const { colors } = useTheme();
   const { data: [tournament] = [] } = useGetTournamentsQuery();
   const round = useMemo(() => getActiveRound(tournament), [tournament]);
-  const {
-    refetch: refetchPicks,
-    isLoading,
-    data: { data: prevPicks = [] } = {},
-  } = useGetPicksQuery({
+  const selectedGroup = useAppSelector(({ groups }) => groups.selectedGroup);
+
+  const resp = useGetPicksQuery({
     tournamentId: tournament?.id,
     roundId: round?.id,
+    groupId: selectedGroup?.id,
   });
-  const selectedGroup = useAppSelector(({ groups }) => groups.selectedGroup);
+  const { refetch: refetchPicks, isSuccess, isLoading, data: { data: prevPicks = [] } = {} } = resp;
 
   const [picks, setPicks] = useState<Pick[]>(
     prevPicks
@@ -67,7 +66,7 @@ const PicksScreen = () => {
         .map(({ teamId, eventId }) => ({ teamId, eventId }));
       setPicks(prev);
     }
-  }, [selectedGroup?.id]);
+  }, [selectedGroup?.id, isSuccess]);
 
   useLayoutEffect(() => {
     navigation.setParams({
@@ -126,7 +125,7 @@ const PicksScreen = () => {
               const eventId = id ?? event.eventId;
               return (
                 <View key={idx}>
-                  {[teamA, teamB].map(({ teamId, logo = defLogo, name, ranking }, i) => (
+                  {[teamA, teamB].map(({ teamId, logo, name, ranking }, i) => (
                     <View key={i} style={{ paddingHorizontal: 15 }}>
                       <Card
                         style={{
@@ -140,12 +139,16 @@ const PicksScreen = () => {
                       >
                         <Horizontal style={{ flex: 0.86 }}>
                           <AvatarContainer>
-                            <Image
-                              source={logo}
-                              resizeMode='contain'
-                              resizeMethod='auto'
-                              style={{ width: 35, height: 35 }}
-                            />
+                            {logo ? (
+                              <Image
+                                source={{ uri: logo }}
+                                resizeMode='contain'
+                                resizeMethod='auto'
+                                style={{ width: 35, height: 35 }}
+                              />
+                            ) : (
+                              <MaterialIcons name='no-photography' size={24} color='#cdcfd1' />
+                            )}
                           </AvatarContainer>
                           <View>
                             <BoldText style={{ fontSize: 12 }}>

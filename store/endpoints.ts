@@ -15,9 +15,6 @@ export const JOIN_GROUP = (groupId: string) => `${SINGLE_GROUP(groupId)}/join-gr
 
 // Games endpoints
 export const TOURNAMENTS = `/tournaments`;
-export const GET_GAMES = (roundId: string, status: GAME_STATUS) => {
-  return `${TOURNAMENTS}/rounds/${roundId}/my-scores?gameStatus=${status}`;
-};
 export const GET_MY_SCORES = (roundId: string, status: GAME_STATUS) => {
   return `${TOURNAMENTS}/rounds/${roundId}/my-scores?gameStatus=${status}`;
 };
@@ -25,5 +22,5 @@ export const GET_ALL_SCORES = (roundId: string, status: GAME_STATUS) => {
   return `${TOURNAMENTS}/rounds/${roundId}/games?gameStatus=${status}`;
 };
 export const PICKS = '/picks';
-export const MY_PICKS = (tournamentId, roundId) =>
-  `${PICKS}/my-picks?roundId=${roundId}&tournamentId=${tournamentId}`;
+export const MY_PICKS = (tournamentId, roundId, groupId) =>
+  `${PICKS}/my-picks?tournamentId=${tournamentId}&roundId=${roundId}&groupId=${groupId}`;
