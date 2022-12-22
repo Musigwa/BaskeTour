@@ -27,7 +27,7 @@ import BottomTabNavigator from './main/BottomTab';
 
 const Stack = createStackNavigator();
 
-function MainNavigator({ colorScheme }: { colorScheme: ColorSchemeName }) {
+const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
   const { isLoggedIn } = useAppSelector(state => state.auth);
   const isOnboarded = useAppSelector(({ auth }) => auth.completedOnboarding);
   return (
@@ -84,6 +84,6 @@ function MainNavigator({ colorScheme }: { colorScheme: ColorSchemeName }) {
       </NavigationContainer>
     </ToastProvider>
   );
-}
+};
 
 export default MainNavigator;

@@ -17,13 +17,16 @@ const options = [
   { title: 'Logout' },
 ];
 
-const SettingsScreen = () => {
+const SettingsScreen = ({ navigation }) => {
   const { colors } = useTheme();
-  const navigation = useNavigation();
   const dispatch = useAppDispatch();
 
   const handlePress = (element: { title: string }) => {
     if (element.title.includes('ogout')) dispatch(loggedOut());
+    else {
+      const [screenName] = element.title.split(' ');
+      navigation.navigate(screenName);
+    }
   };
 
   return (
