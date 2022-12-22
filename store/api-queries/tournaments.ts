@@ -5,7 +5,7 @@ import { GAME_STATUS } from '../../types';
 import { GET_ALL_SCORES, GET_MY_SCORES, MY_PICKS, PICKS, TOURNAMENTS } from '../endpoints';
 
 type GQueryParamsType = { roundId: string; status: GAME_STATUS; myScores?: boolean };
-type GPicksQueryParams = { tournamentId: string; roundId: string };
+type GPicksQueryParams = { tournamentId: string; roundId: string; groupId?: string };
 
 const tournamentApi = createApi({
   reducerPath: 'tournament',
@@ -23,7 +23,8 @@ const tournamentApi = createApi({
     }),
     createPick: builder.mutation({ query: body => ({ url: PICKS, method: 'POST', body }) }),
     getPicks: builder.query<any, GPicksQueryParams>({
-      query: ({ tournamentId, roundId }: GPicksQueryParams) => MY_PICKS(tournamentId, roundId),
+      query: ({ tournamentId, roundId, groupId }: GPicksQueryParams) =>
+        MY_PICKS(tournamentId, roundId, groupId),
     }),
   }),
 });

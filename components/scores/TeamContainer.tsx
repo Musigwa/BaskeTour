@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image } from 'react-native';
+import { Image, View } from 'react-native';
 import { H6, Horizontal } from '../../styles/styled-elements';
 import defLogo from '../../assets/images/defLogo.png';
 import { GAME_STATUS } from '../../types';
@@ -24,12 +24,9 @@ const TeamContainer = ({ team, currentTab }: TeamProps) => {
             resizeMode='contain'
           />
         ) : (
-          <MaterialIcons
-            style={{ width: 30, height: 30, borderRadius: 15, marginRight: 10 }}
-            name='no-photography'
-            size={24}
-            color='rgb(210, 212, 214)'
-          />
+          <View style={{ width: 30, height: 30, marginRight: 10 }}>
+            <MaterialIcons name='no-photography' size={28} color='#cdcfd1' />
+          </View>
         )}
         <H6 style={{ color: '#CBB7B7' }}>
           {`${team?.ranking}\u0020`}
