@@ -41,7 +41,7 @@ function SetupTypeScreen({ route }) {
           <Logo />
         </View>
         <View mt={100} w-100>
-          <Touchable mb={23} onPress={() => handleNext('Groups', { screen: 'CreateGroup' })}>
+          <Touchable mb={23} onPress={() => handleNext('CreateGroup')}>
             <Action bg='#4833B5'>
               <ActionIcons>
                 <BallIcon />
