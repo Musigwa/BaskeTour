@@ -24,10 +24,6 @@ export const GET_MY_SCORES = (roundId: string, status: GAME_STATUS) => {
 export const GET_ALL_SCORES = (roundId: string, status: GAME_STATUS) => {
   return `${TOURNAMENTS}/rounds/${roundId}/games?gameStatus=${status}`;
 };
-export const GET_LIVE_SCORES = (myScores = false) => {
-  return `${TOURNAMENTS}/live-scores?myScores=${myScores}`;
-};
-
 export const PICKS = '/picks';
 export const MY_PICKS = (tournamentId, roundId) =>
   `${PICKS}/my-picks?roundId=${roundId}&tournamentId=${tournamentId}`;

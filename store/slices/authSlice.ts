@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { authApi } from '../api-queries/auth-queries';
-import { fetchUsers } from '../api-thunks/auth-thunks';
 
 export interface IAuthState {
   token: string;
@@ -38,19 +37,6 @@ const authSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    builder.addCase(fetchUsers.pending, state => {
-      state.loading = true;
-    });
-
-    builder.addCase(fetchUsers.fulfilled, (state, action) => {
-      state.loading = false;
-    });
-
-    builder.addCase(fetchUsers.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload as string;
-    });
-
     builder.addMatcher(authApi.endpoints.signup.matchFulfilled, (state, { payload }) => {
       state.user = payload.data;
       state.token = payload.token;

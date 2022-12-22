@@ -1,6 +1,6 @@
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation, useTheme } from '@react-navigation/native';
-import { findIndex, isEqual } from 'lodash';
+import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, Image, ScrollView, View } from 'react-native';
@@ -27,12 +27,20 @@ const PicksScreen = () => {
   const { data: [tournament] = [] } = useGetTournamentsQuery();
   const round = useMemo(() => getActiveRound(tournament), [tournament]);
   const {
-    data: { data: prevPicks = [] },
-  } = useGetPicksQuery({ tournamentId: tournament?.id, roundId: round?.id });
-  const [picks, setPicks] = useState<Pick[]>(
-    prevPicks.map(({ teamId, eventId }) => ({ teamId, eventId }))
-  );
+    refetch: refetchPicks,
+    isLoading,
+    data: { data: prevPicks = [] } = {},
+  } = useGetPicksQuery({
+    tournamentId: tournament?.id,
+    roundId: round?.id,
+  });
   const selectedGroup = useAppSelector(({ groups }) => groups.selectedGroup);
+
+  const [picks, setPicks] = useState<Pick[]>(
+    prevPicks
+      .filter(p => selectedGroup.id === p.groupId)
+      .map(({ teamId, eventId }) => ({ teamId, eventId }))
+  );
   const navigation = useNavigation();
   const toast = useToast();
 
@@ -51,6 +59,16 @@ const PicksScreen = () => {
     }
   }, [isError, err]);
 
+  useEffect(() => {
+    refetchPicks();
+    if (!isLoading) {
+      const prev = prevPicks
+        .filter(({ groupId }) => selectedGroup.id === groupId)
+        .map(({ teamId, eventId }) => ({ teamId, eventId }));
+      setPicks(prev);
+    }
+  }, [selectedGroup?.id]);
+
   useLayoutEffect(() => {
     navigation.setParams({
       picks,
@@ -62,7 +80,7 @@ const PicksScreen = () => {
 
   const updatePicks = (pick: Pick) => {
     const temp = [...picks];
-    const peIdx = findIndex(picks, pick);
+    const peIdx = _.findIndex(picks, pick);
     const pickExists = peIdx !== -1;
     const geIdx = picks.findIndex(p => p.eventId === pick.eventId);
     const gameExists = geIdx !== -1;
@@ -74,7 +92,7 @@ const PicksScreen = () => {
     else if (picks.length === limit)
       return Alert.alert('Limit reached', 'Try deselecting some picks first!');
     else temp.push(pick);
-    if (!isEqual(picks, temp)) setPicks(temp);
+    if (!_.isEqual(picks, temp)) setPicks(temp);
   };
 
   return (
@@ -105,7 +123,7 @@ const PicksScreen = () => {
           <ScrollView showsVerticalScrollIndicator={false}>
             {games.map((event, idx) => {
               const { id, teamA, teamB, eventDate } = event;
-              const eventId = event.eventId ?? id;
+              const eventId = id ?? event.eventId;
               return (
                 <View key={idx}>
                   {[teamA, teamB].map(({ teamId, logo = defLogo, name, ranking }, i) => (
@@ -113,7 +131,7 @@ const PicksScreen = () => {
                       <Card
                         style={{
                           backgroundColor:
-                            findIndex(picks, { teamId, eventId }) !== -1
+                            _.findIndex(picks, { teamId, eventId }) !== -1
                               ? colors.primary
                               : colors.card,
                         }}
