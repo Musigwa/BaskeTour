@@ -44,8 +44,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   selected: {
-    height: 10,
-    width: 10,
+    height: '50%',
+    width: '50%',
     borderRadius: 5,
     backgroundColor: '#000',
   },

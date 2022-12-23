@@ -1,11 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components/native';
 import { H4, Horizontal, Paragraph, Separator } from '../../../../styles/styled-elements';
 
 import { useTheme } from '@react-navigation/native';
 import moment from 'moment';
-import { ActivityIndicator, ScrollView, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
+import ActionSheet, { ActionSheetRef } from 'react-native-actions-sheet';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useToast } from 'react-native-toast-notifications';
+import RadioButton from '../../../../components/common/RadioButton';
 import TopTab from '../../../../components/common/TopTab';
 import TeamContainer from '../../../../components/scores/TeamContainer';
 import {
@@ -19,20 +22,28 @@ const ScoresScreen = ({ route }) => {
   const statuses = {
     upcoming: 'STATUS_SCHEDULED',
     live: 'STATUS_IN_PROGRESS',
-    complete: 'STATUS_FINAL',
+    completed: 'STATUS_FINAL',
   };
 
+  const { bottom, top } = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const actionSheetRef = useRef<ActionSheetRef>(null);
   const { colors } = useTheme();
   const [currentTab, setCurrentTab] = useState<GAME_STATUS>('STATUS_SCHEDULED');
   const { params } = route;
+  const toast = useToast();
 
   const myScores = !!params?.scoreType?.toLowerCase().includes('my score');
   const options = currentTab === 'STATUS_IN_PROGRESS' ? { pollingInterval: 5000 } : undefined;
   const { data: [tournament] = [] } = useGetTournamentsQuery();
-  const toast = useToast();
 
-  const round = useMemo(() => getActiveRound(tournament), [tournament]);
-  const response = useGetGamesQuery({ roundId: round?.id, status: currentTab, myScores }, options);
+  const activeRound = useMemo(() => getActiveRound(tournament), [tournament]);
+  const [selectedRound, setSelectedRound] = useState(activeRound);
+
+  const response = useGetGamesQuery(
+    { roundId: selectedRound?.id, status: currentTab, myScores },
+    options
+  );
   const { data = {}, isFetching, refetch, isError, error: err } = response;
 
   useEffect(() => {
@@ -45,15 +56,45 @@ const ScoresScreen = ({ route }) => {
 
   const { data: games } = data;
 
-  useEffect(refetch, [currentTab, myScores]);
+  useEffect(refetch, [currentTab, myScores, selectedRound]);
 
   return (
     <Container>
       <RoundBanner source={require('../../../../assets/images/roundImage.png')}>
-        <InnerBanner>
-          <H3 style={{ color: colors.card }}>{round?.name}</H3>
-        </InnerBanner>
+        <Pressable
+          onPress={actionSheetRef.current?.show}
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(79, 20, 115, 0.74)',
+          }}
+        >
+          <H3 style={{ color: colors.card }}>{selectedRound?.name}</H3>
+        </Pressable>
       </RoundBanner>
+      <ActionSheet
+        ref={actionSheetRef}
+        containerStyle={{
+          paddingBottom: bottom,
+          padding: 20,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        {tournament?.rounds.map((r, idx) => (
+          <RadioButton
+            selected={selectedRound === r}
+            color={colors.primary}
+            text={r.name}
+            onClick={() => {
+              setSelectedRound(tournament?.rounds[idx]);
+              actionSheetRef.current?.hide();
+            }}
+          />
+        ))}
+      </ActionSheet>
       <TopTab
         tabs={Object.keys(statuses).map(title => ({ title }))}
         shadowVisible={false}
