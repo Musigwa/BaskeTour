@@ -50,7 +50,7 @@ const RankingScreen = () => {
           size='large'
           style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}
         />
-      ) : data.length ? (
+      ) : data?.length ? (
         <ScrollView
           showsVerticalScrollIndicator={false}
           style={{ marginBottom: 30 }}
