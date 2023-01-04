@@ -52,7 +52,11 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                   options={{ title: 'Settings' }}
                 />
                 <Stack.Screen name='Notifications' component={NotificationScreen} />
-                <Stack.Screen name='Profile' component={ProfileScreen} />
+                <Stack.Screen
+                  name='Profile'
+                  component={ProfileScreen}
+                  options={{ title: 'Profile Settings' }}
+                />
               </Stack.Group>
               {/* The groups entity screens */}
               <Stack.Group screenOptions={{ ...defaultScreenOptions, title: '' }}>

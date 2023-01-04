@@ -8,8 +8,9 @@ const KeyboardAvoid: FC<PropsWithChildren<{ children: ReactNode; style?: ViewSty
 }) => {
   return (
     <KeyboardAwareScrollView
-      style={[style, { width: '100%' }]}
+      style={[{ width: '100%' }]}
       contentInsetAdjustmentBehavior='always'
+      contentContainerStyle={style}
     >
       {children}
     </KeyboardAwareScrollView>
