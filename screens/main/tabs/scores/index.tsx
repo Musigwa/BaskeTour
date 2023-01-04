@@ -37,7 +37,9 @@ const ScoresScreen = ({ route }) => {
   const options = currentTab === 'STATUS_IN_PROGRESS' ? { pollingInterval: 5000 } : undefined;
   const { data: [tournament] = [] } = useGetTournamentsQuery();
 
-  const activeRound = useMemo(() => getActiveRound(tournament), [tournament]);
+  const activeRound =
+    useMemo(() => getActiveRound(tournament), [tournament]) ?? tournament?.rounds[0];
+
   const [selectedRound, setSelectedRound] = useState(activeRound);
 
   const response = useGetGamesQuery(
@@ -85,6 +87,7 @@ const ScoresScreen = ({ route }) => {
       >
         {tournament?.rounds.map((r, idx) => (
           <RadioButton
+            key={idx}
             selected={selectedRound === r}
             color={colors.primary}
             text={r.name}
@@ -107,7 +110,7 @@ const ScoresScreen = ({ route }) => {
           color={colors.primary}
           size='large'
         />
-      ) : games.length ? (
+      ) : games && games?.length ? (
         <ScrollView contentContainerStyle={{ padding: 20, paddingTop: 0 }}>
           {games.map(({ teamA, teamB, eventDate, gameClock }, idx) => {
             return (

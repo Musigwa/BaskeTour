@@ -6,7 +6,6 @@ import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, Image, ScrollView, View } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
 import styled from 'styled-components/native';
-import defLogo from '../../../../assets/images/defLogo.png';
 import CountDown from '../../../../components/common/CountDown';
 import GroupSelector from '../../../../components/common/GroupSelector';
 import TopTab from '../../../../components/common/TopTab';
@@ -17,6 +16,7 @@ import {
   useGetTournamentsQuery,
 } from '../../../../store/api-queries/tournaments';
 import { H2, H4, Horizontal, Separator } from '../../../../styles/styled-elements';
+import { GAME_STATUS } from '../../../../types';
 import { getActiveRound } from '../../../../utils/methods';
 
 type Pick = { eventId: string; teamId: string };
@@ -25,7 +25,7 @@ const statuses = [{ title: 'East' }, { title: 'South' }, { title: 'Midwest' }, {
 const PicksScreen = () => {
   const { colors } = useTheme();
   const { data: [tournament] = [] } = useGetTournamentsQuery();
-  const round = useMemo(() => getActiveRound(tournament), [tournament]);
+  const round = useMemo(() => getActiveRound(tournament), [tournament]) ?? tournament?.rounds[0];
   const selectedGroup = useAppSelector(({ groups }) => groups.selectedGroup);
 
   const resp = useGetPicksQuery({
@@ -43,11 +43,20 @@ const PicksScreen = () => {
   const navigation = useNavigation();
   const toast = useToast();
 
-  const response = useGetGamesQuery(
+  const {
+    data: { data: scheduled = [] } = {},
+    isFetching,
+    isError,
+    error: err,
+    refetch: refetchGames,
+  } = useGetGamesQuery(
     { roundId: round?.id, status: 'STATUS_SCHEDULED' },
     { refetchOnReconnect: true }
   );
-  const { data: { data: games = [] } = {}, isFetching, isError, error: err } = response;
+  const { data: { data: completed = [] } = {} } = useGetGamesQuery(
+    { roundId: round?.id, status: 'STATUS_FINAL' },
+    { refetchOnReconnect: true }
+  );
   const [limit] = useState(round?.allowedPicks ?? 3);
 
   useEffect(() => {
@@ -58,15 +67,15 @@ const PicksScreen = () => {
     }
   }, [isError, err]);
 
+  const games = scheduled && scheduled.length ? scheduled : completed ?? [];
+
   useEffect(() => {
     refetchPicks();
-    if (!isLoading) {
-      const prev = prevPicks
-        .filter(({ groupId }) => selectedGroup.id === groupId)
-        .map(({ teamId, eventId }) => ({ teamId, eventId }));
-      setPicks(prev);
-    }
-  }, [selectedGroup?.id, isSuccess]);
+    const prev = prevPicks
+      .filter(({ groupId }) => selectedGroup.id === groupId)
+      .map(({ teamId, eventId }) => ({ teamId, eventId }));
+    setPicks(prev);
+  }, [selectedGroup?.id]);
 
   useLayoutEffect(() => {
     navigation.setParams({
@@ -106,7 +115,7 @@ const PicksScreen = () => {
           size='large'
           style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}
         />
-      ) : games.length ? (
+      ) : games && games?.length ? (
         <>
           <View style={{ padding: 15 }}>
             <Headline style={{ color: colors.primary }}>Time remaining to make picks</Headline>
@@ -162,7 +171,9 @@ const PicksScreen = () => {
                             </View>
                           </View>
                         </Horizontal>
-                        <AntDesign name='checksquare' size={24} color={colors.background} />
+                        {_.findIndex(prevPicks, { teamId, eventId }) !== -1 ? (
+                          <AntDesign name='checksquare' size={24} color={colors.background} />
+                        ) : null}
                       </Card>
                       {!i ? (
                         <BoldText style={{ fontSize: 12, textAlign: 'center' }}>VS</BoldText>
