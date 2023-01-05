@@ -55,3 +55,17 @@ export const getActiveRound = tournament => {
   }
   return {};
 };
+
+/**
+ * This function compares two objects and returns
+ * items that are only present in the second object.
+ * @author Musigwa Pacifique
+ * @param {*} o1
+ * @param {*} o2
+ * @return {*}
+ */
+export const objDiff = (o1, o2) =>
+  Object.keys(o2).reduce(
+    (diff, key) => (o1[key] === o2[key] ? diff : { ...diff, [key]: o2[key] }),
+    {}
+  );

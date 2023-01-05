@@ -1,19 +1,17 @@
-import React, { useState } from "react";
-import styled from "styled-components/native";
-import * as ImagePicker from "expo-image-picker";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import CameraIcon from "../assets/svgs/CameraIcon";
+import * as ImagePicker from 'expo-image-picker';
+import React from 'react';
+import styled from 'styled-components/native';
 
-import { Paragraph, View } from "../styles/styled-elements";
-import { TouchableOpacity } from "react-native";
+import { MaterialIcons } from '@expo/vector-icons';
+import { TouchableOpacity, ViewStyle } from 'react-native';
 
 interface Props {
   onSelect: Function;
+  style?: ViewStyle;
+  imageUrl?: string;
 }
 
-const PhotoUploader = ({ onSelect }: Props) => {
-  const [image, setImage] = useState("");
-
+const PhotoUploader = ({ onSelect, style, imageUrl }: Props) => {
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -23,18 +21,19 @@ const PhotoUploader = ({ onSelect }: Props) => {
       quality: 1,
     });
 
-    console.log(result);
-
-    if (!result.cancelled) {
-      setImage(result.uri);
-      onSelect(result);
-    }
+    if (!result.cancelled) onSelect(result);
   };
 
   return (
-    <TouchableOpacity onPress={pickImage}>
-      <Wrapper source={{ uri: image }}>
-        {!image ? <CameraIcon /> : null}
+    <TouchableOpacity onPress={pickImage} activeOpacity={0.8}>
+      <Wrapper style={style} source={{ uri: imageUrl }}>
+        {!imageUrl ? (
+          <MaterialIcons
+            name='add-a-photo'
+            size={(typeof style?.width === 'number' && style.width / 3) || 54}
+            color='#4F1473'
+          />
+        ) : null}
       </Wrapper>
     </TouchableOpacity>
   );
