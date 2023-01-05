@@ -1,46 +1,47 @@
-import {
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  View,
-  TextInput,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
-import React, { useState } from 'react';
-import { H4, H5, H6, Separator } from '../../../styles/styled-elements';
 import { useTheme } from '@react-navigation/native';
-import { useAppSelector } from '../../../hooks/useStore';
-import KeyboardAvoid from '../../../components/common/KeyboardAvoid';
-import { useUploadProfileDetailsMutation } from '../../../store/api-queries/auth-queries';
 import _ from 'lodash';
+import React, { useState } from 'react';
+import { ActivityIndicator, Pressable, TextInput, TouchableOpacity, View } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
+import PhotoUploader from '../../../components/PhotoUploader';
+import KeyboardAvoid from '../../../components/common/KeyboardAvoid';
+import { useAppSelector } from '../../../hooks/useStore';
+import { useUploadProfileDetailsMutation } from '../../../store/api-queries/auth-queries';
+import { H4, H5, H6, Horizontal, Separator } from '../../../styles/styled-elements';
+import { createFormData, objDiff } from '../../../utils/methods';
 
 const ProfileScreen = () => {
   const { colors } = useTheme();
   const toast = useToast();
   const { user } = useAppSelector(state => state.auth);
   const [uploadDetails, { isLoading }] = useUploadProfileDetailsMutation();
-  const [newUser, setNewUser] = useState({});
-  const selectable = ['email', 'firstName', 'lastName'];
+  const [newUser, setNewUser] = useState(user);
+
+  const selectable = ['email', 'firstName', 'lastName', 'profilePic'];
   const newProfile = _.pick(newUser, selectable);
   const prevProfile = _.pick(user, selectable);
 
   const disabled = _.isEqual(newProfile, prevProfile) || isLoading;
 
   const handleUpload = async () => {
-    const { status } = await uploadDetails({ ...prevProfile, ...newProfile }).unwrap();
+    const difference = objDiff(user, newUser);
+    const data = difference?.photo
+      ? createFormData(difference?.photo, _.omit(difference, ['profilePic', 'photo']))
+      : difference;
+    const { status } = await uploadDetails(data).unwrap();
     if (status === 200) {
-      toast.show('Profile updated successfully!', {
-        type: 'success',
-        placement: 'center',
-        animationType: 'zoom-in',
-      });
+      setNewUser(user);
+      const message = 'Profile updated successfully!';
+      toast.show(message, { type: 'success', placement: 'center', animationType: 'zoom-in' });
     }
   };
 
   const handleInputChange = args => {
     setNewUser(state => ({ ...state, ...args }));
+  };
+
+  const cancelPhoto = () => {
+    setNewUser(state => ({ ..._.omit(state, ['photo']), profilePic: user.profilePic }));
   };
 
   return (
@@ -53,28 +54,18 @@ const ProfileScreen = () => {
       }}
     >
       <View style={{ flex: 0.65, justifyContent: 'space-between' }}>
-        <TouchableOpacity
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}
-          activeOpacity={0.8}
-        >
-          <Image
-            source={{ uri: user?.profilePic }}
-            style={{
-              backgroundColor: 'blue',
-              width: 96,
-              height: 96,
-              borderRadius: 48,
-              marginRight: 15,
-            }}
-            resizeMode='stretch'
+        <Horizontal style={{ justifyContent: 'flex-start' }}>
+          <PhotoUploader
+            imageUrl={newUser.profilePic}
+            onSelect={result => handleInputChange({ profilePic: result.uri, photo: result })}
+            style={{ width: 96, height: 96, borderRadius: 48, marginRight: 15 }}
           />
-          <H5 style={{ color: colors.primary }}>Edit photo</H5>
-        </TouchableOpacity>
+          <Pressable onPress={newUser.photo ? cancelPhoto : null}>
+            <H5 style={{ color: colors.primary }}>{newUser.photo ? 'Discard' : 'Edit photo'}</H5>
+          </Pressable>
+        </Horizontal>
         <View style={{ flex: 0.2, justifyContent: 'space-evenly' }}>
-          <H6 style={{ color: 'rgba(144, 160, 175, 1)' }}>First Name</H6>
+          <H6 style={{ color: colors.gray }}>First Name</H6>
           <TextInput
             defaultValue={user?.firstName}
             underlineColorAndroid='transparent'
@@ -83,7 +74,7 @@ const ProfileScreen = () => {
           <Separator size='sm' />
         </View>
         <View style={{ flex: 0.2, justifyContent: 'space-evenly' }}>
-          <H6 style={{ color: 'rgba(144, 160, 175, 1)' }}>Last Name</H6>
+          <H6 style={{ color: colors.gray }}>Last Name</H6>
           <TextInput
             defaultValue={user?.lastName}
             underlineColorAndroid='transparent'
@@ -92,7 +83,7 @@ const ProfileScreen = () => {
           <Separator size='sm' />
         </View>
         <View style={{ flex: 0.2, justifyContent: 'space-evenly' }}>
-          <H6 style={{ color: 'rgba(144, 160, 175, 1)' }}>Email</H6>
+          <H6 style={{ color: colors.gray }}>Email</H6>
           <TextInput
             defaultValue={user?.email}
             underlineColorAndroid='transparent'
@@ -106,7 +97,7 @@ const ProfileScreen = () => {
       </View>
       <TouchableOpacity
         style={{
-          backgroundColor: disabled ? 'whitesmoke' : colors.primary,
+          backgroundColor: disabled ? colors.disabled : colors.primary,
           paddingVertical: 17,
           justifyContent: 'center',
           alignItems: 'center',
@@ -127,5 +118,3 @@ const ProfileScreen = () => {
 };
 
 export default ProfileScreen;
-
-const styles = StyleSheet.create({});

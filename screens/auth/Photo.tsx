@@ -1,33 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import styled from 'styled-components/native';
 import { Formik } from 'formik';
-import { createFormData } from '../../utils/methods';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components/native';
 import * as Yup from 'yup';
+import { createFormData } from '../../utils/methods';
 
-import { useAppDispatch, useAppSelector } from '../../hooks/useStore';
+import { useAppDispatch } from '../../hooks/useStore';
 import { useUploadProfileDetailsMutation } from '../../store/api-queries/auth-queries';
 
 import IndicatorHeader from '../../components/Indicator';
 import PhotoUploader from '../../components/PhotoUploader';
-import Input from '../../components/common/Input';
 import Button from '../../components/common/Buttons';
+import Input from '../../components/common/Input';
 
-import { AuthScreenProps } from '../../types';
-
-import { Paragraph, View } from '../../styles/styled-elements';
 import { Alert, SafeAreaView } from 'react-native';
-import { hasLoggedIn } from '../../store/slices/authSlice';
-import { useNavigation } from '@react-navigation/native';
 import { useToast } from 'react-native-toast-notifications';
 import KeyboardAvoid from '../../components/common/KeyboardAvoid';
+import { hasLoggedIn } from '../../store/slices/authSlice';
+import { Paragraph, View } from '../../styles/styled-elements';
 
 function PhotoScreen() {
   const [photo, setPhoto] = useState<any>();
-  const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
-  const { token, user, completedOnboarding } = useAppSelector(state => state.auth);
-  const navigation = useNavigation();
   const [uploadDetails, { isLoading, error, isError }] = useUploadProfileDetailsMutation();
 
   const onImageSelect = (image: any) => {
@@ -62,7 +55,7 @@ function PhotoScreen() {
         </View>
 
         <View w-100 items-center>
-          <PhotoUploader onSelect={onImageSelect} />
+          <PhotoUploader onSelect={onImageSelect} imageUrl={photo} />
           <Paragraph mt={18} color='#4F1473'>
             Add photo
           </Paragraph>
