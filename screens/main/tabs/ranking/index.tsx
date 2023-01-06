@@ -21,7 +21,10 @@ const RankingScreen = () => {
   const { colors } = useTheme();
 
   const { data: [tournament] = [], isLoading } = useGetTournamentsQuery();
-  const selectedGroup = useAppSelector(({ groups }) => groups.selectedGroup);
+  const { selectedGroup, user } = useAppSelector(({ groups, auth }) => ({
+    selectedGroup: groups.selectedGroup,
+    user: auth.user,
+  }));
   const rounds = tournament?.rounds?.map(r => ({ title: r.name, ...r }));
   const [round, setRound] = useState<any>(rounds[0]);
 
@@ -62,7 +65,7 @@ const RankingScreen = () => {
               <TouchableOpacity
                 key={idx}
                 activeOpacity={0.8}
-                style={{ backgroundColor: 0 === idx && colors.pink }}
+                style={{ backgroundColor: player?.id === user?.id && colors.pink }}
               >
                 <View style={{ padding: 15 }}>
                   <Horizontal>
