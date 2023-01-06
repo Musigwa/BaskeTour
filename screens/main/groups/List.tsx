@@ -49,7 +49,11 @@ export const GroupListScreen = ({ navigation }) => {
             const { length } = group.players;
             const lastIdx = length < showCount ? length : showCount;
             return (
-              <Pressable style={styles.card} key={idx}>
+              <Pressable
+                style={styles.card}
+                key={idx}
+                onPress={() => navigation.navigate('GroupDetails', { group })}
+              >
                 <H6 style={{ color: group.availableSpots ? colors.gray : colors.primary }}>
                   {`${group.players.length} members${
                     !group.availableSpots ? `, ${group.availableSpots} available spots` : ''
