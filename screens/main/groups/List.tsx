@@ -43,85 +43,71 @@ export const GroupListScreen = ({ navigation }) => {
         />
         {isFetching ? <ActivityIndicator size='small' color={colors.gray} /> : null}
       </Horizontal>
-
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {groups && groups.length
-          ? groups?.map((group, idx) => {
-              const showCount = 5;
-              const { length } = group.players;
-              const lastIdx = length < showCount ? length : showCount;
-              return (
-                <Pressable
-                  style={styles.card}
-                  key={idx}
-                  onPress={() => navigation.navigate('GroupDetails', { group })}
-                >
-                  <H6 style={{ color: group.availableSpots ? colors.gray : colors.primary }}>
-                    {`${group.players.length} member${group.players.length > 1 ? 's' : ''}${
-                      !group.availableSpots ? `, ${group.availableSpots} available spots` : ''
-                    }`}
-                  </H6>
-                  <Horizontal>
-                    <H3>{group.groupName}</H3>
-                    <Entypo name='chevron-small-right' size={24} color={'black'} />
-                  </Horizontal>
-                  <Horizontal style={{ justifyContent: 'flex-start', marginTop: 5 }}>
-                    {group.players.slice(0, showCount).map((player, idx) => {
-                      return (
-                        <View
-                          style={{
-                            borderRadius: 30,
-                            backgroundColor: 'white',
-                            padding: 2,
-                            left: -(20 * idx),
-                          }}
-                          key={idx}
-                        >
-                          {player.profilePic ? (
-                            <Image
-                              source={{ uri: player.profilePic }}
-                              style={[styles.image, { backgroundColor: colors.gray }]}
-                              resizeMode='cover'
-                            />
-                          ) : (
-                            <View style={[styles.noImage, { borderColor: colors.gray }]}>
-                              <MaterialIcons name='no-photography' size={24} color={colors.gray} />
-                            </View>
-                          )}
-                        </View>
-                      );
-                    })}
-                    {lastIdx !== length ? (
+      {groups && groups.length
+        ? groups?.map((group, idx) => {
+            const showCount = 5;
+            const { length } = group.players;
+            const lastIdx = length < showCount ? length : showCount;
+            return (
+              <Pressable style={styles.card} key={idx}>
+                <H6 style={{ color: group.availableSpots ? colors.gray : colors.primary }}>
+                  {`${group.players.length} members${
+                    !group.availableSpots ? `, ${group.availableSpots} available spots` : ''
+                  }`}
+                </H6>
+                <Horizontal>
+                  <H3>{group.groupName}</H3>
+                  <Entypo name='chevron-small-right' size={24} color={'black'} />
+                </Horizontal>
+                <Horizontal style={{ justifyContent: 'flex-start', marginTop: 5 }}>
+                  {group.players.slice(0, showCount).map((player, idx) => {
+                    return (
                       <View
-                        style={[
-                          styles.extra,
-                          { backgroundColor: colors.gray, left: -(20 * lastIdx) },
-                        ]}
+                        style={{
+                          borderRadius: 30,
+                          backgroundColor: 'white',
+                          padding: 2,
+                          left: -(20 * idx),
+                        }}
+                        key={idx}
                       >
-                        <H3 style={{ color: 'white', fontWeight: 'bold' }}>
-                          +{length - showCount}
-                        </H3>
+                        <Image
+                          source={{ uri: 'https://loremflickr.com/640/480' }}
+                          // Todo: Replace this url with the player's profilePic
+                          style={{ width: 50, height: 50, borderRadius: 25 }}
+                          resizeMode='cover'
+                        />
                       </View>
-                    ) : null}
-                  </Horizontal>
-                </Pressable>
-              );
-            })
-          : null}
-        <View style={{ marginTop: 150 }}>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: colors.primary }]}
-            activeOpacity={0.9}
-            onPress={() => navigation.navigate('CreateGroup')}
-          >
-            <H3 style={{ color: 'white' }}>Create Group</H3>
-          </TouchableOpacity>
-          <H5>
-            The first 5 players in your group are provided for free. If more players want to join,
-            the Group Admin can purchase additional spots for $2 per player.
-          </H5>
-        </View>
-      </ScrollView>
+                    );
+                  })}
+                  {lastIdx !== length ? (
+                    <View
+                      style={[
+                        styles.extra,
+                        { backgroundColor: colors.gray, left: -(20 * lastIdx) },
+                      ]}
+                    >
+                      <H3 style={{ color: 'white', fontWeight: 'bold' }}>+{length - showCount}</H3>
+                    </View>
+                  ) : null}
+                </Horizontal>
+              </Pressable>
+            );
+          })
+        : null}
+      <View style={{ marginTop: 150 }}>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: colors.primary }]}
+          activeOpacity={0.9}
+          onPress={() => navigation.navigate('CreateGroup')}
+        >
+          <H3 style={{ color: 'white' }}>Create Group</H3>
+        </TouchableOpacity>
+        <H5>
+          The first 5 players in your group are provided for free. If more players want to join, the
+          Group Admin can purchase additional spots for $2 per player.
+        </H5>
+      </View>
     </View>
   );
 };
@@ -137,13 +123,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(241, 243, 245, 1)',
     paddingHorizontal: 15,
     borderRadius: 6,
-    marginBottom: 15,
   },
   card: {
     width: '100%',
     borderRadius: 4,
     backgroundColor: 'white',
-    marginBottom: 31,
+    marginTop: 31,
     shadowColor: 'rgba(35, 20, 115, 0.08)',
     shadowOffset: {
       width: 0,
@@ -169,19 +154,6 @@ const styles = StyleSheet.create({
     padding: 2,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  image: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-  noImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    borderWidth: StyleSheet.hairlineWidth,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
 
