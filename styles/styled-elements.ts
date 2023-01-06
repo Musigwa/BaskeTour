@@ -93,13 +93,13 @@ export const Horizontal = styled.View`
 export const Separator: React.FC<IntStyleProps & { size?: 'lg' | 'sm' | 'md' }> = styled.View`
   width: 100%;
   border: ${props => {
-    let thickness = 1;
+    let thickness = 0.6;
     switch (props.size) {
       case 'sm':
         thickness = StyleSheet.hairlineWidth;
         break;
       case 'md':
-        thickness = 1;
+        thickness = 0.6;
         break;
       case 'lg':
         thickness = 1.5;

@@ -1,5 +1,5 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { ColorSchemeName } from 'react-native';
+import { NavigationContainer, useTheme } from '@react-navigation/native';
+import { ColorSchemeName, Alert, View } from 'react-native';
 
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -24,12 +24,29 @@ import NotificationScreen from '../screens/main/settings/Notification';
 import ProfileScreen from '../screens/main/settings/Profile';
 import { AppDarkTheme, AppDefaultTheme } from '../styles/theme';
 import BottomTabNavigator from './main/BottomTab';
+import GroupListScreen from '../screens/main/groups/List';
+import GroupDetailsScreen from '../screens/main/groups/Details';
+import { MaterialIcons } from '@expo/vector-icons';
+import { eliipsizeText } from '../utils/methods';
 
 const Stack = createStackNavigator();
 
 const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
   const { isLoggedIn } = useAppSelector(state => state.auth);
   const isOnboarded = useAppSelector(({ auth }) => auth.completedOnboarding);
+  const { colors } = useTheme();
+  const handleDelete = group => {
+    Alert.alert(
+      'Confirm your choice',
+      `Are you sure you want to delete the "${group.groupName}" group?`,
+      [
+        { text: 'Cancel', style: 'cancel', onPress: () => {} },
+        { text: 'Delete', style: 'destructive' },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
     <ToastProvider textStyle={{ fontSize: 18 }}>
       <NavigationContainer
@@ -64,6 +81,29 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                 <Stack.Screen name='JoinGroup' component={JoinGroupScreen} />
                 <Stack.Screen name='ShareGroup' component={ShareGroupScreen} />
                 <Stack.Screen name='SuccessGroup' component={JoinGroupSuccessScreen} />
+                <Stack.Screen
+                  name='Groups'
+                  component={GroupListScreen}
+                  options={{ title: 'Groups' }}
+                />
+                <Stack.Screen
+                  name='GroupDetails'
+                  component={GroupDetailsScreen}
+                  options={({ route: { params } }) => ({
+                    title: eliipsizeText(params?.group?.groupName, 18),
+                    headerRight: () => (
+                      <View style={{ alignItems: 'center', justifyContent: 'center', padding: 7 }}>
+                        <MaterialIcons
+                          name='delete'
+                          size={24}
+                          color='black'
+                          onPress={() => handleDelete(params?.group)}
+                        />
+                      </View>
+                    ),
+                    headerRightContainerStyle: { paddingRight: 5 },
+                  })}
+                />
                 <Stack.Screen
                   name='SearchGroup'
                   component={SearchGroup}

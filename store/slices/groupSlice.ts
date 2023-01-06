@@ -5,6 +5,7 @@ import { groupApi } from '../api-queries/group-queries';
 
 export interface IGroupState {
   groups: Array<IGroup>;
+  myGroups: Array<IGroup>;
   loading: boolean;
   error: unknown | Error;
   newGroup: IGroup;
@@ -19,6 +20,7 @@ export interface IGroupState {
 
 const initialState: IGroupState = {
   groups: [],
+  myGroups: [],
   loading: false,
   error: null,
   newGroup: {} as IGroup,
@@ -42,6 +44,10 @@ const groupSlice = createSlice({
   extraReducers: builder => {
     builder.addMatcher(groupApi.endpoints.getGroups.matchFulfilled, (state, { payload }) => {
       state.groups = payload.data;
+    });
+
+    builder.addMatcher(groupApi.endpoints.getMyGroups.matchFulfilled, (state, { payload }) => {
+      state.myGroups = payload.data;
     });
 
     builder.addMatcher(groupApi.endpoints.joinGroup.matchFulfilled, (state, { payload }) => {

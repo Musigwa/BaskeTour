@@ -69,3 +69,13 @@ export const objDiff = (o1, o2) =>
     (diff, key) => (o1[key] === o2[key] ? diff : { ...diff, [key]: o2[key] }),
     {}
   );
+
+/**
+ * This function slices a longer than (n) text and padd the ellipsize dots
+ * @author Musigwa Pacifique
+ * @param {string} text
+ * @param {number} n
+ * @returns {string}
+ */
+export const eliipsizeText = (text: string, n: number) =>
+  text.length > n ? text.slice(0, n - 1) + '\u2026' : text;

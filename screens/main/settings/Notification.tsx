@@ -19,9 +19,8 @@ const NotificationScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, paddingHorizontal: 24 }}>
-      <View style={{ paddingVertical: 10 }} />
-      <Separator />
+    <View style={{ flex: 1, marginHorizontal: 24 }}>
+      <Separator style={{ paddingVertical: 10 }} />
       {Object.keys(options).map((op, idx) => {
         return (
           <View key={idx}>
