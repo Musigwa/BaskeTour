@@ -1,5 +1,5 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { ColorSchemeName, Alert } from 'react-native';
+import { NavigationContainer, useTheme } from '@react-navigation/native';
+import { ColorSchemeName, Alert, View } from 'react-native';
 
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -27,12 +27,14 @@ import BottomTabNavigator from './main/BottomTab';
 import GroupListScreen from '../screens/main/groups/List';
 import GroupDetailsScreen from '../screens/main/groups/Details';
 import { MaterialIcons } from '@expo/vector-icons';
+import { eliipsizeText } from '../utils/methods';
 
 const Stack = createStackNavigator();
 
 const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
   const { isLoggedIn } = useAppSelector(state => state.auth);
   const isOnboarded = useAppSelector(({ auth }) => auth.completedOnboarding);
+  const { colors } = useTheme();
   const handleDelete = group => {
     Alert.alert(
       'Confirm your choice',
@@ -88,15 +90,18 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                   name='GroupDetails'
                   component={GroupDetailsScreen}
                   options={({ route: { params } }) => ({
-                    title: params?.group?.groupName,
+                    title: eliipsizeText(params?.group?.groupName, 18),
                     headerRight: () => (
-                      <MaterialIcons
-                        name='delete'
-                        size={24}
-                        color='black'
-                        onPress={() => handleDelete(params?.group)}
-                      />
+                      <View style={{ alignItems: 'center', justifyContent: 'center', padding: 7 }}>
+                        <MaterialIcons
+                          name='delete'
+                          size={24}
+                          color='black'
+                          onPress={() => handleDelete(params?.group)}
+                        />
+                      </View>
                     ),
+                    headerRightContainerStyle: { paddingRight: 5 },
                   })}
                 />
                 <Stack.Screen
