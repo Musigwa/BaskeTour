@@ -1,7 +1,7 @@
-import { Entypo, Feather, MaterialIcons } from '@expo/vector-icons';
+import { Entypo, Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import _ from 'lodash';
-import React, { FC, PropsWithChildren, useEffect, useMemo, useState } from 'react';
+import React, { FC, PropsWithChildren, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -22,6 +22,8 @@ export const SearchPaginated: FC<
   const { colors } = useTheme();
   const { id: userId } = useAppSelector(state => state.auth.user);
   const [searchQuery, setText] = useState<string>('');
+  const searchInput = useRef(null);
+
   const {
     isFetching,
     refetch,
@@ -34,23 +36,30 @@ export const SearchPaginated: FC<
     return handleDebTextChange.cancel;
   }, [searchQuery]);
 
+  const clearText = () => {
+    setText('');
+    searchInput.current?.clear?.();
+  };
+
   return (
     <View style={styles.container}>
       {searchable ? (
         <Horizontal style={styles.inputWrapper}>
           <Feather name='search' size={20} color='black' />
           <TextInput
-            style={[styles.input, { width: isFetching ? '90%' : '97%' }]}
+            ref={searchInput}
+            style={[styles.input, { width: '82%' }]}
             onChangeText={handleDebTextChange}
             placeholder='Type to search...'
             autoCapitalize='none'
             autoComplete='off'
             autoCorrect={false}
-            clearButtonMode={isFetching ? 'never' : 'always'}
             returnKeyType='search'
           />
           {isFetching ? (
             <ActivityIndicator size='small' color={colors.gray} />
+          ) : searchQuery.length ? (
+            <Ionicons name='close' size={20} color='gray' onPress={clearText} />
           ) : (
             <View style={{ width: 20 }} />
           )}
@@ -143,12 +152,12 @@ const styles = StyleSheet.create({
   inputWrapper: {
     height: 48,
     backgroundColor: 'rgba(241, 243, 245, 1)',
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
     borderRadius: 6,
     marginBottom: 15,
     width: '100%',
   },
-  input: { height: '100%', paddingLeft: 10, fontSize: 16, fontFamily: 'Poppins_500Medium' },
+  input: { height: '100%', fontSize: 16, fontFamily: 'Poppins_500Medium' },
   card: {
     width: '100%',
     borderRadius: 4,

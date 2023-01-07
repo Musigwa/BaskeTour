@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components/native';
 import * as Yup from 'yup';
 
@@ -11,28 +11,22 @@ import FacebookLogo from '../../assets/svgs/FacebookLogo';
 import Button from '../../components/common/Buttons';
 import Input from '../../components/common/Input';
 
-import { Alert, Pressable } from 'react-native';
+import { Pressable } from 'react-native';
 import { Paragraph, View } from '../../styles/styled-elements';
-import { AuthScreenProps } from '../../types';
 
 import { useToast } from 'react-native-toast-notifications';
+import { ToastOptions } from 'react-native-toast-notifications/lib/typescript/toast';
 import { useAppDispatch } from '../../hooks/useStore';
 import { useLoginMutation } from '../../store/api-queries/auth-queries';
 import { hasLoggedIn } from '../../store/slices/authSlice';
 
-function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
+function LoginScreen({ navigation }) {
   const [isChecked, setChecked] = useState(false);
   const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
 
-  const [loginUser, { isLoading, isError, error }] = useLoginMutation();
+  const [loginUser, { isLoading, data }] = useLoginMutation();
   const toast = useToast();
-  useEffect(() => {
-    if (isError) {
-      const { message } = error?.data;
-      toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
-    }
-  }, [isError, error]);
 
   const handleGetStarted = () => {
     navigation.push('Photo');
@@ -41,12 +35,15 @@ function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   const handleSubmit = async ({ email: accountIdentifier, password }) => {
     try {
       const res = await loginUser({ accountIdentifier, password }).unwrap();
-      console.log('RES---', res);
-      if (res.status === 200) {
-        dispatch(hasLoggedIn(true));
-      } else Alert.alert('Something went wrong');
-    } catch (error) {
-      console.log('error', error);
+      if (res.status === 200) dispatch(hasLoggedIn(true));
+      else throw new Error(res);
+    } catch ({ data }) {
+      const options: ToastOptions = {
+        type: 'danger',
+        placement: 'center',
+        animationType: 'zoom-in',
+      };
+      toast.show(data?.message, options);
     }
   };
 
