@@ -47,7 +47,9 @@ const groupSlice = createSlice({
     });
 
     builder.addMatcher(groupApi.endpoints.getMyGroups.matchFulfilled, (state, { payload }) => {
-      state.myGroups = payload.data;
+      const { page } = payload.meta;
+      if (page === 1) state.myGroups = payload.data;
+      else state.myGroups = [...state.myGroups, ...payload.data];
     });
 
     builder.addMatcher(groupApi.endpoints.joinGroup.matchFulfilled, (state, { payload }) => {

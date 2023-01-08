@@ -79,7 +79,7 @@ export const GroupListScreen = ({ navigation }) => {
   return (
     <SearchPaginated
       fetchQuery={useGetMyGroupsQuery}
-      params={{ userId }}
+      params={{ userId, perPage: 5 }}
       ListFooterComponent={listFooterComponent({ navigation, colors })}
       renderItem={args => renderItem({ ...args, navigation, colors })}
     />

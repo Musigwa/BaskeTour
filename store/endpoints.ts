@@ -9,8 +9,8 @@ export const CURRENT_USER = '/users/me';
 export const GROUPS = '/groups';
 export const SINGLE_GROUP = groupId => `${GROUPS}/${groupId}`;
 export const GET_GROUPS = (groupName = '') => `${GROUPS}?searchQuery=${groupName}`;
-export const MY_GROUPS = (groupName = '', userId) =>
-  `${GROUPS}?searchQuery=${groupName}&userId=${userId}`;
+export const MY_GROUPS = (groupName = '', userId, page, perPage) =>
+  `${GROUPS}?searchQuery=${groupName}&userId=${userId}&page=${page}&perPage=${perPage}`;
 export const GROUP_RANKING = (groupId, roundId) =>
   `${SINGLE_GROUP(groupId)}/leader-board?roundId=${roundId}`;
 export const JOIN_GROUP = (groupId: string) => `${SINGLE_GROUP(groupId)}/join-group`;

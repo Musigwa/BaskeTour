@@ -5,6 +5,7 @@ import React, {
   FC,
   PropsWithChildren,
   ReactElement,
+  ReactNode,
   useEffect,
   useMemo,
   useRef,
@@ -18,13 +19,14 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { H5, Horizontal } from '../../../styles/styled-elements';
+import { useAppSelector } from '../../../hooks/useStore';
+import { H4, H5, Horizontal } from '../../../styles/styled-elements';
 
 type SearchPaginatedProps = {
   searchable?: boolean;
   fetchQuery: Function;
-  params: { [key: string]: any };
-  ListFooterComponent: ReactElement;
+  params?: { [key: string]: any };
+  ListFooterComponent: ReactNode;
   ListEmptyComponent?: ReactElement;
   renderItem: ListRenderItem<any>;
 };
@@ -39,19 +41,37 @@ export const SearchPaginated: FC<PropsWithChildren<SearchPaginatedProps>> = ({
 }) => {
   const { colors } = useTheme();
   const [searchQuery, setText] = useState<string>('');
+  const [page, setPage] = useState<number>(1);
   const searchInput = useRef(null);
 
-  const { isFetching, refetch, data: { data = [] } = {} } = fetchQuery({ searchQuery, ...params });
-  const handleDebTextChange = useMemo(() => _.debounce(setText, 300), []);
+  const debCallback = text => {
+    setPage(1);
+    setText(text);
+  };
+  const handleDebTextChange = useMemo(() => _.debounce(debCallback, 300), []);
+
+  const {
+    isFetching,
+    refetch,
+    data: { meta = {} } = {},
+  } = fetchQuery({ searchQuery, page, perPage: params?.perPage ?? 5, ...params });
+  const list = useAppSelector(({ groups }) => groups.myGroups);
+  const isListEnd = useMemo(() => meta.page === meta.totalPages, [meta.page, meta.totalPages]);
 
   useEffect(() => {
     refetch();
     return handleDebTextChange.cancel;
-  }, [searchQuery]);
+  }, [searchQuery, page]);
 
   const clearText = () => {
     setText('');
     searchInput.current?.clear?.();
+  };
+
+  const fetchMoreData = () => {
+    if (!isListEnd && !isFetching) {
+      setPage(page + 1);
+    }
   };
 
   return (
@@ -82,13 +102,21 @@ export const SearchPaginated: FC<PropsWithChildren<SearchPaginatedProps>> = ({
         refreshing={isFetching}
         onRefresh={refetch}
         contentContainerStyle={{ flexGrow: 1 }}
-        data={data}
-        // ListHeaderComponent={<H5>Musigwa</H5>}
+        data={list}
         onEndReachedThreshold={0.2}
-        // onEndReached={fetchMoreData}
+        onEndReached={fetchMoreData}
         showsVerticalScrollIndicator={false}
         renderItem={renderItem}
-        ListFooterComponent={ListFooterComponent}
+        keyExtractor={(item, index) => `[${index}]${item?.id}`}
+        ListFooterComponent={
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            {isListEnd && !isFetching && list.length ? (
+              <H4 style={{ textTransform: 'normal' }}>End of list, no more data to fetch!</H4>
+            ) : null}
+            {isFetching ? <H4>Fetching more, please wait...</H4> : null}
+            {ListFooterComponent}
+          </View>
+        }
         ListEmptyComponent={ListEmptyComponent}
       />
     </View>
