@@ -1,6 +1,6 @@
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
-import React from 'react';
+import React, { FC, PropsWithChildren } from 'react';
 import { Image, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
 import SearchPaginated from '../../../components/common/Lists/SearchPaginated';
 import { useAppSelector } from '../../../hooks/useStore';
@@ -25,7 +25,14 @@ const listFooterComponent = ({ navigation, colors }) => {
   );
 };
 
-const renderItem = ({ item: group, index: idx, colors, navigation }) => {
+type RenderItemProps = { item: any; index: any; colors: any; navigation: any };
+
+const renderItem: FC<PropsWithChildren<RenderItemProps>> = ({
+  item: group,
+  index: idx,
+  colors,
+  navigation,
+}) => {
   const showCount = 5;
   const { length } = group.players;
   const lastIdx = length < showCount ? length : showCount;
@@ -72,14 +79,21 @@ const renderItem = ({ item: group, index: idx, colors, navigation }) => {
   );
 };
 
-export const GroupListScreen = ({ navigation }) => {
-  const { id: userId } = useAppSelector(state => state.auth.user);
+const GroupListScreen: FC<PropsWithChildren<{ navigation: any }>> = ({ navigation }) => {
+  const {
+    myGroups,
+    user: { id: userId },
+  } = useAppSelector(({ auth: { user }, groups: { myGroups } }) => ({ user, myGroups }));
   const { colors } = useTheme();
 
   return (
     <SearchPaginated
-      fetchQuery={useGetMyGroupsQuery}
-      params={{ userId, perPage: 5 }}
+      data={myGroups}
+      searchKeyName='searchQuery'
+      perPageCountName='perPage'
+      itemsPerPage={8}
+      fetchMethod={useGetMyGroupsQuery}
+      params={{ userId }}
       ListFooterComponent={listFooterComponent({ navigation, colors })}
       renderItem={args => renderItem({ ...args, navigation, colors })}
     />
@@ -90,15 +104,6 @@ export default GroupListScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, backgroundColor: 'rgba(0,0,0,0.02)' },
-  inputWrapper: {
-    height: 48,
-    backgroundColor: 'rgba(241, 243, 245, 1)',
-    paddingHorizontal: 10,
-    borderRadius: 6,
-    marginBottom: 15,
-    width: '100%',
-  },
-  input: { height: '100%', fontSize: 16, fontFamily: 'Poppins_500Medium' },
   card: {
     width: '100%',
     borderRadius: 4,
