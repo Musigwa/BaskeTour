@@ -47,7 +47,7 @@ const RankingScreen = () => {
       <Separator size='sm' />
       {rounds?.length ? <TopTab tabs={rounds} onTabPress={setRound} /> : null}
       <Separator size='sm' />
-      {isLoading || isFetching ? (
+      {isFetching ? (
         <ActivityIndicator
           color={colors.primary}
           size='large'
@@ -71,10 +71,16 @@ const RankingScreen = () => {
                   <Horizontal>
                     <View>
                       <Horizontal>
-                        {player.profilePic ? (
+                        {player?.profilePic ? (
                           <Image
                             source={{ uri: player.profilePic }}
-                            style={{ width: 48, height: 48, borderRadius: 24, marginRight: 10 }}
+                            style={{
+                              width: 48,
+                              height: 48,
+                              borderRadius: 24,
+                              marginRight: 10,
+                              backgroundColor: colors.gray,
+                            }}
                             resizeMode='cover'
                           />
                         ) : (
@@ -92,21 +98,23 @@ const RankingScreen = () => {
                         )}
 
                         <View>
-                          <H5>{player.firstName}</H5>
-                          <H5>{player.lastName}</H5>
+                          <H5>{player?.firstName}</H5>
+                          <H5>{player?.lastName}</H5>
                         </View>
                       </Horizontal>
                     </View>
                     <View>
                       <View>
-                        <H2>{player.totalPoints}</H2>
+                        <H2>{player?.totalPoints}</H2>
                         <H6>Total points</H6>
                       </View>
                     </View>
                     <View>
                       <View>
-                        <H2>{player.totalLosses}</H2>
-                        <H6 style={{ textTransform: 'normal' }}>Losses</H6>
+                        <H2>{player?.totalLosses}</H2>
+                        <H6 style={{ textTransform: 'normal' }}>{`Loss${
+                          player?.totalLosses > 1 ? 'es' : ''
+                        }`}</H6>
                       </View>
                     </View>
                   </Horizontal>
@@ -119,9 +127,9 @@ const RankingScreen = () => {
                       marginLeft: 50,
                     }}
                   >
-                    {picks.map((pick, idx) => (
+                    {picks.map(({ team }, idx) => (
                       <H6 key={idx} style={{}}>
-                        {idx + 1}. ({pick.team.ranking}) {pick.team.abbreviation}
+                        {idx + 1}. ({team?.ranking}) {team?.abbreviation}
                       </H6>
                     ))}
                   </RNView>
