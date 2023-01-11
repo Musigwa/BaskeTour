@@ -42,7 +42,7 @@ const SettingsScreen = ({ navigation }) => {
       {options.map((item, idx) => (
         <TouchableOpacity
           key={idx}
-          style={{ flex: 1 }}
+          style={{ flex: 1, marginBottom: 10, justifyContent: 'center' }}
           activeOpacity={0.7}
           onPress={() => handlePress(item)}
         >

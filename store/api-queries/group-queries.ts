@@ -3,6 +3,13 @@ import baseQuery from './baseQuery';
 
 import { GET_GROUPS, GROUPS, GROUP_RANKING, JOIN_GROUP, MY_GROUPS } from '../endpoints';
 
+type MyGroupProps = {
+  searchQuery: string;
+  userId: string;
+  page: number;
+  perPage: number;
+};
+
 export const groupApi = createApi({
   reducerPath: 'groupApi',
   baseQuery: baseQuery,
@@ -13,9 +20,9 @@ export const groupApi = createApi({
     getGroups: builder.query<any, { searchQuery: string }>({
       query: (payload: { searchQuery: string }) => GET_GROUPS(payload.searchQuery),
     }),
-    getMyGroups: builder.query<any, { searchQuery: string; userId: string }>({
-      query: ({ searchQuery, userId }: { searchQuery: string; userId: string }) =>
-        MY_GROUPS(searchQuery, userId),
+    getMyGroups: builder.query<any, MyGroupProps>({
+      query: ({ searchQuery, userId, page, perPage }: MyGroupProps) =>
+        MY_GROUPS(searchQuery, userId, page, perPage),
     }),
     joinGroup: builder.mutation<any, { groupId: string; groupPIN: string }>({
       query: payload => ({
