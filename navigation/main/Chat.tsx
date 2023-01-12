@@ -1,13 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import * as React from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import { defaultScreenOptions } from '../../constants';
+import { useAppSelector } from '../../hooks/useStore';
 import ChatListScreen from '../../screens/main/tabs/chat';
 import InboxScreen from '../../screens/main/tabs/chat/Inbox';
 import { H4, H6 } from '../../styles/styled-elements';
-import { useAppSelector } from '../../hooks/useStore';
 import { ellipsizeText } from '../../utils/methods';
 
 const Stack = createStackNavigator();
@@ -34,7 +34,7 @@ const ChatNavigator = ({ navigation }) => {
           />
         ),
       }}
-      initialRouteName={!!myGroups.length ? 'ChatList' : 'Inbox'}
+      initialRouteName='ChatList'
     >
       <Stack.Screen
         name='ChatList'

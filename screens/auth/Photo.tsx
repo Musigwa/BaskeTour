@@ -43,7 +43,7 @@ function PhotoScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <KeyboardAvoid style={{ paddingHorizontal: 20 }}>
+      <KeyboardAvoid contentContainerStyle={{ paddingHorizontal: 20 }}>
         <IndicatorHeader
           // showBackIcon={true}
           count={2}

@@ -1,6 +1,7 @@
+import { Feather, FontAwesome } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
-import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { Image, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
 import { H5, H6, Horizontal } from '../../../../styles/styled-elements';
@@ -46,16 +47,39 @@ const renderItem = ({ item, index, colors }) => {
 const InboxScreen = ({ route }) => {
   const { colors } = useTheme();
   const { chat } = route.params ?? {};
+  const [text, setText] = useState('');
+  const textMode = useMemo(() => text.length, [text]);
+
   return (
-    <SearchPaginated
-      data={chat}
-      renderItem={args => {
-        return renderItem({ ...args, colors });
-      }}
-      fetchMethod={useGetMyGroupsQuery}
-      style={styles.container}
-      searchable={false}
-    />
+    <View style={{ flex: 1 }}>
+      <SearchPaginated
+        data={chat}
+        renderItem={args => renderItem({ ...args, colors })}
+        fetchMethod={useGetMyGroupsQuery}
+        style={styles.container}
+        searchable={false}
+      />
+      <Horizontal style={styles.inputContainer}>
+        <Pressable style={styles.inputBtnContainer}>
+          <Feather name='paperclip' size={24} color='gray' />
+        </Pressable>
+        <TextInput
+          style={styles.input}
+          placeholder='Write your message...'
+          onChangeText={setText}
+          numberOfLines={3}
+        />
+        <Horizontal>
+          <Pressable style={styles.inputBtnContainer}>
+            <FontAwesome
+              name={textMode ? 'send-o' : 'microphone'}
+              size={24}
+              color={colors.primary}
+            />
+          </Pressable>
+        </Horizontal>
+      </Horizontal>
+    </View>
   );
 };
 
@@ -74,4 +98,17 @@ const styles = StyleSheet.create({
   senderName: { color: 'white', fontFamily: 'Poppins_700Bold' },
   message: { color: 'white', maxWidth: '75%' },
   timestamp: { color: 'white', alignSelf: 'flex-end', textTransform: 'uppercase' },
+  inputContainer: { backgroundColor: 'rgba(241, 243, 245, 1)', padding: 5 },
+  input: {
+    fontSize: 16,
+    fontWeight: '600',
+    fontFamily: 'Poppins_500Medium',
+    flex: 0.9,
+    height: '100%',
+  },
+  inputBtnContainer: {
+    padding: 10,
+    borderRadius: 30,
+    backgroundColor: 'transparent',
+  },
 });
