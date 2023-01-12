@@ -1,7 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useEffect } from 'react';
 import BracketScreen from '../../screens/main/tabs/bracket';
-import ChatScreen from '../../screens/main/tabs/chat';
 import PicksScreen from '../../screens/main/tabs/picks';
 import RankingScreen from '../../screens/main/tabs/ranking';
 import ScoresScreen from '../../screens/main/tabs/scores';
@@ -15,6 +14,7 @@ import TopTab from '../../components/common/TopTab';
 import { defaultScreenOptions } from '../../constants';
 import { useCreatePickMutation } from '../../store/api-queries/tournaments';
 import { H2, H3, Horizontal } from '../../styles/styled-elements';
+import ChatNavigator from './Chat';
 
 const Touchable = styled.Pressable`
   border-width: 1px;
@@ -130,11 +130,12 @@ const BottomTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name='Chat'
-        component={ChatScreen}
+        name='Chats'
+        component={ChatNavigator}
         options={{
           tabBarIcon: props => <Ionicons name='chatbubbles' {...props} />,
           headerShadowVisible: true,
+          headerShown: false,
         }}
       />
       <Tab.Screen

@@ -84,7 +84,7 @@ export const SearchPaginated: FC<PropsWithChildren<SearchPaginatedProps>> = ({
   };
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={{ ...styles.container, ...style }}>
       {searchable ? (
         <Searchbar
           clearText={clearText}
@@ -111,7 +111,7 @@ export const SearchPaginated: FC<PropsWithChildren<SearchPaginatedProps>> = ({
               <H4 style={{ textTransform: 'normal' }}>End of list, no more data to fetch!</H4>
             ) : null}
             {isFetching && page > 1 ? (
-              <Horizontal>
+              <Horizontal style={{ marginVertical: 20 }}>
                 <ActivityIndicator size='large' color={colors.gray} style={{ marginRight: 20 }} />
                 <H4 styles={{ textAlign: 'right' }}>Fetching more items...</H4>
               </Horizontal>
