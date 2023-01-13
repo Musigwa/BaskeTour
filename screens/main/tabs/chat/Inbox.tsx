@@ -9,7 +9,7 @@ import { genColor } from '../../../../utils/methods';
 
 const renderItem = ({ item, index, colors }) => {
   const isMe = item?.sender?.id === '43f23vc1233432341544';
-  const color = genColor({ type: 'shade' });
+  // const color = genColor({ type: 'shade' });
   return (
     <Horizontal style={{ alignSelf: isMe ? 'flex-end' : 'flex-start' }} key={index}>
       {isMe ? null : (
@@ -22,7 +22,7 @@ const renderItem = ({ item, index, colors }) => {
         style={[
           styles.bubble,
           {
-            backgroundColor: isMe ? colors.primary : color,
+            backgroundColor: isMe ? colors.primary : colors.violet,
             borderBottomLeftRadius: isMe ? 15 : 0,
             borderBottomRightRadius: isMe ? 0 : 15,
           },

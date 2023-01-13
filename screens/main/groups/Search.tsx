@@ -1,125 +1,56 @@
-import { useNavigation, useNavigationState, useRoute, useTheme } from '@react-navigation/native';
-import { FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
-import RadioButton from '../../../components/common/RadioButton';
-import {
-  Container,
-  ErrorMessage,
-  H3,
-  ListItem,
-  Title,
-  View,
-} from '../../../styles/styled-elements';
+import { useTheme } from '@react-navigation/native';
+import { H3, H4, Horizontal, Separator } from '../../../styles/styled-elements';
 
-import React, { useEffect, useState } from 'react';
-
-import { Formik } from 'formik';
-import { debounce } from 'lodash';
-import Input from '../../../components/common/Input';
-import { useAppDispatch } from '../../../hooks/useStore';
-import { IGroup } from '../../../interfaces';
+import React from 'react';
+import { Pressable } from 'react-native';
+import SearchPaginated from '../../../components/common/Lists/SearchPaginated';
+import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
 import { useGetGroupsQuery } from '../../../store/api-queries/group-queries';
 import { selectGroup } from '../../../store/slices/groupSlice';
+import { ellipsizeText } from '../../../utils/methods';
+import { StatusBar } from 'expo-status-bar';
+import Container from '../../../components/common/Container';
 
-type GroupSearchProps = {
-  onSelect: (group: IGroup) => void;
-  title?: string;
-  msg404?: string;
-  btnText?: string;
-};
-
-const SearchGroup = ({}) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [skip, setSkip] = useState(true);
-  const [selectedItem, setSelectedItem] = useState<IGroup>();
+const SearchGroup = ({ navigation }) => {
   const { colors } = useTheme();
-  const navigation = useNavigation();
   const dispatch = useAppDispatch();
-  const { params } = useRoute<{ params: GroupSearchProps } & any>();
-  const navState = useNavigationState(state => state);
+  const { groups, user } = useAppSelector(({ groups: { groups }, auth: { user } }) => ({
+    groups,
+    user,
+  }));
 
-  const {
-    title = 'Join Existing Group',
-    confirmBtn = {},
-    msg404 = 'Group does not exist. Contact your group admin',
-  } = params ?? {};
-  const { text = 'Confirm Selection' } = confirmBtn;
-
-  const {
-    data: groups,
-    refetch,
-    isError,
-    error: err,
-  } = useGetGroupsQuery({ searchQuery: searchQuery }, { skip });
-
-  const debouncedUpdate = debounce(text => setSearchQuery(text), 300, {
-    leading: true,
-    trailing: false,
-  });
-
-  useEffect(() => {
-    if (searchQuery.length) setSkip(false);
-  }, [searchQuery]);
-
-  const handleSelect = () => {
-    dispatch(selectGroup(selectedItem));
-    const { routes } = navigation.getState();
-    const prevRoute = routes[routes.length - 2];
-    navigation.navigate(prevRoute.name, { group: selectedItem });
+  const handleSelect = group => {
+    dispatch(selectGroup(group));
+    navigation.navigate('JoinGroup', { group });
   };
 
   return (
     <Container>
-      <SafeAreaView style={{ alignItems: 'center' }}>
-        <Title style={{ textTransform: 'capitalize' }}>{title}</Title>
-        <Formik initialValues={{ searchQuery: '' }} onSubmit={refetch}>
-          {({ handleChange, values }) => {
-            debouncedUpdate(values.searchQuery);
-            return (
-              <View mb={40} mt={40}>
-                <Input
-                  placeholder='Type a group name to search...'
-                  name='searchQuery'
-                  required
-                  handleChange={handleChange}
-                  handleBlur={() => {}}
-                />
-              </View>
-            );
-          }}
-        </Formik>
-        <FlatList
-          data={groups?.data ?? []}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={item => item.id}
-          renderItem={({ item }: { item: IGroup }) => (
-            <ListItem key={item.id}>
-              <RadioButton
-                selected={selectedItem?.id === item.id}
-                color={colors.primary}
-                text={item.groupName}
-                onClick={text => setSelectedItem(item)}
-              />
-            </ListItem>
-          )}
-          ListFooterComponent={
-            <View>
-              <ErrorMessage>{isError && err ? JSON.stringify(err) : msg404}</ErrorMessage>
-            </View>
-          }
-        />
-        <TouchableOpacity
-          style={{
-            backgroundColor: !!selectedItem ? colors.primary : '#CCCCCC',
-            padding: 15,
-            borderRadius: 10,
-            marginTop: 10,
-          }}
-          onPress={handleSelect}
-          disabled={!selectedItem}
-        >
-          <H3 style={{ color: 'white' }}>{text}</H3>
-        </TouchableOpacity>
-      </SafeAreaView>
+      <SearchPaginated
+        fetchMethod={useGetGroupsQuery}
+        data={groups}
+        ItemSeparatorComponent={() => <Separator />}
+        renderItem={({ index, item }) => {
+          const disabled = item.players.find(p => user.id === p.id);
+          return (
+            <Horizontal style={{ width: '100%', paddingVertical: 20 }} key={index}>
+              <H3>{ellipsizeText(item.groupName, 20)}</H3>
+              <Pressable
+                disabled={disabled}
+                style={{
+                  backgroundColor: disabled ? 'transparent' : 'rgba(255, 117, 91, 0.14)',
+                  paddingVertical: 8,
+                  paddingHorizontal: 20,
+                  borderRadius: 5,
+                }}
+                onPress={() => handleSelect(item)}
+              >
+                <H4 style={{ color: colors.primary }}>{disabled ? 'Joined' : 'Join'}</H4>
+              </Pressable>
+            </Horizontal>
+          );
+        }}
+      />
     </Container>
   );
 };

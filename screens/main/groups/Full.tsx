@@ -2,7 +2,8 @@ import React from 'react';
 import styled from 'styled-components/native';
 import WarningIcon from '../../../assets/svgs/WarningIcon';
 import Button from '../../../components/common/Buttons';
-import { Container, Paragraph, Title, View } from '../../../styles/styled-elements';
+import { Paragraph, Title, View } from '../../../styles/styled-elements';
+import Container from '../../../components/common/Container';
 
 const FullGroupScreen = ({ navigation }) => {
   const gotItButtonClickHandler = () => {

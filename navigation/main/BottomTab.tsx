@@ -14,6 +14,7 @@ import TopTab from '../../components/common/TopTab';
 import { defaultScreenOptions } from '../../constants';
 import { useCreatePickMutation } from '../../store/api-queries/tournaments';
 import { H2, H3, Horizontal } from '../../styles/styled-elements';
+import { StatusBar } from 'expo-status-bar';
 import ChatNavigator from './Chat';
 
 const Touchable = styled.Pressable`
@@ -71,19 +72,22 @@ const BottomTabNavigator = () => {
         name='Scores'
         component={ScoresScreen}
         options={{
-          header: () => (
-            <SafeAreaView>
-              <Horizontal>
-                <TopTab tabs={headerParts} onTabPress={handlePress} />
-                <Ionicons
-                  name='settings'
-                  size={24}
-                  style={{ marginRight: 20 }}
-                  onPress={goToSettings}
-                />
-              </Horizontal>
-            </SafeAreaView>
-          ),
+          header: () => {
+            return (
+              <SafeAreaView>
+                <StatusBar />
+                <Horizontal>
+                  <TopTab tabs={headerParts} onTabPress={handlePress} />
+                  <Ionicons
+                    name='settings'
+                    size={24}
+                    style={{ marginRight: 20 }}
+                    onPress={goToSettings}
+                  />
+                </Horizontal>
+              </SafeAreaView>
+            );
+          },
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name='scoreboard' size={24} color={color} />
           ),
@@ -98,11 +102,12 @@ const BottomTabNavigator = () => {
             const shouldSubmit = canSubmit && !isLoading;
             return (
               <SafeAreaView style={{ backgroundColor: 'white' }}>
+                <StatusBar />
                 <Horizontal style={{ marginRight: 20 }}>
                   <View style={{ flex: 0.4 }} />
                   <H2>Picks</H2>
                   <Touchable
-                    style={{ borderColor: shouldSubmit ? colors.primary : '#CFCFCF' }}
+                    style={{ borderColor: shouldSubmit ? colors.primary : colors.disabled }}
                     disabled={!shouldSubmit}
                     onPress={() => {
                       savePicks({ picks, roundId, groupId });
@@ -111,7 +116,9 @@ const BottomTabNavigator = () => {
                     {isLoading ? (
                       <ActivityIndicator color={colors.primary} />
                     ) : (
-                      <H3 style={{ color: shouldSubmit ? colors.primary : '#CFCFCF' }}>Save</H3>
+                      <H3 style={{ color: shouldSubmit ? colors.primary : colors.disabled }}>
+                        Save
+                      </H3>
                     )}
                   </Touchable>
                 </Horizontal>

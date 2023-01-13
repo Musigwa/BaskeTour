@@ -8,6 +8,7 @@ import { Paragraph, View } from '../../../styles/styled-elements';
 import Button from '../../../components/common/Buttons';
 import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Container from '../../../components/common/Container';
 
 const ShareGroupScreen = () => {
   const insets = useSafeAreaInsets();
@@ -22,22 +23,13 @@ const ShareGroupScreen = () => {
     navigation.navigate('Tabs');
   };
   return (
-    <Container pt={insets.top} pb={insets.bottom}>
+    <Container style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
       <Title>Share Group</Title>
       <Paragraph mb={72}>Link to share: {`${newGroup?.slug}/${newGroup?.id}`}</Paragraph>
       <Button text='Copy & Proceed' onPress={handleCopy} />
     </Container>
   );
 };
-
-const Container = styled(View)`
-  flex: 1;
-  padding-left: 24px;
-  padding-right: 24px;
-  background-color: white;
-  align-items: center;
-  justify-content: center;
-`;
 
 const Title = styled(Paragraph)`
   font-size: 24px;

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import {
   ImageBackground,
   View as RNView,
-  StatusBar,
   StyleSheet,
   TouchableOpacity,
   useWindowDimensions,
@@ -15,6 +14,8 @@ import Logo from '../../../assets/svgs/Logo';
 import { useNavigation, useRoute, useTheme } from '@react-navigation/native';
 import { useGetTournamentsQuery } from '../../../store/api-queries/tournaments';
 import { H3, H4 } from '../../../styles/styled-elements';
+import { StatusBar } from 'expo-status-bar';
+import Container from '../../../components/common/Container';
 
 const SetupTypeScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -22,48 +23,41 @@ const SetupTypeScreen = ({ route }) => {
   const { width } = useWindowDimensions();
   useGetTournamentsQuery();
   const { colors } = useTheme();
-  const { params } = route;
-
-  useEffect(() => {
-    if (params?.group) {
-      const { group } = params;
-      navigation.navigate('JoinGroup', { group });
-    }
-  }, [params?.group]);
 
   const handleNext = (routeName, params = {}) => {
     navigation.navigate(routeName, params);
   };
 
   return (
-    <ImageBackground
-      source={require(' ../../../assets/images/bg_main.png')}
-      style={[style.container, { width, paddingBottom, paddingTop }]}
-    >
-      <StatusBar barStyle='light-content' />
-      <Logo />
-      <RNView style={style.btnContainer}>
-        <TouchableOpacity
-          onPress={() => handleNext('CreateGroup')}
-          style={[style.button, { backgroundColor: '#4833B5' }]}
-        >
-          <BallIcon />
-          <H3 style={{ color: 'white' }}>Create New Group</H3>
-        </TouchableOpacity>
+    <Container>
+      <ImageBackground
+        source={require(' ../../../assets/images/bg_main.png')}
+        style={[style.container, { width, paddingBottom, paddingTop }]}
+      >
+        <Logo />
+        <RNView style={style.btnContainer}>
+          <TouchableOpacity
+            onPress={() => handleNext('CreateGroup')}
+            style={[style.button, { backgroundColor: '#4833B5' }]}
+          >
+            <BallIcon />
+            <H3 style={{ color: 'white' }}>Create New Group</H3>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[style.button, { backgroundColor: '#9C49CF' }]}
-          onPress={() => handleNext('SearchGroup', { btnText: 'Join Group' })}
-        >
-          <HoopIcon />
-          <H3 style={{ color: 'white' }}>Join Existing Group</H3>
-        </TouchableOpacity>
-      </RNView>
+          <TouchableOpacity
+            style={[style.button, { backgroundColor: '#9C49CF' }]}
+            onPress={() => handleNext('SearchGroup')}
+          >
+            <HoopIcon />
+            <H3 style={{ color: 'white' }}>Join Existing Group</H3>
+          </TouchableOpacity>
+        </RNView>
 
-      <TouchableOpacity onPress={() => handleNext('Tabs')}>
-        <H4 style={{ color: colors.primary }}>Skip For Now</H4>
-      </TouchableOpacity>
-    </ImageBackground>
+        <TouchableOpacity onPress={() => handleNext('Tabs')}>
+          <H4 style={{ color: colors.primary }}>Skip For Now</H4>
+        </TouchableOpacity>
+      </ImageBackground>
+    </Container>
   );
 };
 

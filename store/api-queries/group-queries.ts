@@ -17,8 +17,9 @@ export const groupApi = createApi({
     createGroup: builder.mutation({
       query: payload => ({ url: GROUPS, method: 'POST', body: payload }),
     }),
-    getGroups: builder.query<any, { searchQuery: string }>({
-      query: (payload: { searchQuery: string }) => GET_GROUPS(payload.searchQuery),
+    getGroups: builder.query<any, MyGroupProps>({
+      query: ({ searchQuery, userId, page, perPage }: MyGroupProps) =>
+        GET_GROUPS(searchQuery, userId, page, perPage),
     }),
     getMyGroups: builder.query<any, MyGroupProps>({
       query: ({ searchQuery, userId, page, perPage }: MyGroupProps) =>

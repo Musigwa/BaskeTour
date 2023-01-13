@@ -45,7 +45,7 @@ const CreateGroupScreen = ({ navigation }: SetupStackScreenProps<'CreateGroup'>)
       <Loader show={isLoading} text='Genrating Group ID' />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Container pb={insets.bottom} content-center items-center>
-          <StatusBar style='dark' />
+          <StatusBar />
           <View>
             <Title mb={80}>Create New Group</Title>
           </View>

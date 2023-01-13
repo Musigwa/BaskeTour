@@ -4,7 +4,8 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useAppDispatch } from '../../../hooks/useStore';
 import { loggedOut } from '../../../store/slices/authSlice';
-import { H4, Horizontal } from '../../../styles/styled-elements';
+import { H2, H4, Horizontal } from '../../../styles/styled-elements';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const options = [
   { title: 'Groups' },

@@ -3,7 +3,8 @@ import { Text } from 'react-native';
 import styled from 'styled-components/native';
 import ConsensusIcon from '../../../assets/svgs/Consensus';
 import Button from '../../../components/common/Buttons';
-import { Container, Paragraph, View } from '../../../styles/styled-elements';
+import { Paragraph, View } from '../../../styles/styled-elements';
+import Container from '../../../components/common/Container';
 
 const JoinGroupSuccessScreen = ({ navigation, route }) => {
   const {
