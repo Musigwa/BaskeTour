@@ -1,21 +1,13 @@
-import { MaterialIcons } from '@expo/vector-icons';
-import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Keyboard, Pressable, TouchableWithoutFeedback } from 'react-native';
+import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
 import styled from 'styled-components';
 import Button from '../../../components/common/Buttons';
+import Container from '../../../components/common/Container';
 import PinCodeInput from '../../../components/common/PinCodeInput';
 import { useAppSelector } from '../../../hooks/useStore';
 import { useJoinGroupMutation } from '../../../store/api-queries/group-queries';
-import {
-  BackButtonWrapper,
-  ErrorMessage,
-  Paragraph,
-  Title,
-  View,
-} from '../../../styles/styled-elements';
-import Container from '../../../components/common/Container';
+import { ErrorMessage, Paragraph, Title, View } from '../../../styles/styled-elements';
 
 const JoinGroupScreen = ({ navigation }) => {
   const group = useAppSelector(({ groups }) => groups.selectedGroup);
@@ -59,7 +51,7 @@ const JoinGroupScreen = ({ navigation }) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <Container>
+      <Container style={{ padding: 20 }}>
         <View w-100 flex={keyboardVisible ? 0.8 : 1} items-center>
           <Title>Join Existing Group </Title>
 

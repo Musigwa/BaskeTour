@@ -5,7 +5,6 @@ import { Image, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
 import { H5, H6, Horizontal } from '../../../../styles/styled-elements';
-import { genColor } from '../../../../utils/methods';
 
 const renderItem = ({ item, index, colors }) => {
   const isMe = item?.sender?.id === '43f23vc1233432341544';

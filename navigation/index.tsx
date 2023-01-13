@@ -26,9 +26,8 @@ import SettingsScreen from '../screens/main/settings';
 import NotificationScreen from '../screens/main/settings/Notification';
 import ProfileScreen from '../screens/main/settings/Profile';
 import { AppDarkTheme, AppDefaultTheme } from '../styles/theme';
-import { eliipsizeText } from '../utils/methods';
+import { ellipsizeText } from '../utils/methods';
 import BottomTabNavigator from './main/BottomTab';
-import { StatusBar } from 'expo-status-bar';
 
 const Stack = createStackNavigator();
 
@@ -77,7 +76,7 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                 />
               </Stack.Group>
               {/* The groups entity screens */}
-              <Stack.Group screenOptions={{ ...defaultScreenOptions }}>
+              <Stack.Group screenOptions={{ ...defaultScreenOptions, title: '' }}>
                 <Stack.Screen name='CreateGroup' component={CreateGroupScreen} />
                 <Stack.Screen name='JoinGroup' component={JoinGroupScreen} />
                 <Stack.Screen name='ShareGroup' component={ShareGroupScreen} />
