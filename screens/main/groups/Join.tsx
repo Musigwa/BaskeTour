@@ -10,12 +10,12 @@ import { useAppSelector } from '../../../hooks/useStore';
 import { useJoinGroupMutation } from '../../../store/api-queries/group-queries';
 import {
   BackButtonWrapper,
-  Container,
   ErrorMessage,
   Paragraph,
   Title,
   View,
 } from '../../../styles/styled-elements';
+import Container from '../../../components/common/Container';
 
 const JoinGroupScreen = ({ navigation }) => {
   const group = useAppSelector(({ groups }) => groups.selectedGroup);
@@ -58,16 +58,8 @@ const JoinGroupScreen = ({ navigation }) => {
   const PINValueChangeHandler = (pin: string) => setPIN(pin);
 
   return (
-    // <KeyboardAvoidingView
-    //   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    //   style={{ flex: 1 }}
-    // >
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <Container
-        style={{
-          justifyContent: 'flex-start',
-        }}
-      >
+      <Container>
         <View w-100 flex={keyboardVisible ? 0.8 : 1} items-center>
           <Title>Join Existing Group </Title>
 

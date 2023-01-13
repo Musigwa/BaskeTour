@@ -1,8 +1,9 @@
 import { NavigationContainer, useTheme } from '@react-navigation/native';
-import { ColorSchemeName, Alert, View } from 'react-native';
+import { Alert, ColorSchemeName, View } from 'react-native';
 
 import LinkingConfiguration from './LinkingConfiguration';
 
+import { MaterialIcons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { ToastProvider } from 'react-native-toast-notifications';
@@ -13,8 +14,10 @@ import LoginScreen from '../screens/auth/Login';
 import PhotoScreen from '../screens/auth/Photo';
 import SignUpScreen from '../screens/auth/SignUp';
 import CreateGroupScreen from '../screens/main/groups/Create';
+import GroupDetailsScreen from '../screens/main/groups/Details';
 import JoinGroupScreen from '../screens/main/groups/Join';
 import JoinGroupSuccessScreen from '../screens/main/groups/JoinSuccess';
+import GroupListScreen from '../screens/main/groups/List';
 import SearchGroup from '../screens/main/groups/Search';
 import ShareGroupScreen from '../screens/main/groups/Share';
 import SetupTypeScreen from '../screens/main/onboarding/SetupType';
@@ -23,11 +26,9 @@ import SettingsScreen from '../screens/main/settings';
 import NotificationScreen from '../screens/main/settings/Notification';
 import ProfileScreen from '../screens/main/settings/Profile';
 import { AppDarkTheme, AppDefaultTheme } from '../styles/theme';
+import { eliipsizeText } from '../utils/methods';
 import BottomTabNavigator from './main/BottomTab';
-import GroupListScreen from '../screens/main/groups/List';
-import GroupDetailsScreen from '../screens/main/groups/Details';
-import { MaterialIcons } from '@expo/vector-icons';
-import { ellipsizeText } from '../utils/methods';
+import { StatusBar } from 'expo-status-bar';
 
 const Stack = createStackNavigator();
 
@@ -53,9 +54,9 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
         linking={LinkingConfiguration}
         theme={colorScheme === 'dark' ? AppDarkTheme : AppDefaultTheme}
       >
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
           {isLoggedIn ? (
-            <Stack.Group screenOptions={{ headerShown: false }}>
+            <Stack.Group>
               <Stack.Screen
                 name={isOnboarded ? 'SetupType' : 'Slider'}
                 component={isOnboarded ? SetupTypeScreen : SliderScreen}
@@ -76,7 +77,7 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                 />
               </Stack.Group>
               {/* The groups entity screens */}
-              <Stack.Group screenOptions={{ ...defaultScreenOptions, title: '' }}>
+              <Stack.Group screenOptions={{ ...defaultScreenOptions }}>
                 <Stack.Screen name='CreateGroup' component={CreateGroupScreen} />
                 <Stack.Screen name='JoinGroup' component={JoinGroupScreen} />
                 <Stack.Screen name='ShareGroup' component={ShareGroupScreen} />
@@ -107,7 +108,7 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                 <Stack.Screen
                   name='SearchGroup'
                   component={SearchGroup}
-                  options={{ presentation: 'modal' }}
+                  options={({ route }) => ({ title: route.params.title ?? 'Join Existing Group' })}
                 />
               </Stack.Group>
             </Stack.Group>
@@ -116,8 +117,8 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
             <Stack.Group screenOptions={{ ...defaultScreenOptions, headerTitle: '' }}>
               <Stack.Screen
                 name='Initial'
-                options={{ headerShown: false }}
                 component={InitialScreen}
+                options={{ headerShown: false }}
               />
               <Stack.Screen name='Login' component={LoginScreen} />
               <Stack.Screen name='SignUp' component={SignUpScreen} />

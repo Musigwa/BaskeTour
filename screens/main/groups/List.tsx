@@ -89,9 +89,6 @@ const GroupListScreen: FC<PropsWithChildren<{ navigation: any }>> = ({ navigatio
   return (
     <SearchPaginated
       data={myGroups}
-      searchKeyName='searchQuery'
-      perPageCountName='perPage'
-      itemsPerPage={8}
       fetchMethod={useGetMyGroupsQuery}
       params={{ userId }}
       ListFooterComponent={listFooterComponent({ navigation, colors })}
