@@ -11,6 +11,7 @@ export const AppDarkTheme: typeof DefaultTheme = {
     pink: 'rgba(156, 73, 207, 0.08)',
     disabled: 'rgba(214, 212, 212, 1)',
     gray: 'rgba(144, 160, 175, 1)',
+    violet: 'rgba(167, 97, 255, 1)',
   },
 };
 
@@ -25,5 +26,6 @@ export const AppDefaultTheme: typeof DarkTheme = {
     pink: 'rgba(156, 73, 207, 0.08)',
     disabled: 'rgba(214, 212, 212, 1)',
     gray: 'rgba(144, 160, 175, 1)',
+    violet: 'rgba(167, 97, 255, 1)',
   },
 };

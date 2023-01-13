@@ -153,3 +153,160 @@ export const games = [
     locationName: 'No where',
   },
 ];
+
+export const chats = [
+  {
+    message: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+    sender: {
+      profilePic:
+        'https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/170.jpg',
+      firstName: 'Jack',
+      lastName: 'Beem',
+      id: '43f23vc1233432341543',
+    },
+    group: {
+      groupName: 'Best 5 Group',
+      groupPIN: '1111',
+      creator: '638a526dcaf71f35a8944335',
+      extraPlayers: 0,
+      createdAt: '2023-01-07T23:19:17.639Z',
+      updatedAt: '2023-01-07T23:19:17.639Z',
+      slug: 'beholder',
+      id: '63b9fdf59aa4d902b625ee7b',
+      availableSpots: 4,
+    },
+    timestamp: '11:53 AM',
+  },
+  {
+    message: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+    sender: {
+      profilePic:
+        'https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/170.jpg',
+      firstName: 'Jack',
+      lastName: 'Beem',
+      id: '43f23vc1233432341544',
+    },
+    group: {
+      groupName: 'Beholder',
+      groupPIN: '1111',
+      creator: '638a526dcaf71f35a8944335',
+      extraPlayers: 0,
+      createdAt: '2023-01-07T23:19:17.639Z',
+      updatedAt: '2023-01-07T23:19:17.639Z',
+      slug: 'beholder',
+      id: '63b9fdf59aa4d902b625ee7b',
+      availableSpots: 4,
+    },
+    timestamp: '11:53 AM',
+  },
+  {
+    message: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+    sender: {
+      profilePic:
+        'https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/170.jpg',
+      firstName: 'Jack',
+      lastName: 'Beem',
+      id: '43f23vc1233432341543',
+    },
+    group: {
+      groupName: 'December Test Tournament',
+      groupPIN: '1221',
+      creator: '637f5a6c2c9bc762219826f9',
+      extraPlayers: 4,
+      createdAt: '2022-12-22T14:43:41.067Z',
+      updatedAt: '2022-12-22T14:43:41.067Z',
+      slug: 'december-test-tournament',
+      id: '63a46d1dee3a09d7cd175741',
+      availableSpots: 0,
+    },
+    timestamp: '11:53 AM',
+  },
+  {
+    message: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+    sender: {
+      profilePic:
+        'https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/170.jpg',
+      firstName: 'Jack',
+      lastName: 'Beem',
+      id: '43f23vc1233432341545',
+    },
+    group: {
+      groupName: 'Fitz Fun',
+      groupPIN: '1234',
+      creator: '63a31acf2f0c4cb12f89e3f6',
+      extraPlayers: 15,
+      createdAt: '2022-12-22T14:48:02.601Z',
+      updatedAt: '2022-12-22T14:48:02.601Z',
+      slug: 'fitz-fun',
+      id: '63a46e22ee3a09d7cd175783',
+      availableSpots: 18,
+    },
+    timestamp: '11:53 AM',
+  },
+  {
+    message: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+    sender: {
+      profilePic:
+        'https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/170.jpg',
+      firstName: 'Jack',
+      lastName: 'Beem',
+      id: '43f23vc1233432341543',
+    },
+    group: {
+      groupName: 'Fitz Fun',
+      groupPIN: '1234',
+      creator: '63a31acf2f0c4cb12f89e3f6',
+      extraPlayers: 15,
+      createdAt: '2022-12-22T14:48:02.601Z',
+      updatedAt: '2022-12-22T14:48:02.601Z',
+      slug: 'fitz-fun',
+      id: '63a46e22ee3a09d7cd175783',
+      availableSpots: 18,
+    },
+    timestamp: '11:53 AM',
+  },
+  {
+    message: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+    sender: {
+      profilePic:
+        'https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/170.jpg',
+      firstName: 'Jack',
+      lastName: 'Beem',
+      id: '43f23vc1233432341544',
+    },
+    group: {
+      groupName: 'December Test Tournament',
+      groupPIN: '1221',
+      creator: '637f5a6c2c9bc762219826f9',
+      extraPlayers: 4,
+      createdAt: '2022-12-22T14:43:41.067Z',
+      updatedAt: '2022-12-22T14:43:41.067Z',
+      slug: 'december-test-tournament',
+      id: '63a46d1dee3a09d7cd175741',
+      availableSpots: 0,
+    },
+    timestamp: '11:53 AM',
+  },
+  {
+    message: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+    sender: {
+      profilePic:
+        'https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/170.jpg',
+      firstName: 'Jack',
+      lastName: 'Beem',
+      id: '43f23vc1233432341546',
+    },
+    group: {
+      groupName: 'December Test Tournament',
+      groupPIN: '1221',
+      creator: '637f5a6c2c9bc762219826f9',
+      extraPlayers: 4,
+      createdAt: '2022-12-22T14:43:41.067Z',
+      updatedAt: '2022-12-22T14:43:41.067Z',
+      slug: 'december-test-tournament',
+      id: '63a46d1dee3a09d7cd175741',
+      availableSpots: 0,
+    },
+    timestamp: '11:53 AM',
+  },
+];

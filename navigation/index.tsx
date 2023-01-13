@@ -27,7 +27,7 @@ import BottomTabNavigator from './main/BottomTab';
 import GroupListScreen from '../screens/main/groups/List';
 import GroupDetailsScreen from '../screens/main/groups/Details';
 import { MaterialIcons } from '@expo/vector-icons';
-import { eliipsizeText } from '../utils/methods';
+import { ellipsizeText } from '../utils/methods';
 
 const Stack = createStackNavigator();
 
@@ -90,7 +90,7 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                   name='GroupDetails'
                   component={GroupDetailsScreen}
                   options={({ route: { params } }) => ({
-                    title: eliipsizeText(params?.group?.groupName, 18),
+                    title: ellipsizeText(params?.group?.groupName, 18),
                     headerRight: () => (
                       <View style={{ alignItems: 'center', justifyContent: 'center', padding: 7 }}>
                         <MaterialIcons

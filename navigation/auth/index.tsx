@@ -7,7 +7,7 @@ import InitialScreen from '../../screens/auth/Initial';
 
 const Stack = createStackNavigator();
 
-function AuthNavigator() {
+const AuthNavigator = () => {
   return (
     <Stack.Group screenOptions={{ headerShown: false }} navigationKey='Auth'>
       <Stack.Screen name='Initial' component={InitialScreen} />
@@ -16,6 +16,6 @@ function AuthNavigator() {
       <Stack.Screen name='Photo' component={PhotoScreen} />
     </Stack.Group>
   );
-}
+};
 
 export default AuthNavigator;

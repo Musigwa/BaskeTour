@@ -9,7 +9,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { ActivityIndicator, FlatList, ListRenderItem, StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  ListRenderItem,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from 'react-native';
 import { H4, Horizontal } from '../../../../styles/styled-elements';
 import Searchbar from '../../Inputs/Searchbar';
 import EmpytList from './EmpytList';
@@ -25,6 +32,7 @@ type SearchPaginatedProps = {
   searchKeyName?: string;
   perPageCountName?: string;
   itemsPerPage?: number;
+  style?: ViewStyle;
 };
 
 type StateProps = { page: number; text: string };
@@ -40,6 +48,7 @@ export const SearchPaginated: FC<PropsWithChildren<SearchPaginatedProps>> = ({
   searchKeyName = 'query',
   perPageCountName = 'perPage',
   itemsPerPage = 3,
+  style,
 }) => {
   const { colors } = useTheme();
   const [state, setState] = useState<StateProps>({ page: 1, text: '' });
@@ -75,7 +84,7 @@ export const SearchPaginated: FC<PropsWithChildren<SearchPaginatedProps>> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={{ ...styles.container, ...style }}>
       {searchable ? (
         <Searchbar
           clearText={clearText}
@@ -102,7 +111,7 @@ export const SearchPaginated: FC<PropsWithChildren<SearchPaginatedProps>> = ({
               <H4 style={{ textTransform: 'normal' }}>End of list, no more data to fetch!</H4>
             ) : null}
             {isFetching && page > 1 ? (
-              <Horizontal>
+              <Horizontal style={{ marginVertical: 20 }}>
                 <ActivityIndicator size='large' color={colors.gray} style={{ marginRight: 20 }} />
                 <H4 styles={{ textAlign: 'right' }}>Fetching more items...</H4>
               </Horizontal>
