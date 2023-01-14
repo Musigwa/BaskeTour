@@ -14,15 +14,8 @@ import TopTab from '../../../../components/common/TopTab';
 import { useAppSelector } from '../../../../hooks/useStore';
 import { useGetGRankingsQuery } from '../../../../store/api-queries/group-queries';
 import { useGetTournamentsQuery } from '../../../../store/api-queries/tournaments';
-import {
-  H2,
-  H4,
-  H5,
-  H6,
-  Horizontal,
-  Separator,
-} from '../../../../styles/styled-elements';
-import GroupDropdown from '../../../../components/common/GroupDropdown';
+import { H2, H4, H5, H6, Horizontal, Separator } from '../../../../styles/styled-elements';
+import GroupDropdown from '../../../../components/common/GroupSelector';
 
 const RankingScreen = () => {
   const { colors } = useTheme();
@@ -32,7 +25,7 @@ const RankingScreen = () => {
     selectedGroup: groups.selectedGroup,
     user: auth.user,
   }));
-  const rounds = tournament?.rounds?.map((r) => ({ title: r.name, ...r }));
+  const rounds = tournament?.rounds?.map(r => ({ title: r.name, ...r }));
   const [round, setRound] = useState<any>(rounds[0]);
 
   const {
@@ -102,11 +95,7 @@ const RankingScreen = () => {
                               marginRight: 10,
                             }}
                           >
-                            <MaterialIcons
-                              name='no-photography'
-                              size={30}
-                              color='gray'
-                            />
+                            <MaterialIcons name='no-photography' size={30} color='gray' />
                           </RNView>
                         )}
 
