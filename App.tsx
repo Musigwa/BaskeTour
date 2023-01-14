@@ -11,7 +11,8 @@ import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import { persistor, store } from './store';
 import { AppDarkTheme, AppDefaultTheme } from './styles/theme';
-
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import { StatusBar } from 'expo-status-bar';
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
@@ -25,11 +26,14 @@ export default function App() {
   return isLoadingComplete ? (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <ThemeProvider theme={theme.colors}>
-          <SafeAreaProvider>
-            <Navigation colorScheme={colorScheme} />
-          </SafeAreaProvider>
-        </ThemeProvider>
+        <PaperProvider theme={DefaultTheme}>
+          <ThemeProvider theme={theme.colors}>
+            <SafeAreaProvider>
+              <StatusBar style='auto' />
+              <Navigation colorScheme={colorScheme} />
+            </SafeAreaProvider>
+          </ThemeProvider>
+        </PaperProvider>
       </PersistGate>
     </Provider>
   ) : (

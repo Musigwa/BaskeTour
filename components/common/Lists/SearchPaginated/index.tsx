@@ -56,7 +56,6 @@ const DefaultLoadMoreComponent = () => {
     </Horizontal>
   );
 };
-
 export const SearchPaginated: FC<PropsWithChildren<SearchPaginatedProps>> = ({
   searchable = true,
   fetchMethod,
@@ -85,7 +84,12 @@ export const SearchPaginated: FC<PropsWithChildren<SearchPaginatedProps>> = ({
     isFetching,
     refetch,
     data: { meta = {} } = {},
-  } = fetchMethod({ [searchKeyName]: text, ...params, page, [perPageCountName]: itemsPerPage });
+  } = fetchMethod({
+    [searchKeyName]: text,
+    ...params,
+    page,
+    [perPageCountName]: itemsPerPage,
+  });
   const isListEnd = useMemo(() => meta.page === meta.totalPages, [meta.page, meta.totalPages]);
   const handleDebTextChange = useMemo(() => _.debounce(debCallback, 300), [isFetching]);
 

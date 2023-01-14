@@ -1,16 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import React, { FC, PropsWithChildren, useCallback, useState } from 'react';
-import { Pressable, ScrollView } from 'react-native';
+import { Pressable } from 'react-native';
 import { H3, Horizontal } from '../../styles/styled-elements';
 
 const TopTab: FC<
-  PropsWithChildren<{ tabs: []; onTabPress?: Function; showVisible?: boolean } & any>
+  PropsWithChildren<
+    { tabs: []; onTabPress?: Function; showVisible?: boolean } & any
+  >
 > = ({ tabs, onTabPress, shadowVisible = true }) => {
   const [focused, setFocused] = useState(tabs[0].title);
   const { colors } = useTheme();
 
-  const isFocused = useCallback(title => title === focused, [focused]);
+  const isFocused = useCallback((title) => title === focused, [focused]);
 
   return (
     <Horizontal>
@@ -29,7 +31,8 @@ const TopTab: FC<
               style={{
                 paddingVertical: 15,
                 paddingHorizontal: 20,
-                borderBottomColor: shadowVisible && isFocused(title) ? colors.primary : null,
+                borderBottomColor:
+                  shadowVisible && isFocused(title) ? colors.primary : null,
                 borderBottomWidth: shadowVisible && isFocused(title) ? 1.5 : 0,
               }}
             >
@@ -41,7 +44,11 @@ const TopTab: FC<
                 />
               ) : null}
               {title ? (
-                <H3 style={{ color: isFocused(title) ? colors.primary : 'black' }}>{title}</H3>
+                <H3
+                  style={{ color: isFocused(title) ? colors.primary : 'black' }}
+                >
+                  {title}
+                </H3>
               ) : null}
             </Horizontal>
           </Pressable>

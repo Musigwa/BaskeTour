@@ -32,10 +32,10 @@ import BottomTabNavigator from './main/BottomTab';
 const Stack = createStackNavigator();
 
 const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
-  const { isLoggedIn } = useAppSelector(state => state.auth);
+  const { isLoggedIn } = useAppSelector((state) => state.auth);
   const isOnboarded = useAppSelector(({ auth }) => auth.completedOnboarding);
   const { colors } = useTheme();
-  const handleDelete = group => {
+  const handleDelete = (group) => {
     Alert.alert(
       'Confirm your choice',
       `Are you sure you want to delete the "${group.groupName}" group?`,
@@ -68,7 +68,10 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                   component={SettingsScreen}
                   options={{ title: 'Settings' }}
                 />
-                <Stack.Screen name='Notifications' component={NotificationScreen} />
+                <Stack.Screen
+                  name='Notifications'
+                  component={NotificationScreen}
+                />
                 <Stack.Screen
                   name='Profile'
                   component={ProfileScreen}
@@ -76,11 +79,17 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                 />
               </Stack.Group>
               {/* The groups entity screens */}
-              <Stack.Group screenOptions={{ ...defaultScreenOptions, title: '' }}>
-                <Stack.Screen name='CreateGroup' component={CreateGroupScreen} />
+              <Stack.Group screenOptions={{ ...defaultScreenOptions }}>
+                <Stack.Screen
+                  name='CreateGroup'
+                  component={CreateGroupScreen}
+                />
                 <Stack.Screen name='JoinGroup' component={JoinGroupScreen} />
                 <Stack.Screen name='ShareGroup' component={ShareGroupScreen} />
-                <Stack.Screen name='SuccessGroup' component={JoinGroupSuccessScreen} />
+                <Stack.Screen
+                  name='SuccessGroup'
+                  component={JoinGroupSuccessScreen}
+                />
                 <Stack.Screen
                   name='Groups'
                   component={GroupListScreen}
@@ -92,7 +101,13 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                   options={({ route: { params } }) => ({
                     title: ellipsizeText(params?.group?.groupName, 18),
                     headerRight: () => (
-                      <View style={{ alignItems: 'center', justifyContent: 'center', padding: 7 }}>
+                      <View
+                        style={{
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: 7,
+                        }}
+                      >
                         <MaterialIcons
                           name='delete'
                           size={24}
@@ -107,13 +122,17 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                 <Stack.Screen
                   name='SearchGroup'
                   component={SearchGroup}
-                  options={({ route }) => ({ title: route.params.title ?? 'Join Existing Group' })}
+                  options={({ route }) => ({
+                    title: route.params.title ?? 'Join Existing Group',
+                  })}
                 />
               </Stack.Group>
             </Stack.Group>
           ) : (
             // Authentication & authorization screens
-            <Stack.Group screenOptions={{ ...defaultScreenOptions, headerTitle: '' }}>
+            <Stack.Group
+              screenOptions={{ ...defaultScreenOptions, headerTitle: '' }}
+            >
               <Stack.Screen
                 name='Initial'
                 component={InitialScreen}

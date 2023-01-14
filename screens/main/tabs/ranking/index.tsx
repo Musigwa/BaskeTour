@@ -10,12 +10,12 @@ import {
   View,
 } from 'react-native';
 import styled from 'styled-components/native';
-import GroupSelector from '../../../../components/common/GroupSelector';
 import TopTab from '../../../../components/common/TopTab';
 import { useAppSelector } from '../../../../hooks/useStore';
 import { useGetGRankingsQuery } from '../../../../store/api-queries/group-queries';
 import { useGetTournamentsQuery } from '../../../../store/api-queries/tournaments';
 import { H2, H4, H5, H6, Horizontal, Separator } from '../../../../styles/styled-elements';
+import GroupDropdown from '../../../../components/common/GroupSelector';
 
 const RankingScreen = () => {
   const { colors } = useTheme();
@@ -43,7 +43,7 @@ const RankingScreen = () => {
 
   return (
     <Container>
-      <GroupSelector />
+      <GroupDropdown />
       <Separator size='sm' />
       {rounds?.length ? <TopTab tabs={rounds} onTabPress={setRound} /> : null}
       <Separator size='sm' />
@@ -65,7 +65,9 @@ const RankingScreen = () => {
               <TouchableOpacity
                 key={idx}
                 activeOpacity={0.8}
-                style={{ backgroundColor: player?.id === user?.id && colors.pink }}
+                style={{
+                  backgroundColor: player?.id === user?.id && colors.pink,
+                }}
               >
                 <View style={{ padding: 15 }}>
                   <Horizontal>
@@ -141,7 +143,12 @@ const RankingScreen = () => {
         </ScrollView>
       ) : (
         <View
-          style={{ justifyContent: 'center', alignItems: 'center', flex: 1, paddingHorizontal: 10 }}
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            flex: 1,
+            paddingHorizontal: 10,
+          }}
         >
           <H4 style={{ textAlign: 'center' }}>
             Nothing to show for the selected{' '}
