@@ -7,7 +7,7 @@ import { useAppSelector } from '../../../hooks/useStore';
 import { useGetMyGroupsQuery } from '../../../store/api-queries/group-queries';
 import { H3, H5, H6, Horizontal } from '../../../styles/styled-elements';
 
-const listFooterComponent = ({ navigation, colors }) => {
+const ListFooterComponent = ({ navigation, colors }) => {
   return (
     <View style={{ marginVertical: 80 }}>
       <TouchableOpacity
@@ -91,7 +91,7 @@ const GroupListScreen: FC<PropsWithChildren<{ navigation: any }>> = ({ navigatio
       data={myGroups}
       fetchMethod={useGetMyGroupsQuery}
       params={{ userId }}
-      ListFooterComponent={listFooterComponent({ navigation, colors })}
+      ListFooterComponent={ListFooterComponent({ navigation, colors })}
       renderItem={args => renderItem({ ...args, navigation, colors })}
     />
   );
