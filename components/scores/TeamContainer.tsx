@@ -1,7 +1,6 @@
 import React from 'react';
 import { Image, View } from 'react-native';
 import { H6, Horizontal } from '../../styles/styled-elements';
-import defLogo from '../../assets/images/defLogo.png';
 import { GAME_STATUS } from '../../types';
 import { useTheme } from '@react-navigation/native';
 import { Iteam } from '../../interfaces';
@@ -19,7 +18,7 @@ const TeamContainer = ({ team, currentTab }: TeamProps) => {
       <Horizontal style={{ justifyContent: 'flex-start' }}>
         {team.logo ? (
           <Image
-            source={team.logo ? { uri: team.logo } : defLogo}
+            source={team.logo ? { uri: team.logo } : {}}
             style={{ width: 30, height: 30, marginRight: 10, borderRadius: 15 }}
             resizeMode='contain'
           />
@@ -34,7 +33,7 @@ const TeamContainer = ({ team, currentTab }: TeamProps) => {
         </H6>
       </Horizontal>
       <H6 style={{ color: team.isWinner ? colors.primary : 'black' }}>
-        {currentTab === 'STATUS_FINAL' ? team.score : team.record}
+        {currentTab === 'STATUS_SCHEDULED' ? team.record : team.score}
       </H6>
     </Horizontal>
   );
