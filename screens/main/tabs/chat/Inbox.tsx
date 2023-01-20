@@ -1,19 +1,20 @@
 import { Feather, FontAwesome } from '@expo/vector-icons';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useTheme } from '@react-navigation/native';
 import moment from 'moment';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Image, Pressable, StyleSheet, TextInput, View, Keyboard, Animated } from 'react-native';
+import { Image, Keyboard, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import useSocketIO from '../../../../hooks/socketIO';
 import { useAppSelector } from '../../../../hooks/useStore';
 import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
 import { H5, H6, Horizontal } from '../../../../styles/styled-elements';
 import { ellipsizeText } from '../../../../utils/methods';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 const renderItem = ({ item, index, colors, user }) => {
   const isMe = item?.sender?.id === user?.id;
+  // const color = genColor({ type: 'shade' });
+
   return (
     <Horizontal style={{ alignSelf: isMe ? 'flex-end' : 'flex-start' }} key={index}>
       {isMe ? null : (
@@ -136,7 +137,6 @@ const InboxScreen = ({ route }: any) => {
         scrollOnContentChange
         paginatable={false}
       />
-      {/* <View style={{ width: '100%', bottom: keyboardHeight }}> */}
       <Horizontal style={[styles.inputContainer, { bottom: keyboardHeight }]}>
         <Pressable style={styles.inputBtnContainer}>
           <Feather name='paperclip' size={24} color='gray' />
@@ -167,7 +167,6 @@ const InboxScreen = ({ route }: any) => {
           </Pressable>
         </Horizontal>
       </Horizontal>
-      {/* </View> */}
     </View>
   );
 };
