@@ -46,8 +46,8 @@ const ChatNavigator = ({ navigation }) => {
         component={InboxScreen}
         options={({ route: { params } }) => ({
           headerTitle: ({ style, tintColor, ...props }) => {
-            const group = params?.chat[0]?.group;
-            const fullGroup = myGroups.find(g => g.id === group.id);
+            const group = params?.chat?.group;
+            const fullGroup = myGroups.find((g) => g.id === group.id);
             return (
               <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <H4 {...props} style={{ color: tintColor }}>

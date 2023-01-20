@@ -1,20 +1,31 @@
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Image, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
 import { H5, H6, Horizontal } from '../../../../styles/styled-elements';
+import { useAppSelector } from '../../../../hooks/useStore';
+import moment from 'moment';
+import { ellipsizeText } from '../../../../utils/methods';
+import axios from 'axios';
+import useSocketIO from '../../../../hooks/socketIO';
 
-const renderItem = ({ item, index, colors }) => {
-  const isMe = item?.sender?.id === '43f23vc1233432341544';
+const renderItem = ({ item, index, colors, user }) => {
+  const isMe = item?.sender?.id === user?.id;
   // const color = genColor({ type: 'shade' });
+
   return (
-    <Horizontal style={{ alignSelf: isMe ? 'flex-end' : 'flex-start' }} key={index}>
+    <Horizontal
+      style={{ alignSelf: isMe ? 'flex-end' : 'flex-start' }}
+      key={index}
+    >
       {isMe ? null : (
         <Image
           style={[styles.avatar, { backgroundColor: colors.gray }]}
-          source={item?.sender?.profilePic ? { uri: item?.sender?.profilePic } : {}}
+          source={
+            item?.sender?.profilePic ? { uri: item?.sender?.profilePic } : {}
+          }
         />
       )}
       <View
@@ -29,14 +40,19 @@ const renderItem = ({ item, index, colors }) => {
       >
         {isMe ? null : (
           <H5 style={[styles.senderName]}>
-            {item.sender.firstName} {item.sender.lastName}
+            {ellipsizeText(
+              `${item.sender.firstName} ${item.sender.lastName}`,
+              12
+            )}
           </H5>
         )}
         <Horizontal>
           <H5 style={[styles.message, { marginTop: isMe ? 0 : 10 }]}>
-            {item.message.slice(0, Math.floor(Math.random() * 1000))}
+            {item.message}
           </H5>
-          <H6 style={[styles.timestamp]}>{item.timestamp}</H6>
+          <H6 style={[styles.timestamp]}>
+            {moment(item.createdAt).format('LT')}
+          </H6>
         </Horizontal>
       </View>
     </Horizontal>
@@ -47,13 +63,67 @@ const InboxScreen = ({ route }) => {
   const { colors } = useTheme();
   const { chat } = route.params ?? {};
   const [text, setText] = useState('');
+  const inputRef = useRef(null);
   const textMode = useMemo(() => text.length, [text]);
+  const { user, token } = useAppSelector(({ auth }) => auth);
+  const [messages, setMessages] = useState([]);
+  const { socket } = useSocketIO();
+
+  useEffect(() => {
+    socket.on('connect', () => {
+      console.log('socket.connected', socket.connected);
+      socket.emit('JOIN_GROUP', chat.group.id);
+      console.log('chat.group.id', chat.group.id);
+      socket.on('NEW_GROUP_MESSAGE', (message) => {
+        if (user?.id !== message.sender.id) {
+          setMessages((prev) => [...prev, message]);
+        }
+      });
+    });
+  }, [socket, chat.group.id, user]);
+
+  useEffect(() => {
+    fetch(
+      `https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`,
+      {
+        headers: {
+          'x-auth-token': `Bearer ${token}`,
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((result) => setMessages(result.data));
+  }, []);
+
+  const handleSendMessage = () => {
+    axios
+      .post(
+        `https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`,
+        {
+          message: text,
+        },
+        {
+          headers: {
+            'x-auth-token': `Bearer ${token}`,
+          },
+        }
+      )
+      .then(({ data }) => {
+        setText('');
+        setMessages((prev) => [...prev, data.data]);
+        socket.emit('SEND_GROUP_MESSAGE', {
+          ...data.data,
+          groupId: chat.group.id,
+        });
+        inputRef?.current?.clear?.();
+      });
+  };
 
   return (
     <View style={{ flex: 1 }}>
       <SearchPaginated
-        data={chat}
-        renderItem={args => renderItem({ ...args, colors })}
+        data={messages}
+        renderItem={(args) => renderItem({ ...args, colors, user })}
         fetchMethod={useGetMyGroupsQuery}
         style={styles.container}
         searchable={false}
@@ -67,9 +137,14 @@ const InboxScreen = ({ route }) => {
           placeholder='Write your message...'
           onChangeText={setText}
           numberOfLines={3}
+          ref={inputRef}
+          autoCorrect={false}
         />
         <Horizontal>
-          <Pressable style={styles.inputBtnContainer}>
+          <Pressable
+            style={styles.inputBtnContainer}
+            onPress={handleSendMessage}
+          >
             <FontAwesome
               name={textMode ? 'send-o' : 'microphone'}
               size={24}
@@ -93,10 +168,20 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginRight: 5,
   },
-  bubble: { padding: 12, marginVertical: 10, minWidth: '50%', maxWidth: '85%', borderRadius: 15 },
+  bubble: {
+    padding: 12,
+    marginVertical: 10,
+    minWidth: '50%',
+    maxWidth: '85%',
+    borderRadius: 15,
+  },
   senderName: { color: 'white', fontFamily: 'Poppins_700Bold' },
   message: { color: 'white', maxWidth: '75%' },
-  timestamp: { color: 'white', alignSelf: 'flex-end', textTransform: 'uppercase' },
+  timestamp: {
+    color: 'white',
+    alignSelf: 'flex-end',
+    textTransform: 'uppercase',
+  },
   inputContainer: { backgroundColor: 'rgba(241, 243, 245, 1)', padding: 5 },
   input: {
     fontSize: 16,
