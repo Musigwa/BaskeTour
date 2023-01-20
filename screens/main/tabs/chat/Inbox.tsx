@@ -55,7 +55,7 @@ const InboxScreen = ({ route }) => {
   const textMode = useMemo(() => text.length, [text]);
   const { user, token } = useAppSelector(({ auth }) => auth);
   const [messages, setMessages] = useState([]);
-  const { socket } = useSocketIO();
+  const socket = useSocketIO();
 
   useEffect(() => {
     socket.on('connect', () => {
