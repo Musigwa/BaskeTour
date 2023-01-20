@@ -16,16 +16,11 @@ const renderItem = ({ item, index, colors, user }) => {
   // const color = genColor({ type: 'shade' });
 
   return (
-    <Horizontal
-      style={{ alignSelf: isMe ? 'flex-end' : 'flex-start' }}
-      key={index}
-    >
+    <Horizontal style={{ alignSelf: isMe ? 'flex-end' : 'flex-start' }} key={index}>
       {isMe ? null : (
         <Image
           style={[styles.avatar, { backgroundColor: colors.gray }]}
-          source={
-            item?.sender?.profilePic ? { uri: item?.sender?.profilePic } : {}
-          }
+          source={item?.sender?.profilePic ? { uri: item?.sender?.profilePic } : {}}
         />
       )}
       <View
@@ -40,19 +35,12 @@ const renderItem = ({ item, index, colors, user }) => {
       >
         {isMe ? null : (
           <H5 style={[styles.senderName]}>
-            {ellipsizeText(
-              `${item.sender.firstName} ${item.sender.lastName}`,
-              12
-            )}
+            {ellipsizeText(`${item.sender.firstName} ${item.sender.lastName}`, 12)}
           </H5>
         )}
         <Horizontal>
-          <H5 style={[styles.message, { marginTop: isMe ? 0 : 10 }]}>
-            {item.message}
-          </H5>
-          <H6 style={[styles.timestamp]}>
-            {moment(item.createdAt).format('LT')}
-          </H6>
+          <H5 style={[styles.message, { marginTop: isMe ? 0 : 10 }]}>{item.message}</H5>
+          <H6 style={[styles.timestamp]}>{moment(item.createdAt).format('LT')}</H6>
         </Horizontal>
       </View>
     </Horizontal>
@@ -71,28 +59,23 @@ const InboxScreen = ({ route }) => {
 
   useEffect(() => {
     socket.on('connect', () => {
-      console.log('socket.connected', socket.connected);
       socket.emit('JOIN_GROUP', chat.group.id);
-      console.log('chat.group.id', chat.group.id);
-      socket.on('NEW_GROUP_MESSAGE', (message) => {
+      socket.on('NEW_GROUP_MESSAGE', message => {
         if (user?.id !== message.sender.id) {
-          setMessages((prev) => [...prev, message]);
+          setMessages(prev => [...prev, message]);
         }
       });
     });
-  }, [socket, chat.group.id, user]);
+  }, []);
 
   useEffect(() => {
-    fetch(
-      `https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`,
-      {
-        headers: {
-          'x-auth-token': `Bearer ${token}`,
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((result) => setMessages(result.data));
+    fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`, {
+      headers: {
+        'x-auth-token': `Bearer ${token}`,
+      },
+    })
+      .then(response => response.json())
+      .then(result => setMessages(result.data));
   }, []);
 
   const handleSendMessage = () => {
@@ -110,7 +93,7 @@ const InboxScreen = ({ route }) => {
       )
       .then(({ data }) => {
         setText('');
-        setMessages((prev) => [...prev, data.data]);
+        setMessages(prev => [...prev, data.data]);
         socket.emit('SEND_GROUP_MESSAGE', {
           ...data.data,
           groupId: chat.group.id,
@@ -123,7 +106,7 @@ const InboxScreen = ({ route }) => {
     <View style={{ flex: 1 }}>
       <SearchPaginated
         data={messages}
-        renderItem={(args) => renderItem({ ...args, colors, user })}
+        renderItem={args => renderItem({ ...args, colors, user })}
         fetchMethod={useGetMyGroupsQuery}
         style={styles.container}
         searchable={false}
@@ -141,10 +124,7 @@ const InboxScreen = ({ route }) => {
           autoCorrect={false}
         />
         <Horizontal>
-          <Pressable
-            style={styles.inputBtnContainer}
-            onPress={handleSendMessage}
-          >
+          <Pressable style={styles.inputBtnContainer} onPress={handleSendMessage}>
             <FontAwesome
               name={textMode ? 'send-o' : 'microphone'}
               size={24}
