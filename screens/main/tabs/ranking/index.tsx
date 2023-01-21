@@ -114,7 +114,7 @@ const RankingScreen = () => {
                     <View>
                       <View>
                         <H2>{player?.totalLosses}</H2>
-                        <H6 style={{ textTransform: 'normal' }}>{`Loss${
+                        <H6 style={{ textTransform: 'none' }}>{`Loss${
                           player?.totalLosses > 1 ? 'es' : ''
                         }`}</H6>
                       </View>

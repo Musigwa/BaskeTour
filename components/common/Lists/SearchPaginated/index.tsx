@@ -4,6 +4,7 @@ import React, {
   ComponentType,
   FC,
   PropsWithChildren,
+  memo,
   useEffect,
   useMemo,
   useRef,
@@ -35,6 +36,8 @@ type SearchPaginatedProps = {
   perPageCountName?: string;
   itemsPerPage?: number;
   style?: ViewStyle;
+  scrollOnContentChange?: boolean;
+  paginatable?: boolean;
 };
 
 type StateProps = { page: number; text: string };
@@ -44,7 +47,7 @@ const DefaultEmptyComponent = () => (
 );
 
 const DefaultListEndComponent = () => (
-  <H4 style={{ textTransform: 'normal' }}>End of list, no more data to fetch!</H4>
+  <H4 style={{ textTransform: 'none' }}>End of list, no more data to fetch!</H4>
 );
 
 const DefaultLoadMoreComponent = () => {
@@ -56,94 +59,109 @@ const DefaultLoadMoreComponent = () => {
     </Horizontal>
   );
 };
-export const SearchPaginated: FC<PropsWithChildren<SearchPaginatedProps>> = ({
-  searchable = true,
-  fetchMethod,
-  params,
-  renderItem,
-  ListEndComponent = DefaultListEndComponent,
-  ListEmptyComponent = DefaultEmptyComponent,
-  ListLoadMoreComponent = DefaultLoadMoreComponent,
-  ListFooterComponent,
-  ItemSeparatorComponent,
-  data,
-  searchKeyName = 'searchQuery',
-  perPageCountName = 'perPage',
-  itemsPerPage = 12,
-  style,
-}) => {
-  const [state, setState] = useState<StateProps>({ page: 1, text: '' });
-  const { page, text } = state;
-  const searchInput = useRef(null);
 
-  const debCallback = text => {
-    setState(() => ({ text, page: 1 }));
-  };
+export const SearchPaginated: FC<SearchPaginatedProps> = memo(
+  ({
+    searchable = true,
+    fetchMethod,
+    params,
+    renderItem,
+    ListEndComponent = DefaultListEndComponent,
+    ListEmptyComponent = DefaultEmptyComponent,
+    ListLoadMoreComponent = DefaultLoadMoreComponent,
+    ListFooterComponent,
+    ItemSeparatorComponent,
+    data,
+    searchKeyName = 'searchQuery',
+    perPageCountName = 'perPage',
+    itemsPerPage = 12,
+    style,
+    scrollOnContentChange = false,
+    paginatable = true,
+  }) => {
+    const [state, setState] = useState<StateProps>({ page: 1, text: '' });
+    const { page, text } = state;
+    const searchInput = useRef(null);
+    const listRef = useRef(null);
 
-  const {
-    isFetching,
-    refetch,
-    data: { meta = {} } = {},
-  } = fetchMethod({
-    [searchKeyName]: text,
-    ...params,
-    page,
-    [perPageCountName]: itemsPerPage,
-  });
-  const isListEnd = useMemo(() => meta.page === meta.totalPages, [meta.page, meta.totalPages]);
-  const handleDebTextChange = useMemo(() => _.debounce(debCallback, 300), [isFetching]);
+    const debCallback = text => {
+      setState({ text, page: 1 });
+    };
 
-  useEffect(() => {
-    refetch();
-    return handleDebTextChange.cancel;
-  }, [state]);
+    const {
+      isFetching,
+      refetch,
+      data: { meta = {} } = {},
+    } = fetchMethod({
+      [searchKeyName]: text,
+      ...params,
+      page,
+      [perPageCountName]: itemsPerPage,
+    });
+    const isListEnd = useMemo(() => meta.page === meta.totalPages, [meta.page, meta.totalPages]);
+    const handleDebTextChange = useMemo(() => _.debounce(debCallback, 300), [isFetching]);
 
-  const clearText = () => {
-    setState(st => ({ ...st, text: '' }));
-    searchInput.current?.clear?.();
-  };
+    useEffect(() => {
+      refetch();
+      return handleDebTextChange.cancel;
+    }, [state]);
 
-  const fetchMoreData = () => {
-    if (!isListEnd && !isFetching) {
-      setState(st => ({ ...st, page: page + 1 }));
-    }
-  };
+    const clearText = () => {
+      setState(st => ({ ...st, text: '' }));
+      searchInput.current?.clear?.();
+    };
 
-  return (
-    <View style={{ ...styles.container, ...style }}>
-      {searchable ? (
-        <Searchbar
-          clearText={clearText}
-          handleTextChange={handleDebTextChange}
-          isFetching={isFetching}
-          text={text}
-          ref={searchInput}
+    const fetchMoreData = () => {
+      if (!isListEnd && !isFetching) {
+        setState(st => ({ ...st, page: page + 1 }));
+      }
+    };
+
+    const handleContentSizeChange = () => {
+      if (scrollOnContentChange) {
+        listRef.current?.scrollToEnd?.({ animated: false });
+      }
+    };
+
+    return (
+      <View style={{ ...styles.container, ...style }}>
+        {searchable ? (
+          <Searchbar
+            clearText={clearText}
+            handleTextChange={handleDebTextChange}
+            isFetching={isFetching}
+            text={text}
+            ref={searchInput}
+          />
+        ) : null}
+        <FlatList
+          ref={listRef}
+          refreshing={isFetching}
+          onRefresh={refetch}
+          contentContainerStyle={{ flexGrow: 1 }}
+          data={data}
+          onEndReachedThreshold={1}
+          initialNumToRender={5}
+          onEndReached={paginatable ? fetchMoreData : undefined}
+          showsVerticalScrollIndicator={false}
+          renderItem={renderItem}
+          ItemSeparatorComponent={ItemSeparatorComponent}
+          keyExtractor={(item, index) => `[${index}]${item?.id}`}
+          ListFooterComponent={
+            <View style={styles.footerContainer}>
+              {isListEnd && !isFetching && data.length ? <ListEndComponent /> : null}
+              {isFetching && page > 1 ? <ListLoadMoreComponent /> : null}
+              {ListFooterComponent}
+            </View>
+          }
+          ListEmptyComponent={ListEmptyComponent}
+          onContentSizeChange={handleContentSizeChange}
+          onLayout={handleContentSizeChange}
         />
-      ) : null}
-      <FlatList
-        refreshing={isFetching}
-        onRefresh={refetch}
-        contentContainerStyle={{ flexGrow: 1 }}
-        data={data}
-        onEndReachedThreshold={1}
-        initialNumToRender={5}
-        onEndReached={fetchMoreData}
-        showsVerticalScrollIndicator={false}
-        renderItem={renderItem}
-        ItemSeparatorComponent={ItemSeparatorComponent}
-        keyExtractor={(item, index) => `[${index}]${item?.id}`}
-        ListFooterComponent={
-          <View style={styles.footerContainer}>
-            {isListEnd && !isFetching && data.length ? <ListEndComponent /> : null}
-            {isFetching && page > 1 ? <ListLoadMoreComponent /> : null}
-            {ListFooterComponent}
-          </View>
-        }
-        ListEmptyComponent={ListEmptyComponent}
-      />
-    </View>
-  );
-};
+      </View>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, backgroundColor: 'rgba(0,0,0,0.02)' },

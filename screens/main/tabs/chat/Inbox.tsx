@@ -1,6 +1,14 @@
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  PropsWithChildren,
+  PureComponent,
+  memo,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Image, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
@@ -38,8 +46,8 @@ const renderItem = ({ item, index, colors, user }) => {
             {ellipsizeText(`${item.sender.firstName} ${item.sender.lastName}`, 12)}
           </H5>
         )}
-        <Horizontal>
-          <H5 style={[styles.message, { marginTop: isMe ? 0 : 10 }]}>{item.message}</H5>
+        <Horizontal style={{ marginTop: isMe ? 0 : 10 }}>
+          <H5 style={[styles.message, { marginRight: 10 }]}>{item.message}</H5>
           <H6 style={[styles.timestamp]}>{moment(item.createdAt).format('LT')}</H6>
         </Horizontal>
       </View>
@@ -47,24 +55,22 @@ const renderItem = ({ item, index, colors, user }) => {
   );
 };
 
-const InboxScreen = ({ route }) => {
+const InboxScreen = memo(({ route }: any) => {
   const { colors } = useTheme();
   const { chat } = route.params ?? {};
   const [text, setText] = useState('');
   const inputRef = useRef(null);
   const textMode = useMemo(() => text.length, [text]);
   const { user, token } = useAppSelector(({ auth }) => auth);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<any[]>([]);
   const socket = useSocketIO();
 
   useEffect(() => {
-    socket.on('connect', () => {
-      socket.emit('JOIN_GROUP', chat.group.id);
-      socket.on('NEW_GROUP_MESSAGE', message => {
-        if (user?.id !== message.sender.id) {
-          setMessages(prev => [...prev, message]);
-        }
-      });
+    socket.emit('JOIN_GROUP', chat.group.id);
+    socket.on('NEW_GROUP_MESSAGE', (message: any) => {
+      if (user?.id !== message.sender.id) {
+        setMessages(prev => [...prev, message]);
+      }
     });
   }, []);
 
@@ -110,6 +116,8 @@ const InboxScreen = ({ route }) => {
         fetchMethod={useGetMyGroupsQuery}
         style={styles.container}
         searchable={false}
+        scrollOnContentChange
+        paginatable={false}
       />
       <Horizontal style={styles.inputContainer}>
         <Pressable style={styles.inputBtnContainer}>
@@ -124,7 +132,7 @@ const InboxScreen = ({ route }) => {
           autoCorrect={false}
         />
         <Horizontal>
-          <Pressable style={styles.inputBtnContainer} onPress={handleSendMessage}>
+          <Pressable style={styles.inputBtnContainer} onPress={handleSendMessage} disabled={!text}>
             <FontAwesome
               name={textMode ? 'send-o' : 'microphone'}
               size={24}
@@ -135,7 +143,7 @@ const InboxScreen = ({ route }) => {
       </Horizontal>
     </View>
   );
-};
+});
 
 export default InboxScreen;
 
@@ -156,7 +164,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   senderName: { color: 'white', fontFamily: 'Poppins_700Bold' },
-  message: { color: 'white', maxWidth: '75%' },
+  message: { color: 'white', maxWidth: '75%', textTransform: 'none' },
   timestamp: {
     color: 'white',
     alignSelf: 'flex-end',

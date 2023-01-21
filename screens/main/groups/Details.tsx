@@ -21,7 +21,7 @@ const GroupDetailsScreen = ({ navigation, route }) => {
           onChangeText={handleTextChange}
         />
         <Separator style={{ marginTop: 10, marginBottom: 34 }} />
-        <H6 style={{ color: colors.gray, textTransform: 'normal' }}>Group PIN Code</H6>
+        <H6 style={{ color: colors.gray, textTransform: 'none' }}>Group PIN Code</H6>
         <Horizontal style={{ marginTop: 10 }}>
           {group.groupPIN.split('').map((digit, idx) => {
             return (

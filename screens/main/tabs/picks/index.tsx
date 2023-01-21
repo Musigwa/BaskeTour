@@ -16,7 +16,6 @@ import {
   useGetTournamentsQuery,
 } from '../../../../store/api-queries/tournaments';
 import { H2, H4, Horizontal, Separator } from '../../../../styles/styled-elements';
-import { GAME_STATUS } from '../../../../types';
 import { getActiveRound } from '../../../../utils/methods';
 
 type Pick = { eventId: string; teamId: string };
@@ -121,7 +120,7 @@ const PicksScreen = () => {
             <Headline style={{ color: colors.primary }}>Time remaining to make picks</Headline>
             <CountDown date={games[0].eventDate} />
             <Separator />
-            <H2 style={{ marginTop: 35, marginBottom: 10, textTransform: 'normal' }}>
+            <H2 style={{ marginTop: 35, marginBottom: 10, textTransform: 'none' }}>
               Pick teams to win
             </H2>
             <Headline style={{ color: colors.primary }}>
