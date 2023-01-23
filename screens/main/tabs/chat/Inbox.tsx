@@ -18,6 +18,7 @@ import moment from 'moment';
 import { ellipsizeText } from '../../../../utils/methods';
 import axios from 'axios';
 import useSocketIO from '../../../../hooks/socketIO';
+import _ from 'lodash';
 
 const renderItem = ({ item, index, colors, user }) => {
   const isMe = item?.sender?.id === user?.id;
@@ -58,9 +59,9 @@ const renderItem = ({ item, index, colors, user }) => {
 const InboxScreen = memo(({ route }: any) => {
   const { colors } = useTheme();
   const { chat } = route.params ?? {};
-  const [text, setText] = useState('');
+  const [message, setMessage] = useState('');
   const inputRef = useRef(null);
-  const textMode = useMemo(() => text.length, [text]);
+  const textMode = useMemo(() => message.length, [message]);
   const { user, token } = useAppSelector(({ auth }) => auth);
   const [messages, setMessages] = useState<any[]>([]);
   const socket = useSocketIO();
@@ -85,33 +86,34 @@ const InboxScreen = memo(({ route }: any) => {
   }, []);
 
   const handleSendMessage = () => {
+    const newMessage = {
+      createdAt: new Date().toISOString(),
+      message,
+      sender: user,
+      group: chat.group,
+    };
+    console.log('The created message', newMessage);
+    inputRef?.current?.clear?.();
+    setMessage('');
+    setMessages(state => [...state, newMessage]);
     axios
       .post(
         `https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`,
-        {
-          message: text,
-        },
-        {
-          headers: {
-            'x-auth-token': `Bearer ${token}`,
-          },
-        }
+        { message, createdAt: newMessage.createdAt },
+        { headers: { 'x-auth-token': `Bearer ${token}` } }
       )
-      .then(({ data }) => {
-        setText('');
-        setMessages(prev => [...prev, data.data]);
-        socket.emit('SEND_GROUP_MESSAGE', {
-          ...data.data,
-          groupId: chat.group.id,
-        });
-        inputRef?.current?.clear?.();
+      .then(({ data: { data } }) => {
+        const instance = _.sortBy(messages, ['createdAt']);
+        instance.pop();
+        setMessages([...instance, data]);
+        socket.emit('SEND_GROUP_MESSAGE', { ...data, groupId: chat.group.id });
       });
   };
 
   return (
     <View style={{ flex: 1 }}>
       <SearchPaginated
-        data={messages}
+        data={_.sortBy(messages, ['createdAt'])}
         renderItem={args => renderItem({ ...args, colors, user })}
         fetchMethod={useGetMyGroupsQuery}
         style={styles.container}
@@ -126,13 +128,17 @@ const InboxScreen = memo(({ route }: any) => {
         <TextInput
           style={styles.input}
           placeholder='Write your message...'
-          onChangeText={setText}
+          onChangeText={setMessage}
           numberOfLines={3}
           ref={inputRef}
           autoCorrect={false}
         />
         <Horizontal>
-          <Pressable style={styles.inputBtnContainer} onPress={handleSendMessage} disabled={!text}>
+          <Pressable
+            style={styles.inputBtnContainer}
+            onPress={handleSendMessage}
+            disabled={!message}
+          >
             <FontAwesome
               name={textMode ? 'send-o' : 'microphone'}
               size={24}

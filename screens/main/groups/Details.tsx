@@ -100,7 +100,6 @@ const GroupDetailsScreen = ({ navigation, route }) => {
                 </Horizontal>
                 {idx !== 0 ? (
                   <Horizontal>
-                    <Ionicons name='game-controller' size={24} color='black' />
                     <MaterialIcons
                       name='delete'
                       size={24}
