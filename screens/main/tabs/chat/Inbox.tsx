@@ -86,12 +86,8 @@ const InboxScreen = memo(({ route }: any) => {
   }, []);
 
   const handleSendMessage = () => {
-    const newMessage = {
-      createdAt: new Date().toISOString(),
-      message,
-      sender: user,
-      group: chat.group,
-    };
+    const createdAt = new Date().toISOString();
+    const newMessage = { message, sender: user, group: chat.group, createdAt };
     inputRef?.current?.clear?.();
     setMessage('');
     setMessages(state => [...state, newMessage]);
@@ -102,12 +98,6 @@ const InboxScreen = memo(({ route }: any) => {
         { headers: { 'x-auth-token': `Bearer ${token}` } }
       )
       .then(({ data: { data } }) => {
-        messages.pop();
-        setMessages(state => {
-          const instance = state;
-          instance.pop();
-          return [...instance, data];
-        });
         socket.emit('SEND_GROUP_MESSAGE', { ...data, groupId: chat.group.id });
       });
   };
