@@ -42,10 +42,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    })
-      .concat(authApi.middleware)
-      .concat(tournamentApi.middleware)
-      .concat(groupApi.middleware),
+    }).concat([authApi.middleware, tournamentApi.middleware, groupApi.middleware]),
   devTools: process.env.NODE_ENV !== 'production',
 });
 
