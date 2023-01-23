@@ -18,7 +18,7 @@ import moment from 'moment';
 import { ellipsizeText } from '../../../../utils/methods';
 import axios from 'axios';
 import useSocketIO from '../../../../hooks/socketIO';
-import _ from 'lodash';
+import _, { startCase } from 'lodash';
 
 const renderItem = ({ item, index, colors, user }) => {
   const isMe = item?.sender?.id === user?.id;
@@ -92,7 +92,6 @@ const InboxScreen = memo(({ route }: any) => {
       sender: user,
       group: chat.group,
     };
-    console.log('The created message', newMessage);
     inputRef?.current?.clear?.();
     setMessage('');
     setMessages(state => [...state, newMessage]);
@@ -103,9 +102,12 @@ const InboxScreen = memo(({ route }: any) => {
         { headers: { 'x-auth-token': `Bearer ${token}` } }
       )
       .then(({ data: { data } }) => {
-        const instance = _.sortBy(messages, ['createdAt']);
-        instance.pop();
-        setMessages([...instance, data]);
+        messages.pop();
+        setMessages(state => {
+          const instance = state;
+          instance.pop();
+          return [...instance, data];
+        });
         socket.emit('SEND_GROUP_MESSAGE', { ...data, groupId: chat.group.id });
       });
   };
