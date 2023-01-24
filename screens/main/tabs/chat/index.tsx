@@ -110,7 +110,13 @@ const ChatListScreen = ({ navigation }) => {
   return (
     <SearchPaginated
       style={{ backgroundColor: 'white' }}
-      data={conversations}
+      data={conversations
+        .filter((c: any) => c.lastMessage)
+        .sort(
+          (a: any, b: any) =>
+            moment(a?.lastMessage?.createdAt).milliseconds() -
+            moment(b?.lastMessage?.createdAt).milliseconds()
+        )}
       fetchMethod={useGetMyGroupsQuery}
       renderItem={args => renderItem({ ...args, navigation, colors })}
     />
