@@ -1,24 +1,16 @@
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
-import React, {
-  PropsWithChildren,
-  PureComponent,
-  memo,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import axios from 'axios';
+import _ from 'lodash';
+import moment from 'moment';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Image, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
+import useSocketIO from '../../../../hooks/socketIO';
+import { useAppSelector } from '../../../../hooks/useStore';
 import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
 import { H5, H6, Horizontal } from '../../../../styles/styled-elements';
-import { useAppSelector } from '../../../../hooks/useStore';
-import moment from 'moment';
 import { ellipsizeText } from '../../../../utils/methods';
-import axios from 'axios';
-import useSocketIO from '../../../../hooks/socketIO';
-import _, { startCase } from 'lodash';
 
 const renderItem = ({ item, index, colors, user }) => {
   const isMe = item?.sender?.id === user?.id;
@@ -86,10 +78,10 @@ const InboxScreen = memo(({ route }: any) => {
   }, []);
 
   const handleSendMessage = () => {
+    setMessage('');
     const createdAt = new Date().toISOString();
     const newMessage = { message, sender: user, group: chat.group, createdAt };
     inputRef?.current?.clear?.();
-    setMessage('');
     setMessages(state => [...state, newMessage]);
     axios
       .post(

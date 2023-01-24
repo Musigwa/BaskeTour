@@ -20,6 +20,7 @@ const ChatNavigator = ({ navigation }) => {
   const goToSettings = () => {
     navigation.navigate('SettingList');
   };
+
   return (
     <Stack.Navigator
       screenOptions={{

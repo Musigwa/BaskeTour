@@ -13,3 +13,8 @@ export interface IUser {
   bio?: string;
   website?: string;
 }
+
+// Make sure there's a reducer named 'logOut' <== case sensitive under 'auth' => reducers
+export const actions = {
+  LOGOUT: 'auth/logOut',
+};

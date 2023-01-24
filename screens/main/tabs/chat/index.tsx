@@ -4,16 +4,15 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import { chats } from '../../../../constants/dummy';
 import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
-import {
-  H3,
-  H4,
-  H6,
-  Horizontal,
-  Separator,
-} from '../../../../styles/styled-elements';
+import { H3, H4, H6, Horizontal, Separator } from '../../../../styles/styled-elements';
 import { ellipsizeText, genColor } from '../../../../utils/methods';
 import moment from 'moment';
-const renderItem = ({ item: chat, index: idx, navigation, colors }) => {
+import useSocketIO from '../../../../hooks/socketIO';
+import _, { filter } from 'lodash';
+import { useAppSelector } from '../../../../hooks/useStore';
+
+const renderItem = ({ item: chat, index: idx, navigation, colors, socket }) => {
+  socket.emit('JOIN_GROUP', chat.group.id);
   const handleItemPress = () => {
     navigation.navigate('Inbox', { chat });
   };
@@ -33,19 +32,17 @@ const renderItem = ({ item: chat, index: idx, navigation, colors }) => {
           <View style={{ flex: 0.9 }}>
             <H4>{ellipsizeText(chat.group?.groupName, 20)}</H4>
             <H6 style={{ color: colors.gray, marginTop: 5 }}>
-              {ellipsizeText(chat.lastMessage, 30)}
+              {ellipsizeText(chat?.lastMessage?.message, 30)}
             </H6>
           </View>
         </Horizontal>
         <View style={{ alignItems: 'flex-end' }}>
           <H6 style={{ textTransform: 'uppercase', color: colors.gray }}>
-            {moment().format('LT')}
+            {moment(chat?.lastMessage?.createdAt).format('LT')}
           </H6>
           {!!chat.unreadMessages && (
             <View style={[styles.badge, { backgroundColor: colors.primary }]}>
-              <H6 style={{ textAlign: 'center', color: 'white' }}>
-                {chat.unreadMessages}
-              </H6>
+              <H6 style={{ textAlign: 'center', color: 'white' }}>{chat.unreadMessages}</H6>
             </View>
           )}
         </View>
@@ -57,6 +54,9 @@ const renderItem = ({ item: chat, index: idx, navigation, colors }) => {
 
 const ChatListScreen = ({ navigation }) => {
   const { colors } = useTheme();
+  const socket = useSocketIO();
+  const { user, token } = useAppSelector(({ auth }) => auth);
+
   const [conversations, setConversations] = useState([]);
   const groupedChats = Object.values(
     chats.reduce((acc, next) => {
@@ -74,23 +74,35 @@ const ChatListScreen = ({ navigation }) => {
     }
   }, []);
 
-  useEffect(() => {
-    fetch('https://api.ullipicks.com/api/v1/group-chat/conversations', {
+  const fetchData = () => {
+    return fetch('https://api.ullipicks.com/api/v1/group-chat/conversations', {
       headers: {
-        'x-auth-token':
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNTEyYjZmOWU2OWQ2MzMyMGY4ZTFjZCIsImlhdCI6MTY3NDIwNzM2MSwiZXhwIjoxNjc2Nzk5MzYxfQ.iekRjRcvOJc2rKnHP7OyPWA2wMrALtOaZRopy0Avt0Y',
+        'x-auth-token': `Bearer ${token}`,
       },
     })
-      .then((response) => response.json())
-      .then((result) => setConversations(result.data));
+      .then(response => response.json())
+      .then(result => setConversations(result.data));
+  };
+
+  useEffect(() => {
+    fetchData();
+    socket.on('NEW_GROUP_MESSAGE', (message: any) => {
+      fetchData();
+    });
   }, []);
 
   return (
     <SearchPaginated
       style={{ backgroundColor: 'white' }}
-      data={conversations}
+      data={conversations
+        .filter((c: any) => c.lastMessage)
+        .sort(
+          (a: any, b: any) =>
+            moment(a?.lastMessage?.createdAt).milliseconds() -
+            moment(b?.lastMessage?.createdAt).milliseconds()
+        )}
       fetchMethod={useGetMyGroupsQuery}
-      renderItem={(args) => renderItem({ ...args, navigation, colors })}
+      renderItem={args => renderItem({ ...args, navigation, colors, socket })}
     />
   );
 };

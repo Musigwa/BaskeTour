@@ -3,9 +3,10 @@ import { useNavigation, useTheme } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useAppDispatch } from '../../../hooks/useStore';
-import { loggedOut } from '../../../store/slices/authSlice';
+import { logOut } from '../../../store/slices/authSlice';
 import { H2, H4, Horizontal } from '../../../styles/styled-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { persistor } from '../../../store';
 
 const options = [
   { title: 'Groups' },
@@ -22,9 +23,11 @@ const SettingsScreen = ({ navigation }) => {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
 
-  const handlePress = (element: { title: string }) => {
-    if (element.title.includes('ogout')) dispatch(loggedOut());
-    else {
+  const handlePress = async (element: { title: string }) => {
+    if (element.title.includes('ogout')) {
+      await persistor.flush();
+      dispatch(logOut());
+    } else {
       const [screenName] = element.title.split(' ');
       navigation.navigate(screenName);
     }
@@ -64,5 +67,3 @@ const SettingsScreen = ({ navigation }) => {
 };
 
 export default SettingsScreen;
-
-const styles = StyleSheet.create({});
