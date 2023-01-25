@@ -1,14 +1,17 @@
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
-import React, { useMemo, useState } from 'react';
+import moment from 'moment';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Image, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
+import useSocketIO from '../../../../hooks/socketIO';
+import { useAppSelector } from '../../../../hooks/useStore';
 import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
 import { H5, H6, Horizontal } from '../../../../styles/styled-elements';
+import { ellipsizeText } from '../../../../utils/methods';
 
-const renderItem = ({ item, index, colors }) => {
-  const isMe = item?.sender?.id === '43f23vc1233432341544';
-  // const color = genColor({ type: 'shade' });
+const renderItem = ({ item, index, colors, user }) => {
+  const isMe = item?.sender?.id === user?.id;
   return (
     <Horizontal style={{ alignSelf: isMe ? 'flex-end' : 'flex-start' }} key={index}>
       {isMe ? null : (
@@ -29,34 +32,87 @@ const renderItem = ({ item, index, colors }) => {
       >
         {isMe ? null : (
           <H5 style={[styles.senderName]}>
-            {item.sender.firstName} {item.sender.lastName}
+            {ellipsizeText(`${item.sender.firstName} ${item.sender.lastName}`, 12)}
           </H5>
         )}
-        <Horizontal>
-          <H5 style={[styles.message, { marginTop: isMe ? 0 : 10 }]}>
-            {item.message.slice(0, Math.floor(Math.random() * 1000))}
-          </H5>
-          <H6 style={[styles.timestamp]}>{item.timestamp}</H6>
+        <Horizontal style={{ marginTop: isMe ? 0 : 10 }}>
+          <H5 style={[styles.message, { marginRight: 10 }]}>{item.message}</H5>
+          <H6 style={[styles.timestamp]}>{moment(item.createdAt).format('LT')}</H6>
         </Horizontal>
       </View>
     </Horizontal>
   );
 };
 
-const InboxScreen = ({ route }) => {
+const InboxScreen = ({ route }: any) => {
   const { colors } = useTheme();
   const { chat } = route.params ?? {};
   const [text, setText] = useState('');
-  const textMode = useMemo(() => text.length, [text]);
+  const inputRef = useRef(null);
+  const message = useMemo(() => text.trim(), [text]);
+  const { user, token } = useAppSelector(({ auth }) => auth);
+  const [messages, setMessages] = useState<any[]>([]);
+  const socket = useSocketIO();
+
+  const handleUnMount = () => {
+    clearUnreadStatus();
+    socket.off('NEW_GROUP_MESSAGE');
+  };
+
+  const clearUnreadStatus = () => {
+    fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/view-messages`, {
+      headers: { 'x-auth-token': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      method: 'patch',
+    }).then(response => {});
+  };
+
+  const handleNGMessage = (message: any) => {
+    if (user?.id !== message.sender.id && chat.group.id === message.group.id) {
+      setMessages(prev => [...prev, message]);
+    }
+    clearUnreadStatus();
+  };
+
+  useEffect(() => {
+    clearUnreadStatus();
+    socket.on('NEW_GROUP_MESSAGE', handleNGMessage);
+    fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`, {
+      headers: { 'x-auth-token': `Bearer ${token}`, 'Content-Type': 'application/json' },
+    })
+      .then(response => response.json())
+      .then(result => {
+        setMessages(result.data);
+      });
+    return handleUnMount;
+  }, []);
+
+  const handleSendMessage = () => {
+    setText('');
+    const createdAt = new Date().toISOString();
+    const newMessage = { message, sender: user, group: chat.group, createdAt };
+    inputRef?.current?.clear?.();
+    setMessages(state => [...state, newMessage]);
+    fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`, {
+      body: JSON.stringify({ message, createdAt: newMessage.createdAt }),
+      headers: { 'x-auth-token': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      method: 'post',
+    })
+      .then(resp => resp.json())
+      .then(result => {});
+  };
 
   return (
     <View style={{ flex: 1 }}>
       <SearchPaginated
-        data={chat}
-        renderItem={args => renderItem({ ...args, colors })}
+        data={messages.sort(
+          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        )}
+        renderItem={args => renderItem({ ...args, colors, user })}
         fetchMethod={useGetMyGroupsQuery}
         style={styles.container}
         searchable={false}
+        scrollOnContentChange
+        paginatable={false}
       />
       <Horizontal style={styles.inputContainer}>
         <Pressable style={styles.inputBtnContainer}>
@@ -67,13 +123,23 @@ const InboxScreen = ({ route }) => {
           placeholder='Write your message...'
           onChangeText={setText}
           numberOfLines={3}
+          ref={inputRef}
+          autoCorrect={false}
+          returnKeyType='send'
+          returnKeyLabel='Send'
+          onSubmitEditing={handleSendMessage}
+          autoFocus
         />
         <Horizontal>
-          <Pressable style={styles.inputBtnContainer}>
+          <Pressable
+            style={styles.inputBtnContainer}
+            onPress={handleSendMessage}
+            disabled={!message}
+          >
             <FontAwesome
-              name={textMode ? 'send-o' : 'microphone'}
+              name='send-o'
               size={24}
-              color={colors.primary}
+              color={message ? colors.primary : colors.disabled}
             />
           </Pressable>
         </Horizontal>
@@ -93,10 +159,20 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginRight: 5,
   },
-  bubble: { padding: 12, marginVertical: 10, minWidth: '50%', maxWidth: '85%', borderRadius: 15 },
+  bubble: {
+    padding: 12,
+    marginVertical: 10,
+    minWidth: '50%',
+    maxWidth: '85%',
+    borderRadius: 15,
+  },
   senderName: { color: 'white', fontFamily: 'Poppins_700Bold' },
-  message: { color: 'white', maxWidth: '75%' },
-  timestamp: { color: 'white', alignSelf: 'flex-end', textTransform: 'uppercase' },
+  message: { color: 'white', maxWidth: '75%', textTransform: 'none' },
+  timestamp: {
+    color: 'white',
+    alignSelf: 'flex-end',
+    textTransform: 'uppercase',
+  },
   inputContainer: { backgroundColor: 'rgba(241, 243, 245, 1)', padding: 5 },
   input: {
     fontSize: 16,

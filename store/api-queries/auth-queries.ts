@@ -17,10 +17,7 @@ export const authApi = createApi({
       query: body => ({ url: LOGIN, method: 'POST', body }),
     }),
     uploadProfileDetails: builder.mutation({
-      query: body => {
-        console.log('The body ==>', body);
-        return { url: CURRENT_USER, method: 'PUT', body };
-      },
+      query: body => ({ url: CURRENT_USER, method: 'PUT', body }),
     }),
   }),
 });

@@ -46,7 +46,7 @@ const ProfileScreen = () => {
 
   return (
     <KeyboardAvoid
-      style={{
+      contentContainerStyle={{
         flex: 1,
         paddingHorizontal: 20,
         paddingVertical: 50,

@@ -94,7 +94,7 @@ export const objDiff = (o1, o2) =>
  * @param {number} n
  * @returns {string}
  */
-export const ellipsizeText = (text: string, n: number) =>
+export const ellipsizeText = (text: string = '', n: number) =>
   text.length > n ? text.slice(0, n - 1) + '\u2026' : text;
 
 /**

@@ -1,16 +1,21 @@
 import { useTheme } from '@react-navigation/native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import { chats } from '../../../../constants/dummy';
 import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
 import { H3, H4, H6, Horizontal, Separator } from '../../../../styles/styled-elements';
 import { ellipsizeText, genColor } from '../../../../utils/methods';
+import moment from 'moment';
+import useSocketIO from '../../../../hooks/socketIO';
+import _ from 'lodash';
+import { useAppSelector } from '../../../../hooks/useStore';
 
 const renderItem = ({ item: chat, index: idx, navigation, colors }) => {
   const handleItemPress = () => {
     navigation.navigate('Inbox', { chat });
   };
+
   return (
     <Pressable style={styles.container} key={idx} onPress={handleItemPress}>
       <Horizontal style={styles.listItem}>
@@ -21,20 +26,26 @@ const renderItem = ({ item: chat, index: idx, navigation, colors }) => {
               { backgroundColor: genColor({ type: 'shade' }).toString() },
             ]}
           >
-            <H3 style={styles.avatar}>{chat[0]?.group?.groupName.slice(0, 2)}</H3>
+            <H3 style={styles.avatar}>{chat.group?.groupName.slice(0, 2)}</H3>
           </View>
           <View style={{ flex: 0.9 }}>
-            <H4>{ellipsizeText(chat[0]?.group?.groupName, 20)}</H4>
-            <H6 style={{ color: colors.gray, marginTop: 5 }}>
-              {ellipsizeText(chat[0].message, 30)}
+            <H4>{ellipsizeText(chat.group?.groupName, 20)}</H4>
+            <H6 style={{ color: colors.gray, marginTop: 5, textTransform: 'none' }}>
+              {ellipsizeText(chat?.lastMessage?.message, 30)}
             </H6>
           </View>
         </Horizontal>
         <View style={{ alignItems: 'flex-end' }}>
-          <H6 style={{ textTransform: 'uppercase', color: colors.gray }}>{chat[0].timestamp}</H6>
-          <View style={[styles.badge, { backgroundColor: colors.primary }]}>
-            <H6 style={{ textAlign: 'center', color: 'white' }}>12</H6>
-          </View>
+          <H6 style={{ color: colors.gray, textTransform: 'none' }}>
+            {chat?.lastMessage?.createdAt
+              ? moment(chat?.lastMessage?.createdAt).format('LT')
+              : null}
+          </H6>
+          {!!chat.unreadMessages && (
+            <View style={[styles.badge, { backgroundColor: colors.primary }]}>
+              <H6 style={{ textAlign: 'center', color: 'white' }}>{chat.unreadMessages}</H6>
+            </View>
+          )}
         </View>
       </Horizontal>
       <Separator />
@@ -44,6 +55,10 @@ const renderItem = ({ item: chat, index: idx, navigation, colors }) => {
 
 const ChatListScreen = ({ navigation }) => {
   const { colors } = useTheme();
+  const socket = useSocketIO();
+  const { user, token } = useAppSelector(({ auth }) => auth);
+
+  const [conversations, setConversations] = useState<any[]>([]);
   const groupedChats = Object.values(
     chats.reduce((acc, next) => {
       const { group } = next;
@@ -54,16 +69,48 @@ const ChatListScreen = ({ navigation }) => {
   );
 
   useEffect(() => {
-    if (groupedChats.length === 1) {
-      const [chat] = groupedChats;
+    if (conversations.length === 1) {
+      const [chat] = conversations;
       navigation.navigate('Inbox', { chat });
     }
+    socket.on('NEW_GROUP_MESSAGE', handleNGMessage);
+    return () => {
+      socket.off('NEW_GROUP_MESSAGE');
+    };
   }, []);
+
+  const fetchData = () => {
+    return fetch('https://api.ullipicks.com/api/v1/group-chat/conversations', {
+      headers: {
+        'x-auth-token': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(result => setConversations(result.data));
+  };
+
+  const handleNGMessage = (message: any) => {
+    setConversations(prev => {
+      const found = prev.find(c => c?.group?.id === message.group.id) ?? {};
+      const without = _.without(prev, found);
+      found['lastMessage'] = message;
+      if (user?.id !== message.sender.id) {
+        found['unreadMessages'] = (found['unreadMessages'] ?? 0) + 1;
+      }
+      return [found, ...without];
+    });
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', fetchData);
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <SearchPaginated
       style={{ backgroundColor: 'white' }}
-      data={groupedChats}
+      data={conversations}
       fetchMethod={useGetMyGroupsQuery}
       renderItem={args => renderItem({ ...args, navigation, colors })}
     />

@@ -1,15 +1,15 @@
 import { fetchBaseQuery } from '@reduxjs/toolkit/query';
 import Config from '../../environment';
-import { loggedOut } from '../slices/authSlice';
+import { logOut } from '../slices/authSlice';
 
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import type { RootState } from '../index';
 
-export const baseURL = Config.API_BASE_URL;
+export const baseUrl = Config.API_BASE_URL;
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: baseURL,
+  baseUrl,
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
     if (token) headers.set('x-auth-token', `Bearer ${token}`);
@@ -23,9 +23,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
   extraOptions
 ) => {
   let result = await baseQuery(args, api, extraOptions);
-  if (result.error && result.error.status === 401) {
-    api.dispatch(loggedOut());
-  }
+  if ((result.meta?.response?.status || result?.error?.status) === 401) api.dispatch(logOut());
   return result;
 };
 
