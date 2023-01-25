@@ -11,7 +11,7 @@ import useSocketIO from '../../../../hooks/socketIO';
 import _ from 'lodash';
 import { useAppSelector } from '../../../../hooks/useStore';
 
-const renderItem = ({ item: chat, index: idx, navigation, colors, socket }) => {
+const renderItem = ({ item: chat, index: idx, navigation, colors }) => {
   const handleItemPress = () => {
     navigation.navigate('Inbox', { chat });
   };
@@ -56,7 +56,7 @@ const ChatListScreen = ({ navigation }) => {
   const socket = useSocketIO();
   const { user, token } = useAppSelector(({ auth }) => auth);
 
-  const [conversations, setConversations] = useState([]);
+  const [conversations, setConversations] = useState<any[]>([]);
   const groupedChats = Object.values(
     chats.reduce((acc, next) => {
       const { group } = next;
@@ -77,17 +77,29 @@ const ChatListScreen = ({ navigation }) => {
     return fetch('https://api.ullipicks.com/api/v1/group-chat/conversations', {
       headers: {
         'x-auth-token': `Bearer ${token}`,
+        'Content-Type': 'application/json',
       },
     })
       .then(response => response.json())
       .then(result => setConversations(result.data));
   };
 
+  const handleNGMessage = (message: any) => {
+    setConversations(prev => {
+      const found = prev.find(c => c?.group?.id === message.group.id) ?? {};
+      const without = _.without(prev, found);
+      found['lastMessage'] = message;
+      found['unreadMessages'] = +found['unreadMessages'] + 1;
+      return [...without, found];
+    });
+  };
+
   useEffect(() => {
     fetchData();
-    socket.on('NEW_GROUP_MESSAGE', (message: any) => {
-      fetchData();
-    });
+  }, []);
+
+  useEffect(() => {
+    socket.on('NEW_GROUP_MESSAGE', handleNGMessage);
   }, []);
 
   return (
@@ -101,7 +113,7 @@ const ChatListScreen = ({ navigation }) => {
             new Date(a?.lastMessage?.createdAt).getTime()
         )}
       fetchMethod={useGetMyGroupsQuery}
-      renderItem={args => renderItem({ ...args, navigation, colors, socket })}
+      renderItem={args => renderItem({ ...args, navigation, colors })}
     />
   );
 };
