@@ -7,7 +7,7 @@ import { Image, Keyboard, Pressable, StyleSheet, TextInput, View } from 'react-n
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import useSocketIO from '../../../../hooks/socketIO';
 import { useAppSelector } from '../../../../hooks/useStore';
-import { groupApi, useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
+import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
 import { H5, H6, Horizontal } from '../../../../styles/styled-elements';
 import { ellipsizeText } from '../../../../utils/methods';
 
