@@ -51,9 +51,9 @@ const renderItem = ({ item, index, colors, user }) => {
 const InboxScreen = memo(({ route }: any) => {
   const { colors } = useTheme();
   const { chat } = route.params ?? {};
-  const [message, setMessage] = useState('');
+  const [text, setText] = useState('');
   const inputRef = useRef(null);
-  const textMode = useMemo(() => message.length, [message]);
+  const message = useMemo(() => text.trim(), [text]);
   const { user, token } = useAppSelector(({ auth }) => auth);
   const [messages, setMessages] = useState<any[]>([]);
   const socket = useSocketIO();
@@ -73,22 +73,32 @@ const InboxScreen = memo(({ route }: any) => {
       },
     })
       .then(response => response.json())
-      .then(result => setMessages(result.data));
+      .then(result => {
+        setMessages(result.data);
+        fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/view-messages`, {
+          headers: { 'x-auth-token': `Bearer ${token}` },
+          method: 'patch',
+        }).then(response => {
+          console.log('The unread is cleared', response);
+        });
+      });
   }, []);
 
   const handleSendMessage = () => {
-    setMessage('');
+    setText('');
     const createdAt = new Date().toISOString();
     const newMessage = { message, sender: user, group: chat.group, createdAt };
     inputRef?.current?.clear?.();
     setMessages(state => [...state, newMessage]);
-    axios
-      .post(
-        `https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`,
-        { message, createdAt: newMessage.createdAt },
-        { headers: { 'x-auth-token': `Bearer ${token}` } }
-      )
-      .then(({ data: { data } }) => {});
+    fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`, {
+      body: JSON.stringify({ message, createdAt: newMessage.createdAt }),
+      headers: { 'x-auth-token': `Bearer ${token}` },
+      method: 'post',
+    })
+      .then(resp => resp.json())
+      .then(result => {
+        console.log('The message is sent', result);
+      });
   };
 
   return (
@@ -111,10 +121,14 @@ const InboxScreen = memo(({ route }: any) => {
         <TextInput
           style={styles.input}
           placeholder='Write your message...'
-          onChangeText={setMessage}
+          onChangeText={setText}
           numberOfLines={3}
           ref={inputRef}
           autoCorrect={false}
+          returnKeyType='send'
+          returnKeyLabel='Send'
+          onSubmitEditing={handleSendMessage}
+          autoFocus
         />
         <Horizontal>
           <Pressable
@@ -123,9 +137,9 @@ const InboxScreen = memo(({ route }: any) => {
             disabled={!message}
           >
             <FontAwesome
-              name={textMode ? 'send-o' : 'microphone'}
+              name='send-o'
               size={24}
-              color={colors.primary}
+              color={message ? colors.primary : colors.disabled}
             />
           </Pressable>
         </Horizontal>
