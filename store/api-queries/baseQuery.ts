@@ -6,10 +6,10 @@ import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolk
 
 import type { RootState } from '../index';
 
-export const baseURL = Config.API_BASE_URL;
+export const baseUrl = Config.API_BASE_URL;
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: baseURL,
+  baseUrl,
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
     if (token) headers.set('x-auth-token', `Bearer ${token}`);

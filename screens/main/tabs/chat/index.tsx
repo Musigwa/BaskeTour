@@ -8,11 +8,10 @@ import { H3, H4, H6, Horizontal, Separator } from '../../../../styles/styled-ele
 import { ellipsizeText, genColor } from '../../../../utils/methods';
 import moment from 'moment';
 import useSocketIO from '../../../../hooks/socketIO';
-import _, { filter } from 'lodash';
+import _ from 'lodash';
 import { useAppSelector } from '../../../../hooks/useStore';
 
 const renderItem = ({ item: chat, index: idx, navigation, colors, socket }) => {
-  socket.emit('JOIN_GROUP', chat.group.id);
   const handleItemPress = () => {
     navigation.navigate('Inbox', { chat });
   };
@@ -31,13 +30,13 @@ const renderItem = ({ item: chat, index: idx, navigation, colors, socket }) => {
           </View>
           <View style={{ flex: 0.9 }}>
             <H4>{ellipsizeText(chat.group?.groupName, 20)}</H4>
-            <H6 style={{ color: colors.gray, marginTop: 5 }}>
+            <H6 style={{ color: colors.gray, marginTop: 5, textTransform: 'none' }}>
               {ellipsizeText(chat?.lastMessage?.message, 30)}
             </H6>
           </View>
         </Horizontal>
         <View style={{ alignItems: 'flex-end' }}>
-          <H6 style={{ textTransform: 'uppercase', color: colors.gray }}>
+          <H6 style={{ color: colors.gray, textTransform: 'none' }}>
             {moment(chat?.lastMessage?.createdAt).format('LT')}
           </H6>
           {!!chat.unreadMessages && (
@@ -98,8 +97,8 @@ const ChatListScreen = ({ navigation }) => {
         .filter((c: any) => c.lastMessage)
         .sort(
           (a: any, b: any) =>
-            moment(a?.lastMessage?.createdAt).milliseconds() -
-            moment(b?.lastMessage?.createdAt).milliseconds()
+            new Date(b?.lastMessage?.createdAt).getTime() -
+            new Date(a?.lastMessage?.createdAt).getTime()
         )}
       fetchMethod={useGetMyGroupsQuery}
       renderItem={args => renderItem({ ...args, navigation, colors, socket })}

@@ -59,7 +59,6 @@ const InboxScreen = memo(({ route }: any) => {
   const socket = useSocketIO();
 
   useEffect(() => {
-    socket.emit('JOIN_GROUP', chat.group.id);
     socket.on('NEW_GROUP_MESSAGE', (message: any) => {
       if (user?.id !== message.sender.id) {
         setMessages(prev => [...prev, message]);
@@ -89,15 +88,15 @@ const InboxScreen = memo(({ route }: any) => {
         { message, createdAt: newMessage.createdAt },
         { headers: { 'x-auth-token': `Bearer ${token}` } }
       )
-      .then(({ data: { data } }) => {
-        socket.emit('SEND_GROUP_MESSAGE', { ...data, groupId: chat.group.id });
-      });
+      .then(({ data: { data } }) => {});
   };
 
   return (
     <View style={{ flex: 1 }}>
       <SearchPaginated
-        data={_.sortBy(messages, ['createdAt'])}
+        data={messages.sort(
+          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        )}
         renderItem={args => renderItem({ ...args, colors, user })}
         fetchMethod={useGetMyGroupsQuery}
         style={styles.container}

@@ -20,13 +20,13 @@ import GroupDropdown from '../../../../components/common/GroupSelector';
 const RankingScreen = () => {
   const { colors } = useTheme();
 
-  const { data: [tournament] = [], isLoading } = useGetTournamentsQuery();
+  const { data: [tournament] = [] } = useGetTournamentsQuery();
   const { selectedGroup, user } = useAppSelector(({ groups, auth }) => ({
     selectedGroup: groups.selectedGroup,
     user: auth.user,
   }));
   const rounds = tournament?.rounds?.map(r => ({ title: r.name, ...r }));
-  const [round, setRound] = useState<any>(rounds[0]);
+  const [round = [], setRound] = useState<any>(rounds?.[0]);
 
   const {
     data: { data = [] } = {},
@@ -34,10 +34,7 @@ const RankingScreen = () => {
     refetch,
     isError,
     error: err,
-  } = useGetGRankingsQuery(
-    { groupId: selectedGroup?.id, roundId: round?.id },
-    { refetchOnReconnect: true }
-  );
+  } = useGetGRankingsQuery({ groupId: selectedGroup?.id, roundId: round?.id });
 
   useEffect(refetch, [round, selectedGroup]);
 
