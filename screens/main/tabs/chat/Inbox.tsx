@@ -44,7 +44,7 @@ const renderItem = ({ item, index, colors, user }) => {
   );
 };
 
-const InboxScreen = memo(({ route }: any) => {
+const InboxScreen = ({ route }: any) => {
   const { colors } = useTheme();
   const { chat } = route.params ?? {};
   const [text, setText] = useState('');
@@ -63,9 +63,7 @@ const InboxScreen = memo(({ route }: any) => {
     fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/view-messages`, {
       headers: { 'x-auth-token': `Bearer ${token}`, 'Content-Type': 'application/json' },
       method: 'patch',
-    }).then(response => {
-      console.log('The unread is cleared', response);
-    });
+    }).then(response => {});
   };
 
   const handleNGMessage = (message: any) => {
@@ -100,9 +98,7 @@ const InboxScreen = memo(({ route }: any) => {
       method: 'post',
     })
       .then(resp => resp.json())
-      .then(result => {
-        console.log('The message is sent', result);
-      });
+      .then(result => {});
   };
 
   return (
@@ -150,7 +146,7 @@ const InboxScreen = memo(({ route }: any) => {
       </Horizontal>
     </View>
   );
-});
+};
 
 export default InboxScreen;
 
