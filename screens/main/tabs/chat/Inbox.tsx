@@ -13,8 +13,6 @@ import { ellipsizeText } from '../../../../utils/methods';
 
 const renderItem = ({ item, index, colors, user }) => {
   const isMe = item?.sender?.id === user?.id;
-  // const color = genColor({ type: 'shade' });
-
   return (
     <Horizontal style={{ alignSelf: isMe ? 'flex-end' : 'flex-start' }} key={index}>
       {isMe ? null : (
