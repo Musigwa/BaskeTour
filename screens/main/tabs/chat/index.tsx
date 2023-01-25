@@ -71,6 +71,10 @@ const ChatListScreen = ({ navigation }) => {
       const [chat] = groupedChats;
       navigation.navigate('Inbox', { chat });
     }
+    socket.on('NEW_GROUP_MESSAGE', handleNGMessage);
+    return () => {
+      socket.off('NEW_GROUP_MESSAGE');
+    };
   }, []);
 
   const fetchData = () => {
@@ -89,18 +93,17 @@ const ChatListScreen = ({ navigation }) => {
       const found = prev.find(c => c?.group?.id === message.group.id) ?? {};
       const without = _.without(prev, found);
       found['lastMessage'] = message;
-      found['unreadMessages'] = +found['unreadMessages'] + 1;
+      if (user?.id !== message.sender.id) {
+        found['unreadMessages'] = (found['unreadMessages'] ?? 0) + 1;
+      }
       return [...without, found];
     });
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    socket.on('NEW_GROUP_MESSAGE', handleNGMessage);
-  }, []);
+    const unsubscribe = navigation.addListener('focus', fetchData);
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <SearchPaginated

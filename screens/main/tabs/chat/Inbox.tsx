@@ -1,7 +1,5 @@
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
-import axios from 'axios';
-import _ from 'lodash';
 import moment from 'moment';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Image, Pressable, StyleSheet, TextInput, View } from 'react-native';
@@ -14,8 +12,6 @@ import { ellipsizeText } from '../../../../utils/methods';
 
 const renderItem = ({ item, index, colors, user }) => {
   const isMe = item?.sender?.id === user?.id;
-  // const color = genColor({ type: 'shade' });
-
   return (
     <Horizontal style={{ alignSelf: isMe ? 'flex-end' : 'flex-start' }} key={index}>
       {isMe ? null : (
@@ -58,25 +54,38 @@ const InboxScreen = memo(({ route }: any) => {
   const [messages, setMessages] = useState<any[]>([]);
   const socket = useSocketIO();
 
-  useEffect(() => {
-    socket.on('NEW_GROUP_MESSAGE', (message: any) => {
-      if (user?.id !== message.sender.id) {
-        setMessages(prev => [...prev, message]);
-      }
+  const handleUnMount = () => {
+    clearUnreadStatus();
+    socket.off('NEW_GROUP_MESSAGE');
+  };
+
+  const clearUnreadStatus = () => {
+    fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/view-messages`, {
+      headers: { 'x-auth-token': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      method: 'patch',
+    }).then(response => {
+      console.log('The unread is cleared', response);
     });
+  };
+
+  const handleNGMessage = (message: any) => {
+    if (user?.id !== message.sender.id) {
+      setMessages(prev => [...prev, message]);
+    }
+    clearUnreadStatus();
+  };
+
+  useEffect(() => {
+    clearUnreadStatus();
+    socket.on('NEW_GROUP_MESSAGE', handleNGMessage);
     fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`, {
       headers: { 'x-auth-token': `Bearer ${token}`, 'Content-Type': 'application/json' },
     })
       .then(response => response.json())
       .then(result => {
         setMessages(result.data);
-        fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/view-messages`, {
-          headers: { 'x-auth-token': `Bearer ${token}`, 'Content-Type': 'application/json' },
-          method: 'patch',
-        }).then(response => {
-          console.log('The unread is cleared', response);
-        });
       });
+    return handleUnMount;
   }, []);
 
   const handleSendMessage = () => {
