@@ -69,8 +69,8 @@ const ChatListScreen = ({ navigation }) => {
   );
 
   useEffect(() => {
-    if (groupedChats.length === 1) {
-      const [chat] = groupedChats;
+    if (conversations.length === 1) {
+      const [chat] = conversations;
       navigation.navigate('Inbox', { chat });
     }
     socket.on('NEW_GROUP_MESSAGE', handleNGMessage);
@@ -87,9 +87,7 @@ const ChatListScreen = ({ navigation }) => {
       },
     })
       .then(response => response.json())
-      .then(result => {
-        setConversations(result.data);
-      });
+      .then(result => setConversations(result.data));
   };
 
   const handleNGMessage = (message: any) => {
@@ -100,7 +98,7 @@ const ChatListScreen = ({ navigation }) => {
       if (user?.id !== message.sender.id) {
         found['unreadMessages'] = (found['unreadMessages'] ?? 0) + 1;
       }
-      return [...without, found];
+      return [found, ...without];
     });
   };
 
@@ -112,11 +110,7 @@ const ChatListScreen = ({ navigation }) => {
   return (
     <SearchPaginated
       style={{ backgroundColor: 'white' }}
-      data={conversations.sort(
-        (a: any, b: any) =>
-          new Date(b?.lastMessage?.createdAt).getTime() -
-          new Date(a?.lastMessage?.createdAt).getTime()
-      )}
+      data={conversations}
       fetchMethod={useGetMyGroupsQuery}
       renderItem={args => renderItem({ ...args, navigation, colors })}
     />
