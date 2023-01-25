@@ -37,7 +37,9 @@ const renderItem = ({ item: chat, index: idx, navigation, colors }) => {
         </Horizontal>
         <View style={{ alignItems: 'flex-end' }}>
           <H6 style={{ color: colors.gray, textTransform: 'none' }}>
-            {moment(chat?.lastMessage?.createdAt).format('LT')}
+            {chat?.lastMessage?.createdAt
+              ? moment(chat?.lastMessage?.createdAt).format('LT')
+              : null}
           </H6>
           {!!chat.unreadMessages && (
             <View style={[styles.badge, { backgroundColor: colors.primary }]}>
@@ -85,7 +87,9 @@ const ChatListScreen = ({ navigation }) => {
       },
     })
       .then(response => response.json())
-      .then(result => setConversations(result.data));
+      .then(result => {
+        setConversations(result.data);
+      });
   };
 
   const handleNGMessage = (message: any) => {
@@ -108,13 +112,11 @@ const ChatListScreen = ({ navigation }) => {
   return (
     <SearchPaginated
       style={{ backgroundColor: 'white' }}
-      data={conversations
-        .filter((c: any) => c.lastMessage)
-        .sort(
-          (a: any, b: any) =>
-            new Date(b?.lastMessage?.createdAt).getTime() -
-            new Date(a?.lastMessage?.createdAt).getTime()
-        )}
+      data={conversations.sort(
+        (a: any, b: any) =>
+          new Date(b?.lastMessage?.createdAt).getTime() -
+          new Date(a?.lastMessage?.createdAt).getTime()
+      )}
       fetchMethod={useGetMyGroupsQuery}
       renderItem={args => renderItem({ ...args, navigation, colors })}
     />
