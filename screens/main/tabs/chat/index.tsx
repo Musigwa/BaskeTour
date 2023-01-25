@@ -114,8 +114,8 @@ const ChatListScreen = ({ navigation }) => {
         .filter((c: any) => c.lastMessage)
         .sort(
           (a: any, b: any) =>
-            moment(a?.lastMessage?.createdAt).milliseconds() -
-            moment(b?.lastMessage?.createdAt).milliseconds()
+            new Date(b?.lastMessage?.createdAt).getTime() -
+            new Date(a?.lastMessage?.createdAt).getTime()
         )}
       fetchMethod={useGetMyGroupsQuery}
       renderItem={args => renderItem({ ...args, navigation, colors })}
