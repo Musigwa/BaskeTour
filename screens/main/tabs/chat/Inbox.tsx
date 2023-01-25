@@ -64,19 +64,14 @@ const InboxScreen = memo(({ route }: any) => {
         setMessages(prev => [...prev, message]);
       }
     });
-  }, []);
-
-  useEffect(() => {
     fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`, {
-      headers: {
-        'x-auth-token': `Bearer ${token}`,
-      },
+      headers: { 'x-auth-token': `Bearer ${token}`, 'Content-Type': 'application/json' },
     })
       .then(response => response.json())
       .then(result => {
         setMessages(result.data);
         fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/view-messages`, {
-          headers: { 'x-auth-token': `Bearer ${token}` },
+          headers: { 'x-auth-token': `Bearer ${token}`, 'Content-Type': 'application/json' },
           method: 'patch',
         }).then(response => {
           console.log('The unread is cleared', response);
@@ -92,7 +87,7 @@ const InboxScreen = memo(({ route }: any) => {
     setMessages(state => [...state, newMessage]);
     fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`, {
       body: JSON.stringify({ message, createdAt: newMessage.createdAt }),
-      headers: { 'x-auth-token': `Bearer ${token}` },
+      headers: { 'x-auth-token': `Bearer ${token}`, 'Content-Type': 'application/json' },
       method: 'post',
     })
       .then(resp => resp.json())
