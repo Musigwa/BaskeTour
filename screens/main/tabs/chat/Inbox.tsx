@@ -6,7 +6,7 @@ import { Image, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import useSocketIO from '../../../../hooks/socketIO';
 import { useAppSelector } from '../../../../hooks/useStore';
-import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
+import { groupApi, useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
 import { H5, H6, Horizontal } from '../../../../styles/styled-elements';
 import { ellipsizeText } from '../../../../utils/methods';
 
@@ -69,7 +69,7 @@ const InboxScreen = memo(({ route }: any) => {
   };
 
   const handleNGMessage = (message: any) => {
-    if (user?.id !== message.sender.id) {
+    if (user?.id !== message.sender.id && chat.group.id === message.group.id) {
       setMessages(prev => [...prev, message]);
     }
     clearUnreadStatus();
