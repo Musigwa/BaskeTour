@@ -2,13 +2,15 @@ import { Feather, FontAwesome } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import moment from 'moment';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Image, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Image, Pressable, StyleSheet, TextInput, View, Keyboard, Animated } from 'react-native';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import useSocketIO from '../../../../hooks/socketIO';
 import { useAppSelector } from '../../../../hooks/useStore';
 import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
 import { H5, H6, Horizontal } from '../../../../styles/styled-elements';
 import { ellipsizeText } from '../../../../utils/methods';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 const renderItem = ({ item, index, colors, user }) => {
   const isMe = item?.sender?.id === user?.id;
@@ -52,7 +54,9 @@ const InboxScreen = ({ route }: any) => {
   const message = useMemo(() => text.trim(), [text]);
   const { user, token } = useAppSelector(({ auth }) => auth);
   const [messages, setMessages] = useState<any[]>([]);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const socket = useSocketIO();
+  const tabBarHeight = useBottomTabBarHeight();
 
   const handleUnMount = () => {
     clearUnreadStatus();
@@ -73,6 +77,23 @@ const InboxScreen = ({ route }: any) => {
     clearUnreadStatus();
   };
 
+  const keyboardWillShow = ({ endCoordinates }) => {
+    setKeyboardHeight(endCoordinates.height - tabBarHeight);
+  };
+
+  const keyboardWillHide = () => {
+    setKeyboardHeight(0);
+  };
+
+  useEffect(() => {
+    const showListener = Keyboard.addListener('keyboardWillShow', keyboardWillShow);
+    const hideListener = Keyboard.addListener('keyboardWillHide', keyboardWillHide);
+    return () => {
+      showListener.remove();
+      hideListener.remove();
+    };
+  }, []);
+
   useEffect(() => {
     clearUnreadStatus();
     socket.on('NEW_GROUP_MESSAGE', handleNGMessage);
@@ -87,6 +108,7 @@ const InboxScreen = ({ route }: any) => {
   }, []);
 
   const handleSendMessage = () => {
+    if (!text.length) return;
     setText('');
     const createdAt = new Date().toISOString();
     const newMessage = { message, sender: user, group: chat.group, createdAt };
@@ -114,7 +136,8 @@ const InboxScreen = ({ route }: any) => {
         scrollOnContentChange
         paginatable={false}
       />
-      <Horizontal style={styles.inputContainer}>
+      {/* <View style={{ width: '100%', bottom: keyboardHeight }}> */}
+      <Horizontal style={[styles.inputContainer, { bottom: keyboardHeight }]}>
         <Pressable style={styles.inputBtnContainer}>
           <Feather name='paperclip' size={24} color='gray' />
         </Pressable>
@@ -144,6 +167,7 @@ const InboxScreen = ({ route }: any) => {
           </Pressable>
         </Horizontal>
       </Horizontal>
+      {/* </View> */}
     </View>
   );
 };
