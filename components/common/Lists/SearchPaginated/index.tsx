@@ -1,15 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import _ from 'lodash';
-import React, {
-  ComponentType,
-  FC,
-  PropsWithChildren,
-  memo,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { ComponentType, FC, memo, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
