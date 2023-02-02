@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ulli",
+    "name": "UlliApp",
     "slug": "ulli",
     "owner": "ulli",
     "version": "1.0.0",
@@ -28,14 +28,16 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ulli-2"
+      "bundleIdentifier": "com.ulli.ulliapp",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ulli.ulliapp"
+      "package": "com.ulli.ulliapp",
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

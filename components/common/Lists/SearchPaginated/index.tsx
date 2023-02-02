@@ -157,7 +157,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: 'rgba(0,0,0,0.02)' },
   empty: { justifyContent: 'center', alignItems: 'center', marginTop: 50, textAlign: 'center' },
-  footerContainer: { justifyContent: 'center', alignItems: 'center', marginVertical: 30 },
+  footerContainer: { justifyContent: 'center', alignItems: 'center' },
 });
 
 export default SearchPaginated;

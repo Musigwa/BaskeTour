@@ -32,6 +32,7 @@ const Searchbar = forwardRef(
           style={styles.input}
           onChangeText={handleTextChange}
           placeholder='Type to search...'
+          placeholderTextColor={colors.gray}
           autoCapitalize='none'
           autoComplete='off'
           autoCorrect={false}

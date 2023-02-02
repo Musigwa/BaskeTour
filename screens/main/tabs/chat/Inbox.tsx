@@ -3,7 +3,7 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useTheme } from '@react-navigation/native';
 import moment from 'moment';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Image, Keyboard, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Image, Keyboard, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import useSocketIO from '../../../../hooks/socketIO';
 import { useAppSelector } from '../../../../hooks/useStore';
@@ -123,7 +123,9 @@ const InboxScreen = ({ route }: any) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View
+      style={Platform.select({ ios: { flex: 1, bottom: keyboardHeight }, android: { flex: 1 } })}
+    >
       <SearchPaginated
         data={messages.sort(
           (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -135,13 +137,14 @@ const InboxScreen = ({ route }: any) => {
         scrollOnContentChange
         paginatable={false}
       />
-      <Horizontal style={[styles.inputContainer, { bottom: keyboardHeight }]}>
+      <Horizontal style={[styles.inputContainer]}>
         <Pressable style={styles.inputBtnContainer}>
           <Feather name='paperclip' size={24} color='gray' />
         </Pressable>
         <TextInput
           style={styles.input}
           placeholder='Write your message...'
+          placeholderTextColor={colors.gray}
           onChangeText={setText}
           numberOfLines={3}
           ref={inputRef}
