@@ -28,6 +28,10 @@ const authSlice = createSlice({
   name: 'auth',
   initialState: initialState,
   reducers: {
+    /**
+     * Left blank intentionally
+     * The store will cleared when an action with a type matching this reducer name is dispatched
+     */
     logOut: () => {},
     completedOnboarding: (state, action) => {
       state.completedOnboarding = action.payload;

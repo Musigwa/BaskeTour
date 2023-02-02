@@ -90,11 +90,16 @@ export const Horizontal = styled.View`
   flex-direction: row;
 `;
 
-export const Separator: React.FC<IntStyleProps & { size?: 'lg' | 'sm' | 'md' }> = styled.View`
+export const Separator: React.FC<
+  IntStyleProps & { size?: 'lg' | 'sm' | 'md' | 'invisible' }
+> = styled.View`
   width: 100%;
   border: ${props => {
     let thickness = 0.6;
     switch (props.size) {
+      case 'invisible':
+        thickness = 0;
+        break;
       case 'sm':
         thickness = StyleSheet.hairlineWidth;
         break;

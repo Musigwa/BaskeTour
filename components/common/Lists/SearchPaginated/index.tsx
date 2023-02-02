@@ -1,15 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import _ from 'lodash';
-import React, {
-  ComponentType,
-  FC,
-  PropsWithChildren,
-  memo,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { ComponentType, FC, memo, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -166,7 +157,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: 'rgba(0,0,0,0.02)' },
   empty: { justifyContent: 'center', alignItems: 'center', marginTop: 50, textAlign: 'center' },
-  footerContainer: { justifyContent: 'center', alignItems: 'center', marginVertical: 30 },
+  footerContainer: { justifyContent: 'center', alignItems: 'center' },
 });
 
 export default SearchPaginated;
