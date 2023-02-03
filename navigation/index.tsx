@@ -32,10 +32,9 @@ import BottomTabNavigator from './main/BottomTab';
 const Stack = createStackNavigator();
 
 const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
-  const { isLoggedIn } = useAppSelector((state) => state.auth);
+  const { isLoggedIn } = useAppSelector(state => state.auth);
   const isOnboarded = useAppSelector(({ auth }) => auth.completedOnboarding);
-  const { colors } = useTheme();
-  const handleDelete = (group) => {
+  const handleDelete = group => {
     Alert.alert(
       'Confirm your choice',
       `Are you sure you want to delete the "${group.groupName}" group?`,
@@ -68,10 +67,7 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                   component={SettingsScreen}
                   options={{ title: 'Settings' }}
                 />
-                <Stack.Screen
-                  name='Notifications'
-                  component={NotificationScreen}
-                />
+                <Stack.Screen name='Notifications' component={NotificationScreen} />
                 <Stack.Screen
                   name='Profile'
                   component={ProfileScreen}
@@ -80,16 +76,10 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
               </Stack.Group>
               {/* The groups entity screens */}
               <Stack.Group screenOptions={{ ...defaultScreenOptions }}>
-                <Stack.Screen
-                  name='CreateGroup'
-                  component={CreateGroupScreen}
-                />
+                <Stack.Screen name='CreateGroup' component={CreateGroupScreen} />
                 <Stack.Screen name='JoinGroup' component={JoinGroupScreen} />
                 <Stack.Screen name='ShareGroup' component={ShareGroupScreen} />
-                <Stack.Screen
-                  name='SuccessGroup'
-                  component={JoinGroupSuccessScreen}
-                />
+                <Stack.Screen name='SuccessGroup' component={JoinGroupSuccessScreen} />
                 <Stack.Screen
                   name='Groups'
                   component={GroupListScreen}
@@ -130,9 +120,7 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
             </Stack.Group>
           ) : (
             // Authentication & authorization screens
-            <Stack.Group
-              screenOptions={{ ...defaultScreenOptions, headerTitle: '' }}
-            >
+            <Stack.Group screenOptions={{ ...defaultScreenOptions, headerTitle: '' }}>
               <Stack.Screen
                 name='Initial'
                 component={InitialScreen}

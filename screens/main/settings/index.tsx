@@ -3,7 +3,7 @@ import { useNavigation, useTheme } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useAppDispatch } from '../../../hooks/useStore';
-import { logOut } from '../../../store/slices/authSlice';
+import { logOut, completedOnboarding } from '../../../store/slices/authSlice';
 import { H2, H4, Horizontal } from '../../../styles/styled-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { persistor } from '../../../store';
@@ -12,7 +12,7 @@ const options = [
   { title: 'Groups' },
   { title: 'Profile settings' },
   { title: 'Payment settings' },
-  { title: 'Tutorial' },
+  { title: 'Tutorial', screen: 'Slider' },
   { title: 'Detailed rules' },
   { title: 'Notifications' },
   { title: 'Change Password' },
@@ -23,13 +23,16 @@ const SettingsScreen = ({ navigation }) => {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
 
-  const handlePress = async (element: { title: string }) => {
+  const handlePress = async (element: { title: string; screen?: string }) => {
     if (element.title.includes('ogout')) {
       await persistor.flush();
-      dispatch(logOut());
+      return dispatch(logOut());
+    } else if (element.title.toLowerCase().includes('tutorial')) {
+      await dispatch(completedOnboarding(false));
+      navigation.navigate(element.screen);
     } else {
       const [screenName] = element.title.split(' ');
-      navigation.navigate(screenName);
+      navigation.navigate(element.screen ?? screenName);
     }
   };
 
