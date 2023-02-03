@@ -3,7 +3,7 @@ import { H3, H4, Horizontal, Separator } from '../../../styles/styled-elements';
 
 import React from 'react';
 import { Pressable } from 'react-native';
-import Container from '../../../components/common/Container';
+import Container from '../../../components/common/containers/Container';
 import SearchPaginated from '../../../components/common/Lists/SearchPaginated';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
 import { useGetGroupsQuery } from '../../../store/api-queries/group-queries';

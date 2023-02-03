@@ -15,7 +15,7 @@ import { useNavigation, useRoute, useTheme } from '@react-navigation/native';
 import { useGetTournamentsQuery } from '../../../store/api-queries/tournaments';
 import { H3, H4 } from '../../../styles/styled-elements';
 import { StatusBar } from 'expo-status-bar';
-import Container from '../../../components/common/Container';
+import Container from '../../../components/common/containers/Container';
 
 const SetupTypeScreen = ({ route }) => {
   const navigation = useNavigation();

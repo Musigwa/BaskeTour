@@ -3,7 +3,7 @@ import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
 import styled from 'styled-components';
 import Button from '../../../components/common/Buttons';
-import Container from '../../../components/common/Container';
+import Container from '../../../components/common/containers/Container';
 import PinCodeInput from '../../../components/common/PinCodeInput';
 import { useAppSelector } from '../../../hooks/useStore';
 import { useJoinGroupMutation } from '../../../store/api-queries/group-queries';
@@ -11,8 +11,7 @@ import { ErrorMessage, Paragraph, Title, View } from '../../../styles/styled-ele
 
 const JoinGroupScreen = ({ navigation }) => {
   const group = useAppSelector(({ groups }) => groups.selectedGroup);
-  const [joinGroup, { isLoading, error: err, isError }] =
-    useJoinGroupMutation();
+  const [joinGroup, { isLoading, error: err, isError }] = useJoinGroupMutation();
   const toast = useToast();
   useEffect(() => {
     if (isError) {
@@ -31,18 +30,12 @@ const JoinGroupScreen = ({ navigation }) => {
   const [error, setError] = useState<unknown | Error>(null);
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      }
-    );
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+    });
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+    });
     return () => {
       keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();

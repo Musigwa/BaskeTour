@@ -118,12 +118,12 @@ function LoginScreen({ navigation }) {
                 <Paragraph mb={22} mt={22} size={16} color='#8D8D8D'>
                   OR
                 </Paragraph>
-                <Button
+                {/* <Button
                   text='Sign in with Facebook'
                   onPress={handleGetStarted}
                   bg='#475996'
                   icon={FacebookLogo}
-                />
+                /> */}
                 <BottomText>
                   <Paragraph>By using Ulli you agree to our </Paragraph>
                   <Pressable>

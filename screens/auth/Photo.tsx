@@ -14,7 +14,7 @@ import Input from '../../components/common/Input';
 
 import { Alert, SafeAreaView } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
-import KeyboardAvoid from '../../components/common/KeyboardAvoid';
+import KeyboardAvoid from '../../components/common/containers/KeyboardAvoid';
 import { hasLoggedIn } from '../../store/slices/authSlice';
 import { Paragraph, View } from '../../styles/styled-elements';
 

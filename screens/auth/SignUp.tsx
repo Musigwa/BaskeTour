@@ -17,7 +17,7 @@ import { Paragraph, View } from '../../styles/styled-elements';
 import { Alert, Pressable } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { useToast } from 'react-native-toast-notifications';
-import KeyboardAvoid from '../../components/common/KeyboardAvoid';
+import KeyboardAvoid from '../../components/common/containers/KeyboardAvoid';
 
 function SignUpScreen({ navigation }: AuthScreenProps<'SignUp'>) {
   const insets = useSafeAreaInsets();

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { ActivityIndicator, Pressable, TextInput, TouchableOpacity, View } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
 import PhotoUploader from '../../../components/PhotoUploader';
-import KeyboardAvoid from '../../../components/common/KeyboardAvoid';
+import KeyboardAvoid from '../../../components/common/containers/KeyboardAvoid';
 import { useAppSelector } from '../../../hooks/useStore';
 import { useUploadProfileDetailsMutation } from '../../../store/api-queries/auth-queries';
 import { H4, H5, H6, Horizontal, Separator } from '../../../styles/styled-elements';

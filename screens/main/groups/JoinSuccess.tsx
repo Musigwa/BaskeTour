@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import ConsensusIcon from '../../../assets/svgs/Consensus';
 import Button from '../../../components/common/Buttons';
 import { Paragraph, View } from '../../../styles/styled-elements';
-import Container from '../../../components/common/Container';
+import Container from '../../../components/common/containers/Container';
 
 const JoinGroupSuccessScreen = ({ navigation, route }) => {
   const {

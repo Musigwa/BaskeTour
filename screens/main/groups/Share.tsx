@@ -8,7 +8,7 @@ import { Paragraph, View } from '../../../styles/styled-elements';
 import Button from '../../../components/common/Buttons';
 import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Container from '../../../components/common/Container';
+import Container from '../../../components/common/containers/Container';
 
 const ShareGroupScreen = () => {
   const insets = useSafeAreaInsets();
