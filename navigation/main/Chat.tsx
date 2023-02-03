@@ -4,19 +4,16 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { View } from 'react-native';
 import { defaultScreenOptions } from '../../constants';
-import { useAppSelector } from '../../hooks/useStore';
 import ChatListScreen from '../../screens/main/tabs/chat';
 import InboxScreen from '../../screens/main/tabs/chat/Inbox';
+import { useGetSingleGroupQuery } from '../../store/api-queries/group-queries';
 import { H4, H6 } from '../../styles/styled-elements';
 import { ellipsizeText } from '../../utils/methods';
-import { useGetSingleGroupQuery } from '../../store/api-queries/group-queries';
 
 const Stack = createStackNavigator();
 
 const ChatNavigator = ({ navigation }) => {
   const { colors } = useTheme();
-  const myGroups = useAppSelector(({ groups }) => groups.myGroups);
-
   const goToSettings = () => {
     navigation.navigate('SettingList');
   };

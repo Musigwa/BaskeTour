@@ -20,8 +20,9 @@ import { useAppSelector } from '../../../../hooks/useStore';
 import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
 import { H5, H6, Horizontal } from '../../../../styles/styled-elements';
 import { createFormData, ellipsizeText } from '../../../../utils/methods';
+import PhotoModal from './Photo';
 
-const renderItem = ({ item, index, colors, user }) => {
+const renderItem = ({ item, index, colors, user, onMessagePress }) => {
   const isMe = item?.sender?.id === user?.id;
   return (
     <Horizontal style={{ alignSelf: isMe ? 'flex-end' : 'flex-start' }} key={index}>
@@ -48,10 +49,9 @@ const renderItem = ({ item, index, colors, user }) => {
         )}
         <View style={{ marginTop: isMe ? 0 : 5 }}>
           {item.fileUrl ? (
-            <Image
-              style={{ width: 270, height: 150, borderRadius: 10 }}
-              source={{ uri: item?.fileUrl }}
-            />
+            <Pressable onPress={() => onMessagePress(item)}>
+              <Image style={{ width: 270, height: 150 }} source={{ uri: item?.fileUrl }} />
+            </Pressable>
           ) : null}
           <Horizontal style={{ marginVertical: 5 }}>
             <H5 style={[styles.message, { marginRight: 10 }]}>{item.message}</H5>
@@ -67,7 +67,7 @@ const InboxScreen = ({ route }: any) => {
   const { colors } = useTheme();
   const { chat } = route.params ?? {};
   const [text, setText] = useState('');
-  const [photo, setPhoto] = useState<any>({});
+  const [photo, setPhoto] = useState<{ [key: string]: any }>({});
 
   const inputRef = useRef(null);
   const message = useMemo(() => text.trim(), [text]);
@@ -76,6 +76,9 @@ const InboxScreen = ({ route }: any) => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const socket = useSocketIO();
   const tabBarHeight = useBottomTabBarHeight();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [attachVisible, setAttachVisible] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string>('');
 
   const handleUnMount = () => {
     clearUnreadStatus();
@@ -129,24 +132,30 @@ const InboxScreen = ({ route }: any) => {
   const handleSendMessage = () => {
     if (!text.length) return;
     setText('');
+    resetPhoto();
     const createdAt = new Date().toISOString();
-    const fileUrl = photo?.uri ?? undefined;
-    const newMessage = { message, sender: user, group: chat.group, createdAt, fileUrl };
-    setMessages(state => [...state, newMessage]);
-    const body = createFormData(photo, { message, createdAt: newMessage.createdAt }, 'messageFile');
+    const fileUrl = photo?.uri ?? null;
+    const newMessage = { message, createdAt };
+    const newMessageMeta = { ...newMessage, sender: user, group: chat.group, fileUrl };
+    setMessages(state => [...state, { ...newMessage, ...newMessageMeta }]);
+
+    const formData = createFormData(photo, newMessage, 'messageFile');
     fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`, {
-      body,
+      body: photo.uri ? formData : JSON.stringify(newMessage),
       headers: { 'x-auth-token': `Bearer ${token}`, 'Content-Type': 'application/json' },
       method: 'post',
     })
       .then(resp => resp.json())
-      .then(restPhoto);
+      .then(res => {})
+      .catch(err => {
+        console.log('The error', err);
+      });
     inputRef?.current?.clear?.();
   };
 
-  const restPhoto = () => {
-    setPhoto(null);
-  };
+  const resetPhoto = () => setPhoto({});
+  const showModal = () => setModalVisible(true);
+  const hideModal = () => setModalVisible(false);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -157,15 +166,23 @@ const InboxScreen = ({ route }: any) => {
     if (!result.cancelled) setPhoto(result);
   };
 
+  const handleMessagePress = item => {
+    setImageUrl(item.fileUrl);
+    showModal();
+  };
+
   return (
     <View
       style={Platform.select({ ios: { flex: 1, bottom: keyboardHeight }, android: { flex: 1 } })}
     >
+      <PhotoModal visible={modalVisible} hideModal={hideModal} imageUrl={imageUrl} />
       <SearchPaginated
         data={messages.sort(
           (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         )}
-        renderItem={args => renderItem({ ...args, colors, user })}
+        renderItem={args =>
+          renderItem({ ...args, colors, user, onMessagePress: handleMessagePress })
+        }
         fetchMethod={useGetMyGroupsQuery}
         style={styles.container}
         searchable={false}
@@ -196,21 +213,21 @@ const InboxScreen = ({ route }: any) => {
                 name='close'
                 size={24}
                 color='white'
-                onPress={setPhoto}
+                onPress={resetPhoto}
                 style={{ padding: 10 }}
               />
             </View>
           </ImageBackground>
         ) : null}
         <Horizontal style={[styles.inputContainer]}>
-          {photo.uri ? null : (
+          {photo?.uri ? null : (
             <Pressable style={styles.inputBtnContainer} onPress={pickImage}>
               <Feather name='paperclip' size={24} color='gray' />
             </Pressable>
           )}
           <TextInput
-            style={[styles.input, { marginLeft: photo.uri ? 10 : 0 }]}
-            placeholder={`${photo.uri ? 'Add you caption' : 'Write your message'}...`}
+            style={[styles.input, { marginLeft: photo?.uri ? 10 : 0 }]}
+            placeholder={`${photo?.uri ? 'Add you caption' : 'Write your message'}...`}
             onChangeText={setText}
             numberOfLines={3}
             ref={inputRef}

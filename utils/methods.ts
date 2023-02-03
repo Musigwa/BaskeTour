@@ -23,8 +23,8 @@ export const createFormData = (
   propName = 'profilePic'
 ) => {
   const data = new FormData();
-  const name = photo.uri.split('/').pop() ?? 'profilePhoto.jpg';
-  const uri = Platform.select({ ios: photo.uri.replace('file://', ''), android: photo.uri });
+  const name = photo?.uri?.split('/').pop() ?? 'profilePhoto.jpg';
+  const uri = Platform.select({ ios: photo?.uri?.replace('file://', ''), android: photo.uri });
   data.append(propName, { name, type: `image/*`, uri });
   for (let property in body) data.append(property, body[property]);
   return data;
