@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
-import { StatusBar, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
-import { useAppSelector } from '../../hooks/useStore';
-
 import Logo from '../../assets/svgs/Logo';
 import Button from '../../components/common/Buttons';
+import { useAppSelector } from '../../hooks/useStore';
 
 import { useNavigation } from '@react-navigation/native';
 import { Paragraph, View } from '../../styles/styled-elements';
@@ -28,7 +27,6 @@ function InitialScreen() {
   }, [token, user]);
   return (
     <>
-      <StatusBar barStyle='light-content' />
       <ImageBackground
         source={require('../../assets/images/bg_main.png')}
         pt={insets.top}

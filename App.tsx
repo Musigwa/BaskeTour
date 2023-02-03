@@ -29,7 +29,7 @@ export default function App() {
         <PaperProvider theme={DefaultTheme}>
           <ThemeProvider theme={theme.colors}>
             <SafeAreaProvider>
-              <StatusBar style='auto' />
+              <StatusBar style='dark' />
               <Navigation colorScheme={colorScheme} />
             </SafeAreaProvider>
           </ThemeProvider>

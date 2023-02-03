@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import { Formik } from 'formik';
 import React, { useState } from 'react';
 import styled from 'styled-components/native';
@@ -7,7 +6,6 @@ import * as Yup from 'yup';
 import Checkbox from 'expo-checkbox';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import FacebookLogo from '../../assets/svgs/FacebookLogo';
 import Button from '../../components/common/Buttons';
 import Input from '../../components/common/Input';
 
@@ -61,7 +59,6 @@ function LoginScreen({ navigation }) {
 
   return (
     <Container pb={insets.bottom} content-center>
-      <StatusBar style='dark' />
       <View w-100>
         <View items-center w-100 mt={20} mb={70}>
           <Title>Sign in to Ulli</Title>
@@ -115,9 +112,9 @@ function LoginScreen({ navigation }) {
 
               <View mt={50} w-100 items-center>
                 <Button text='Sign in' onPress={handleSubmit} loading={isLoading} />
-                <Paragraph mb={22} mt={22} size={16} color='#8D8D8D'>
+                {/* <Paragraph mb={22} mt={22} size={16} color='#8D8D8D'>
                   OR
-                </Paragraph>
+                </Paragraph> */}
                 {/* <Button
                   text='Sign in with Facebook'
                   onPress={handleGetStarted}

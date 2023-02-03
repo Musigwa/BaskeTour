@@ -14,7 +14,6 @@ import TopTab from '../../components/common/TopTab';
 import { defaultScreenOptions } from '../../constants';
 import { useCreatePickMutation } from '../../store/api-queries/tournaments';
 import { H2, H3, Horizontal } from '../../styles/styled-elements';
-import { StatusBar } from 'expo-status-bar';
 import ChatNavigator from './Chat';
 
 const Touchable = styled.Pressable`
@@ -75,7 +74,6 @@ const BottomTabNavigator = () => {
           header: () => {
             return (
               <SafeAreaView>
-                <StatusBar />
                 <Horizontal>
                   <TopTab tabs={headerParts} onTabPress={handlePress} />
                   <Ionicons
@@ -102,7 +100,6 @@ const BottomTabNavigator = () => {
             const shouldSubmit = canSubmit && !isLoading;
             return (
               <SafeAreaView style={{ backgroundColor: 'white' }}>
-                <StatusBar />
                 <Horizontal style={{ marginRight: 20 }}>
                   <View style={{ flex: 0.4 }} />
                   <H2>Picks</H2>
