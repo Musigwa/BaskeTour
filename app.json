@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "Ulli",
-    "slug": "UlliPicks",
-    "owner": "Ulli, LLC",
+    "slug": "ulli",
+    "owner": "ulli",
     "githubUrl": "https://github.com/MangoDev-HireMango/ulli-mobile.git",
     "platforms": ["android", "ios"],
     "privacy": "hidden",
