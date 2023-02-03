@@ -1,4 +1,3 @@
-import { useTheme } from '@react-navigation/native';
 import _ from 'lodash';
 import React, { ComponentType, FC, memo, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -11,6 +10,7 @@ import {
 } from 'react-native';
 import { H4, H5, Horizontal } from '../../../../styles/styled-elements';
 import Searchbar from '../../Inputs/Searchbar';
+import { useTheme } from 'react-native-paper';
 
 type SearchPaginatedProps = {
   searchable?: boolean;
@@ -74,6 +74,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
     const { page, text } = state;
     const searchInput = useRef(null);
     const listRef = useRef(null);
+    const { colors } = useTheme();
 
     const debCallback = text => {
       setState({ text, page: 1 });
@@ -115,7 +116,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
     };
 
     return (
-      <View style={{ ...styles.container, ...style }}>
+      <View style={{ ...styles.container, ...style, backgroundColor: colors.background }}>
         {searchable ? (
           <Searchbar
             clearText={clearText}
@@ -129,7 +130,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
           ref={listRef}
           refreshing={isFetching}
           onRefresh={refetch}
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ flexGrow: 1, paddingVertical: 5 }}
           data={data}
           onEndReachedThreshold={1}
           initialNumToRender={5}
@@ -155,7 +156,12 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
 );
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: 'rgba(0,0,0,0.02)' },
+  container: {
+    flex: 1,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    backgroundColor: 'rgba(0,0,0,0.02)',
+  },
   empty: { justifyContent: 'center', alignItems: 'center', marginTop: 50, textAlign: 'center' },
   footerContainer: { justifyContent: 'center', alignItems: 'center' },
 });
