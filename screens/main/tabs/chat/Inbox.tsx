@@ -1,17 +1,28 @@
-import { Feather, FontAwesome } from '@expo/vector-icons';
+import { AntDesign, Feather, FontAwesome } from '@expo/vector-icons';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useTheme } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 import moment from 'moment';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Image, Keyboard, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import {
+  Image,
+  ImageBackground,
+  Keyboard,
+  Platform,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import useSocketIO from '../../../../hooks/socketIO';
 import { useAppSelector } from '../../../../hooks/useStore';
 import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
 import { H5, H6, Horizontal } from '../../../../styles/styled-elements';
-import { ellipsizeText } from '../../../../utils/methods';
+import { createFormData, ellipsizeText } from '../../../../utils/methods';
+import PhotoModal from './Photo';
 
-const renderItem = ({ item, index, colors, user }) => {
+const renderItem = ({ item, index, colors, user, onMessagePress }) => {
   const isMe = item?.sender?.id === user?.id;
   return (
     <Horizontal style={{ alignSelf: isMe ? 'flex-end' : 'flex-start' }} key={index}>
@@ -36,10 +47,17 @@ const renderItem = ({ item, index, colors, user }) => {
             {ellipsizeText(`${item.sender.firstName} ${item.sender.lastName}`, 12)}
           </H5>
         )}
-        <Horizontal style={{ marginTop: isMe ? 0 : 10 }}>
-          <H5 style={[styles.message, { marginRight: 10 }]}>{item.message}</H5>
-          <H6 style={[styles.timestamp]}>{moment(item.createdAt).format('LT')}</H6>
-        </Horizontal>
+        <View style={{ marginTop: isMe ? 0 : 5 }}>
+          {item.fileUrl ? (
+            <Pressable onPress={() => onMessagePress(item)}>
+              <Image style={{ width: 270, height: 150 }} source={{ uri: item?.fileUrl }} />
+            </Pressable>
+          ) : null}
+          <Horizontal style={{ marginVertical: 5 }}>
+            <H5 style={[styles.message, { marginRight: 10 }]}>{item.message}</H5>
+            <H6 style={[styles.timestamp]}>{moment(item.createdAt).format('LT')}</H6>
+          </Horizontal>
+        </View>
       </View>
     </Horizontal>
   );
@@ -49,6 +67,8 @@ const InboxScreen = ({ route }: any) => {
   const { colors } = useTheme();
   const { chat } = route.params ?? {};
   const [text, setText] = useState('');
+  const [photo, setPhoto] = useState<{ [key: string]: any }>({});
+
   const inputRef = useRef(null);
   const message = useMemo(() => text.trim(), [text]);
   const { user, token } = useAppSelector(({ auth }) => auth);
@@ -56,6 +76,9 @@ const InboxScreen = ({ route }: any) => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const socket = useSocketIO();
   const tabBarHeight = useBottomTabBarHeight();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [attachVisible, setAttachVisible] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string>('');
 
   const handleUnMount = () => {
     clearUnreadStatus();
@@ -109,65 +132,125 @@ const InboxScreen = ({ route }: any) => {
   const handleSendMessage = () => {
     if (!text.length) return;
     setText('');
+    resetPhoto();
     const createdAt = new Date().toISOString();
-    const newMessage = { message, sender: user, group: chat.group, createdAt };
-    inputRef?.current?.clear?.();
-    setMessages(state => [...state, newMessage]);
+    const fileUrl = photo?.uri ?? null;
+    const newMessage = { message, createdAt };
+    const newMessageMeta = { ...newMessage, sender: user, group: chat.group, fileUrl };
+    setMessages(state => [...state, { ...newMessage, ...newMessageMeta }]);
+
+    const formData = createFormData(photo, newMessage, 'messageFile');
     fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`, {
-      body: JSON.stringify({ message, createdAt: newMessage.createdAt }),
+      body: photo.uri ? formData : JSON.stringify(newMessage),
       headers: { 'x-auth-token': `Bearer ${token}`, 'Content-Type': 'application/json' },
       method: 'post',
     })
       .then(resp => resp.json())
-      .then(result => {});
+      .then(res => {})
+      .catch(err => {
+        console.log('The error', err);
+      });
+    inputRef?.current?.clear?.();
+  };
+
+  const resetPhoto = () => setPhoto({});
+  const showModal = () => setModalVisible(true);
+  const hideModal = () => setModalVisible(false);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      aspect: [9, 5],
+      quality: 1,
+    });
+    if (!result.cancelled) setPhoto(result);
+  };
+
+  const handleMessagePress = item => {
+    setImageUrl(item.fileUrl);
+    showModal();
   };
 
   return (
     <View
       style={Platform.select({ ios: { flex: 1, bottom: keyboardHeight }, android: { flex: 1 } })}
     >
+      <PhotoModal visible={modalVisible} hideModal={hideModal} imageUrl={imageUrl} />
       <SearchPaginated
         data={messages.sort(
           (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         )}
-        renderItem={args => renderItem({ ...args, colors, user })}
+        renderItem={args =>
+          renderItem({ ...args, colors, user, onMessagePress: handleMessagePress })
+        }
         fetchMethod={useGetMyGroupsQuery}
         style={styles.container}
         searchable={false}
         scrollOnContentChange
         paginatable={false}
       />
-      <Horizontal style={[styles.inputContainer]}>
-        <Pressable style={styles.inputBtnContainer}>
-          <Feather name='paperclip' size={24} color='gray' />
-        </Pressable>
-        <TextInput
-          style={styles.input}
-          placeholder='Write your message...'
-          placeholderTextColor={colors.gray}
-          onChangeText={setText}
-          numberOfLines={3}
-          ref={inputRef}
-          autoCorrect={false}
-          returnKeyType='send'
-          returnKeyLabel='Send'
-          onSubmitEditing={handleSendMessage}
-          autoFocus
-        />
-        <Horizontal>
-          <Pressable
-            style={styles.inputBtnContainer}
-            onPress={handleSendMessage}
-            disabled={!message}
+      <View style={{ width: '100%' }}>
+        {photo?.uri ? (
+          <ImageBackground
+            style={{
+              width: '100%',
+              height: 250,
+              borderTopLeftRadius: 15,
+              borderTopRightRadius: 15,
+            }}
+            source={{ uri: photo.uri }}
+            resizeMethod='scale'
           >
-            <FontAwesome
-              name='send-o'
-              size={24}
-              color={message ? colors.primary : colors.disabled}
-            />
-          </Pressable>
+            <View
+              style={{
+                height: '100%',
+                width: '100%',
+                backgroundColor: 'rgba(0,0,0,0.2)',
+                alignItems: 'flex-end',
+              }}
+            >
+              <AntDesign
+                name='close'
+                size={24}
+                color='white'
+                onPress={resetPhoto}
+                style={{ padding: 10 }}
+              />
+            </View>
+          </ImageBackground>
+        ) : null}
+        <Horizontal style={[styles.inputContainer]}>
+          {photo?.uri ? null : (
+            <Pressable style={styles.inputBtnContainer} onPress={pickImage}>
+              <Feather name='paperclip' size={24} color='gray' />
+            </Pressable>
+          )}
+          <TextInput
+            style={[styles.input, { marginLeft: photo?.uri ? 10 : 0 }]}
+            placeholder={`${photo?.uri ? 'Add you caption' : 'Write your message'}...`}
+            onChangeText={setText}
+            numberOfLines={3}
+            ref={inputRef}
+            autoCorrect={false}
+            returnKeyType='send'
+            returnKeyLabel='Send'
+            onSubmitEditing={handleSendMessage}
+          />
+          <Horizontal>
+            <Pressable
+              style={styles.inputBtnContainer}
+              onPress={handleSendMessage}
+              disabled={!message}
+            >
+              <FontAwesome
+                name='send-o'
+                size={24}
+                color={message ? colors.primary : colors.disabled}
+              />
+            </Pressable>
+          </Horizontal>
         </Horizontal>
-      </Horizontal>
+      </View>
     </View>
   );
 };
@@ -175,7 +258,7 @@ const InboxScreen = ({ route }: any) => {
 export default InboxScreen;
 
 const styles = StyleSheet.create({
-  container: { paddingVertical: 30, paddingHorizontal: 15 },
+  container: { paddingHorizontal: 15 },
   avatar: {
     width: 50,
     height: 50,

@@ -1,8 +1,12 @@
 {
   "expo": {
-    "name": "UlliApp",
+    "name": "Ulli",
     "slug": "ulli",
     "owner": "ulli",
+    "githubUrl": "https://github.com/MangoDev-HireMango/ulli-mobile.git",
+    "platforms": ["android", "ios"],
+    "privacy": "hidden",
+    "description": "Ulli is the most exciting survivor pool in March for college basketball fans. Traditional bracket pools are boring with more than 90% of brackets being busted after the first weekend leaving fans sitting - not playing. Ulli (pronounced You-Lee) keeps fans engaged to the Final Four with fresh picks each round, live rankings and group chat within your pool. Download for free and jump into the madness! (This app is not used for gambling of any kind)",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -11,7 +15,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "cover",
-      "backgroundColor": "#344574"
+      "backgroundColor": "#4833B5"
     },
     "plugins": [
       [
@@ -28,7 +32,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ulli.ulliapp",
+      "bundleIdentifier": "com.ulli.ullipicks",
       "buildNumber": "1"
     },
     "android": {
@@ -36,7 +40,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ulli.ulliapp",
+      "package": "com.ulli.ullipicks",
       "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {

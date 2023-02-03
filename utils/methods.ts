@@ -17,19 +17,16 @@ type ColorGenArgs = {
   contrast?: 'low' | 'high';
 };
 
-export const createFormData = (photo: { [x: string]: string }, body = {}) => {
+export const createFormData = (
+  photo: { [x: string]: string },
+  body = {},
+  propName = 'profilePic'
+) => {
   const data = new FormData();
-
-  data.append('profilePic', {
-    name: 'profilePhoto.jpg',
-    type: `image/*`,
-    uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
-  });
-
-  Object.keys(body).forEach(key => {
-    data.append(key, body[key]);
-  });
-
+  const name = photo?.uri?.split('/').pop() ?? 'profilePhoto.jpg';
+  const uri = Platform.select({ ios: photo?.uri?.replace('file://', ''), android: photo.uri });
+  data.append(propName, { name, type: `image/*`, uri });
+  for (let property in body) data.append(property, body[property]);
   return data;
 };
 

@@ -4,7 +4,7 @@ import { H4, Horizontal, Paragraph, Separator } from '../../../../styles/styled-
 
 import { useTheme } from '@react-navigation/native';
 import moment from 'moment';
-import { ActivityIndicator, Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
 import ActionSheet, { ActionSheetRef } from 'react-native-actions-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useToast } from 'react-native-toast-notifications';
@@ -25,8 +25,7 @@ const ScoresScreen = ({ route }) => {
     completed: 'STATUS_FINAL',
   };
 
-  const { bottom, top } = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
+  const { bottom } = useSafeAreaInsets();
   const actionSheetRef = useRef<ActionSheetRef>(null);
   const { colors } = useTheme();
   const [currentTab, setCurrentTab] = useState<GAME_STATUS>('STATUS_SCHEDULED');
