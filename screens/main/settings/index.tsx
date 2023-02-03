@@ -1,12 +1,11 @@
 import { Entypo } from '@expo/vector-icons';
-import { useNavigation, useTheme } from '@react-navigation/native';
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useAppDispatch } from '../../../hooks/useStore';
-import { logOut, completedOnboarding } from '../../../store/slices/authSlice';
-import { H2, H4, Horizontal } from '../../../styles/styled-elements';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { persistor } from '../../../store';
+import { completedOnboarding, logOut } from '../../../store/slices/authSlice';
+import { H4, Horizontal } from '../../../styles/styled-elements';
 
 const options = [
   { title: 'Groups' },

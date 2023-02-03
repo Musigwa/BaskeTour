@@ -1,4 +1,4 @@
-import { NavigationContainer, useTheme } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { Alert, ColorSchemeName, View } from 'react-native';
 
 import LinkingConfiguration from './LinkingConfiguration';

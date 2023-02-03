@@ -1,11 +1,10 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useEffect } from 'react';
-import BracketScreen from '../../screens/main/tabs/bracket';
 import PicksScreen from '../../screens/main/tabs/picks';
 import RankingScreen from '../../screens/main/tabs/ranking';
 import ScoresScreen from '../../screens/main/tabs/scores';
 
-import { FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import { ActivityIndicator, SafeAreaView, View } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
@@ -142,14 +141,14 @@ const BottomTabNavigator = () => {
           headerShown: false,
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name='Bracket'
         component={BracketScreen}
         options={{
           tabBarIcon: props => <FontAwesome name='sitemap' {...props} />,
           headerShadowVisible: true,
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 };
