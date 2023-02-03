@@ -32,8 +32,8 @@ export const groupApi = createApi({
       query: () => GET_USER_GROUPS(),
     }),
     getMyGroups: builder.query<any, MyGroupProps>({
-      query: ({ searchQuery, userId, page, perPage }: MyGroupProps) =>
-        MY_GROUPS(searchQuery, userId, page, perPage),
+      query: ({ searchQuery, page, perPage }: MyGroupProps) =>
+        MY_GROUPS(searchQuery, page, perPage),
     }),
     getSingleGroup: builder.query<any, { groupId: string }>({
       query: ({ groupId }: { groupId: string }) => SINGLE_GROUP(groupId),

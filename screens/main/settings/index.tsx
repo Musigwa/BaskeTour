@@ -23,7 +23,7 @@ const SettingsScreen = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
   const handlePress = async (element: { title: string; screen?: string }) => {
-    if (element.title.includes('ogout')) {
+    if (element.title.toLowerCase().includes('logout')) {
       await persistor.flush();
       return dispatch(logOut());
     } else if (element.title.toLowerCase().includes('tutorial')) {
