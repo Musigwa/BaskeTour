@@ -25,7 +25,7 @@ const JoinGroupSuccessScreen = ({ navigation, route }) => {
           </CTAText>
         </InfoContainer>
       </View>
-      <View w-100 mb={40}>
+      <View w-100 mb={40} style={{ alignItems: 'center' }}>
         <Button bottom-0 onPress={gotItButtonClickHandler} text='Start Play' />
       </View>
     </Container>

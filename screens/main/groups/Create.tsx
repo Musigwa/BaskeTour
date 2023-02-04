@@ -44,10 +44,7 @@ const CreateGroupScreen = ({ navigation }: SetupStackScreenProps<'CreateGroup'>)
       <Loader show={isLoading} text='Genrating Group ID' />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Container pb={insets.bottom} content-center items-center>
-          <View>
-            <Title mb={80}>Create New Group</Title>
-          </View>
-
+          <Title mb={80}>Create New Group</Title>
           <Formik
             initialValues={{ pin: '', name: '' }}
             validationSchema={GroupSchema}
@@ -91,9 +88,12 @@ const CreateGroupScreen = ({ navigation }: SetupStackScreenProps<'CreateGroup'>)
                 <View w-100 mt={40} flex-row justify-center align-center>
                   {error && <ErrorMessage w-100>{error}</ErrorMessage>}
                 </View>
-                <View mt={60} w-100>
-                  <Button text='Create Group' onPress={handleSubmit} loading={isLoading} />
-                </View>
+                <Button
+                  text='Create Group'
+                  containerStyle={{ width: '100%' }}
+                  onPress={handleSubmit}
+                  loading={isLoading}
+                />
               </View>
             )}
           </Formik>

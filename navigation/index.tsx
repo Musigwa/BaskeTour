@@ -75,13 +75,9 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                 />
               </Stack.Group>
               {/* The groups entity screens */}
-              <Stack.Group screenOptions={{ ...defaultScreenOptions }}>
+              <Stack.Group screenOptions={{ ...defaultScreenOptions, title: '' }}>
                 <Stack.Screen name='CreateGroup' component={CreateGroupScreen} />
-                <Stack.Screen
-                  name='JoinGroup'
-                  component={JoinGroupScreen}
-                  options={{ title: '' }}
-                />
+                <Stack.Screen name='JoinGroup' component={JoinGroupScreen} />
                 <Stack.Screen name='ShareGroup' component={ShareGroupScreen} />
                 <Stack.Screen name='SuccessGroup' component={JoinGroupSuccessScreen} />
                 <Stack.Screen
