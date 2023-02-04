@@ -1,18 +1,17 @@
 import { Entypo } from '@expo/vector-icons';
-import { useNavigation, useTheme } from '@react-navigation/native';
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useAppDispatch } from '../../../hooks/useStore';
-import { logOut } from '../../../store/slices/authSlice';
-import { H2, H4, Horizontal } from '../../../styles/styled-elements';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { persistor } from '../../../store';
+import { completedOnboarding, logOut } from '../../../store/slices/authSlice';
+import { H4, Horizontal } from '../../../styles/styled-elements';
 
 const options = [
   { title: 'Groups' },
   { title: 'Profile settings' },
   { title: 'Payment settings' },
-  { title: 'Tutorial' },
+  { title: 'Tutorial', screen: 'Slider' },
   { title: 'Detailed rules' },
   { title: 'Notifications' },
   { title: 'Change Password' },
@@ -23,13 +22,16 @@ const SettingsScreen = ({ navigation }) => {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
 
-  const handlePress = async (element: { title: string }) => {
-    if (element.title.includes('ogout')) {
+  const handlePress = async (element: { title: string; screen?: string }) => {
+    if (element.title.toLowerCase().includes('logout')) {
       await persistor.flush();
-      dispatch(logOut());
+      return dispatch(logOut());
+    } else if (element.title.toLowerCase().includes('tutorial')) {
+      await dispatch(completedOnboarding(false));
+      navigation.navigate(element.screen);
     } else {
       const [screenName] = element.title.split(' ');
-      navigation.navigate(screenName);
+      navigation.navigate(element.screen ?? screenName);
     }
   };
 

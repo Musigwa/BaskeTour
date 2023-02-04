@@ -1,7 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import {
   GET_GROUPS,
-  GET_USER_GROUPS,
   GROUPS,
   GROUP_RANKING,
   JOIN_GROUP,
@@ -25,15 +24,12 @@ export const groupApi = createApi({
       query: payload => ({ url: GROUPS, method: 'POST', body: payload }),
     }),
     getGroups: builder.query<any, MyGroupProps>({
-      query: ({ searchQuery, userId, page, perPage }: MyGroupProps) =>
-        GET_GROUPS(searchQuery, userId, page, perPage),
-    }),
-    getUserGroups: builder.query<any, void>({
-      query: () => GET_USER_GROUPS(),
+      query: ({ searchQuery, page, perPage }: MyGroupProps) =>
+        GET_GROUPS(searchQuery, page, perPage),
     }),
     getMyGroups: builder.query<any, MyGroupProps>({
-      query: ({ searchQuery, userId, page, perPage }: MyGroupProps) =>
-        MY_GROUPS(searchQuery, userId, page, perPage),
+      query: ({ searchQuery, page, perPage }: MyGroupProps) =>
+        MY_GROUPS(searchQuery, page, perPage),
     }),
     getSingleGroup: builder.query<any, { groupId: string }>({
       query: ({ groupId }: { groupId: string }) => SINGLE_GROUP(groupId),
@@ -58,5 +54,4 @@ export const {
   useCreateGroupMutation,
   useGetMyGroupsQuery,
   useGetSingleGroupQuery,
-  useGetUserGroupsQuery,
 } = groupApi;

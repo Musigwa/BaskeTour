@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import ConsensusIcon from '../../../assets/svgs/Consensus';
 import Button from '../../../components/common/Buttons';
 import { Paragraph, View } from '../../../styles/styled-elements';
-import Container from '../../../components/common/Container';
+import Container from '../../../components/common/containers/Container';
 
 const JoinGroupSuccessScreen = ({ navigation, route }) => {
   const {
@@ -25,7 +25,7 @@ const JoinGroupSuccessScreen = ({ navigation, route }) => {
           </CTAText>
         </InfoContainer>
       </View>
-      <View w-100 mb={40}>
+      <View w-100 mb={40} style={{ alignItems: 'center' }}>
         <Button bottom-0 onPress={gotItButtonClickHandler} text='Start Play' />
       </View>
     </Container>

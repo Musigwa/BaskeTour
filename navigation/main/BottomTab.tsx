@@ -1,11 +1,10 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useEffect } from 'react';
-import BracketScreen from '../../screens/main/tabs/bracket';
 import PicksScreen from '../../screens/main/tabs/picks';
 import RankingScreen from '../../screens/main/tabs/ranking';
 import ScoresScreen from '../../screens/main/tabs/scores';
 
-import { FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import { ActivityIndicator, SafeAreaView, View } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
@@ -14,7 +13,6 @@ import TopTab from '../../components/common/TopTab';
 import { defaultScreenOptions } from '../../constants';
 import { useCreatePickMutation } from '../../store/api-queries/tournaments';
 import { H2, H3, Horizontal } from '../../styles/styled-elements';
-import { StatusBar } from 'expo-status-bar';
 import ChatNavigator from './Chat';
 
 const Touchable = styled.Pressable`
@@ -75,7 +73,6 @@ const BottomTabNavigator = () => {
           header: () => {
             return (
               <SafeAreaView>
-                <StatusBar />
                 <Horizontal>
                   <TopTab tabs={headerParts} onTabPress={handlePress} />
                   <Ionicons
@@ -102,7 +99,6 @@ const BottomTabNavigator = () => {
             const shouldSubmit = canSubmit && !isLoading;
             return (
               <SafeAreaView style={{ backgroundColor: 'white' }}>
-                <StatusBar />
                 <Horizontal style={{ marginRight: 20 }}>
                   <View style={{ flex: 0.4 }} />
                   <H2>Picks</H2>
@@ -145,14 +141,14 @@ const BottomTabNavigator = () => {
           headerShown: false,
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name='Bracket'
         component={BracketScreen}
         options={{
           tabBarIcon: props => <FontAwesome name='sitemap' {...props} />,
           headerShadowVisible: true,
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 };

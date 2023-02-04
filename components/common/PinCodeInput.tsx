@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import { TextInput, Keyboard } from "react-native";
-import styled from "styled-components/native";
-import { Paragraph, View } from "../../styles/styled-elements";
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { TextInput, Keyboard } from 'react-native';
+import styled from 'styled-components/native';
+import { H6, Paragraph, View } from '../../styles/styled-elements';
+import { useTheme } from 'react-native-paper';
 
 interface IPinCodeInputProps {
   numberOfInputs?: number;
@@ -17,6 +18,7 @@ const PinCodeInput: React.FC<IPinCodeInputProps> = ({
   const digitRefs = useRef<Array<TextInput>>([]);
   const [digitWithFocus, setDigitWithFocus] = useState(0);
   const [defaultInputValues, setDefaultInputValues] = useState({});
+  const { colors } = useTheme();
 
   useEffect(() => {
     if (value?.length === numberOfInputs) {
@@ -26,8 +28,8 @@ const PinCodeInput: React.FC<IPinCodeInputProps> = ({
 
   useEffect(() => {
     const INPUT_VALUES = {};
-    [...Array(numberOfInputs).keys()].forEach((key) => {
-      INPUT_VALUES[`digit${key}`] = "";
+    [...Array(numberOfInputs).keys()].forEach(key => {
+      INPUT_VALUES[`digit${key}`] = '';
     });
     setDefaultInputValues(INPUT_VALUES);
   }, [numberOfInputs]);
@@ -40,7 +42,7 @@ const PinCodeInput: React.FC<IPinCodeInputProps> = ({
 
   useEffect(() => {
     if (value?.length) {
-      setDigitWithFocus((prev) => {
+      setDigitWithFocus(prev => {
         if (prev === value.length) {
           return value?.length;
         }
@@ -51,8 +53,8 @@ const PinCodeInput: React.FC<IPinCodeInputProps> = ({
 
   const handleValueChange = useCallback(
     (name: string) => (value: string) => {
-      if (+value >= 0 || value === "") {
-        setInputValues((prevValues) => {
+      if (+value >= 0 || value === '') {
+        setInputValues(prevValues => {
           return {
             ...prevValues,
             [name]: value,
@@ -64,7 +66,7 @@ const PinCodeInput: React.FC<IPinCodeInputProps> = ({
   );
 
   useEffect(() => {
-    if (value?.trim() === "") {
+    if (value?.trim() === '') {
       setInputValues({ ...defaultInputValues });
     }
     if (value?.length === numberOfInputs) {
@@ -74,7 +76,7 @@ const PinCodeInput: React.FC<IPinCodeInputProps> = ({
 
   useEffect(() => {
     if (inputValues) {
-      onChangeText?.(Object.values(inputValues).join(""));
+      onChangeText?.(Object.values(inputValues).join(''));
     }
   }, [inputValues]);
 
@@ -87,7 +89,7 @@ const PinCodeInput: React.FC<IPinCodeInputProps> = ({
   const handleKeyPress =
     (name: string) =>
     ({ nativeEvent: { key } }) => {
-      if (key === "Delete" || key === "Backspace") {
+      if (key === 'Delete' || key === 'Backspace') {
         if (+name.slice(-1) > 0) {
           setDigitWithFocus(parseInt(name.slice(-1), 10) - 1);
         }
@@ -96,7 +98,7 @@ const PinCodeInput: React.FC<IPinCodeInputProps> = ({
 
   return (
     <View>
-      <Label>Group Pin code</Label>
+      <H6 style={{ color: colors.gray }}>Group Pin code</H6>
       <PinRow>
         {Object.keys(inputValues).map((inputName, index) => (
           <PinInput
@@ -108,8 +110,8 @@ const PinCodeInput: React.FC<IPinCodeInputProps> = ({
             onKeyPress={handleKeyPress(inputName)}
             key={inputName}
             value={inputValues[inputName]}
-            keyboardType="numeric"
-            returnKeyType="done"
+            keyboardType='numeric'
+            returnKeyType='done'
           />
         ))}
       </PinRow>

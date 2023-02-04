@@ -3,8 +3,9 @@ import { H3, H4, Horizontal, Separator } from '../../../styles/styled-elements';
 
 import React from 'react';
 import { Pressable } from 'react-native';
-import Container from '../../../components/common/Container';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SearchPaginated from '../../../components/common/Lists/SearchPaginated';
+import Container from '../../../components/common/containers/Container';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
 import { useGetGroupsQuery } from '../../../store/api-queries/group-queries';
 import { selectGroup } from '../../../store/slices/groupSlice';
@@ -17,6 +18,7 @@ const SearchGroup = ({ navigation }) => {
     groups,
     user,
   }));
+  const { bottom, top } = useSafeAreaInsets();
 
   const handleSelect = group => {
     dispatch(selectGroup(group));
@@ -45,7 +47,7 @@ const SearchGroup = ({ navigation }) => {
   };
 
   return (
-    <Container>
+    <Container style={{ marginBottom: bottom }}>
       <SearchPaginated
         fetchMethod={useGetGroupsQuery}
         data={groups}

@@ -26,10 +26,10 @@ export default function App() {
   return isLoadingComplete ? (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <PaperProvider theme={DefaultTheme}>
+        <PaperProvider theme={theme}>
           <ThemeProvider theme={theme.colors}>
             <SafeAreaProvider>
-              <StatusBar style='auto' />
+              <StatusBar style='dark' />
               <Navigation colorScheme={colorScheme} />
             </SafeAreaProvider>
           </ThemeProvider>

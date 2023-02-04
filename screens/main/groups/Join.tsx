@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { KeyboardAvoidingView, Platform, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useToast } from 'react-native-toast-notifications';
 import styled from 'styled-components';
 import Button from '../../../components/common/Buttons';
-import Container from '../../../components/common/Container';
 import PinCodeInput from '../../../components/common/PinCodeInput';
 import { useAppSelector } from '../../../hooks/useStore';
 import { useJoinGroupMutation } from '../../../store/api-queries/group-queries';
-import { ErrorMessage, Paragraph, Title, View } from '../../../styles/styled-elements';
+import { ErrorMessage, H2, H6, Paragraph } from '../../../styles/styled-elements';
 
 const JoinGroupScreen = ({ navigation }) => {
   const group = useAppSelector(({ groups }) => groups.selectedGroup);
-  const [joinGroup, { isLoading, error: err, isError }] =
-    useJoinGroupMutation();
+  const [joinGroup, { isLoading, error: err, isError }] = useJoinGroupMutation();
   const toast = useToast();
+  const { colors } = useTheme();
+
   useEffect(() => {
     if (isError) {
       let { message } = err?.data;
@@ -27,27 +29,8 @@ const JoinGroupScreen = ({ navigation }) => {
   }, [isError, err]);
 
   const [PIN, setPIN] = useState<string>('');
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [error, setError] = useState<unknown | Error>(null);
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      }
-    );
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
-  }, []);
+  const { bottom } = useSafeAreaInsets();
 
   const handleSubmit = async () => {
     try {
@@ -61,42 +44,45 @@ const JoinGroupScreen = ({ navigation }) => {
   const PINValueChangeHandler = (pin: string) => setPIN(pin);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <Container style={{ padding: 20 }}>
-        <View w-100 flex={keyboardVisible ? 0.8 : 1} items-center>
-          <Title>Join Existing Group </Title>
+    <KeyboardAvoidingView
+      behavior={Platform.select({ android: 'height', ios: 'padding' })}
+      style={{
+        flex: 1,
+        paddingHorizontal: 15,
+        marginBottom: bottom,
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+      }}
+    >
+      <View
+        style={{
+          flex: 0.56,
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%',
+        }}
+      >
+        <H2>Join Existing Group</H2>
+        <GroupNameContainer style={{ width: '100%' }}>
+          <H6 style={{ color: colors.gray }}>Group name</H6>
+          <GroupName>{group?.groupName}</GroupName>
+        </GroupNameContainer>
+        <PinCodeInput value={PIN} onChangeText={PINValueChangeHandler} />
+        <View>{error ? <ErrorMessage w-100>{error}</ErrorMessage> : null}</View>
+      </View>
 
-          <View w-100 mt={40}>
-            <GroupNameContainer w-100>
-              <GroupNameLabel>Group name</GroupNameLabel>
-              <GroupName>{group?.groupName}</GroupName>
-            </GroupNameContainer>
-          </View>
-
-          <View w-100 mb={30} mt={40}>
-            <PinCodeInput value={PIN} onChangeText={PINValueChangeHandler} />
-          </View>
-          <View w-100 flex-row justify-center align-center>
-            {error && <ErrorMessage w-100>{error}</ErrorMessage>}
-          </View>
-        </View>
-
-        <View w-100 mb={30}>
-          <Button
-            text='Join'
-            onPress={handleSubmit}
-            loading={isLoading}
-            disabled={isLoading || PIN.length < 4}
-          />
-        </View>
-      </Container>
-    </TouchableWithoutFeedback>
-    // </KeyboardAvoidingView>
+      <Button
+        containerStyle={{ width: '100%' }}
+        text='Join'
+        onPress={handleSubmit}
+        loading={isLoading}
+        disabled={isLoading || PIN.length < 4}
+      />
+    </KeyboardAvoidingView>
   );
 };
 
 const GroupNameContainer = styled(View)`
-  border-top-width: 1px;
   border-bottom-width: 1px;
   padding: 14px 0 14px 0;
   border-color: #e9ebed;

@@ -228,6 +228,7 @@ const InboxScreen = ({ route }: any) => {
           <TextInput
             style={[styles.input, { marginLeft: photo?.uri ? 10 : 0 }]}
             placeholder={`${photo?.uri ? 'Add you caption' : 'Write your message'}...`}
+            placeholderTextColor={colors.gray}
             onChangeText={setText}
             numberOfLines={3}
             ref={inputRef}

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   ImageBackground,
   View as RNView,
@@ -11,11 +11,10 @@ import BallIcon from '../../../assets/svgs/BallIcon';
 import HoopIcon from '../../../assets/svgs/HoopIcon';
 import Logo from '../../../assets/svgs/Logo';
 
-import { useNavigation, useRoute, useTheme } from '@react-navigation/native';
+import { useNavigation, useTheme } from '@react-navigation/native';
+import Container from '../../../components/common/containers/Container';
 import { useGetTournamentsQuery } from '../../../store/api-queries/tournaments';
 import { H3, H4 } from '../../../styles/styled-elements';
-import { StatusBar } from 'expo-status-bar';
-import Container from '../../../components/common/Container';
 
 const SetupTypeScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -68,7 +67,7 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
   btnContainer: {
-    flex: 0.4,
+    flex: 0.5,
     justifyContent: 'space-evenly',
     alignItems: 'center',
     width: '85%',

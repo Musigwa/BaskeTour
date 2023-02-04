@@ -1,36 +1,31 @@
-import { StatusBar } from 'expo-status-bar';
 import { Formik } from 'formik';
 import React, { useState } from 'react';
-import styled from 'styled-components/native';
 import * as Yup from 'yup';
 
 import Checkbox from 'expo-checkbox';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Constants from 'expo-constants';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import FacebookLogo from '../../assets/svgs/FacebookLogo';
-import Button from '../../components/common/Buttons';
+import FakeButton from '../../components/common/Buttons';
 import Input from '../../components/common/Input';
 
-import { Pressable } from 'react-native';
-import { Paragraph, View } from '../../styles/styled-elements';
+import { View } from 'react-native';
+import { H2, H5, Horizontal } from '../../styles/styled-elements';
 
+import { Button, useTheme } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 import { ToastOptions } from 'react-native-toast-notifications/lib/typescript/toast';
 import { useAppDispatch } from '../../hooks/useStore';
 import { useLoginMutation } from '../../store/api-queries/auth-queries';
 import { hasLoggedIn } from '../../store/slices/authSlice';
+import { openBrowser } from '../../utils/methods';
 
-function LoginScreen({ navigation }) {
+const LoginScreen = () => {
   const [isChecked, setChecked] = useState(false);
-  const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
-
+  const { colors } = useTheme();
   const [loginUser, { isLoading, data }] = useLoginMutation();
   const toast = useToast();
-
-  const handleGetStarted = () => {
-    navigation.push('Photo');
-  };
 
   const handleSubmit = async ({ email: accountIdentifier, password }) => {
     try {
@@ -60,116 +55,75 @@ function LoginScreen({ navigation }) {
   });
 
   return (
-    <Container pb={insets.bottom} content-center>
-      <StatusBar style='dark' />
-      <View w-100>
-        <View items-center w-100 mt={20} mb={70}>
-          <Title>Sign in to Ulli</Title>
-        </View>
-
-        <Formik
-          initialValues={{ email: '', password: '' }}
-          validationSchema={SigninSchema}
-          onSubmit={handleSubmit}
-        >
-          {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
-            <>
-              <View w-100 mb={45}>
-                <Input
-                  placeholder='Email'
-                  // label='Email'
-                  name='email'
-                  required
-                  handleChange={handleChange}
-                  handleBlur={handleBlur}
-                  error={errors.email}
+    <SafeAreaView
+      style={{ flex: 1, alignItems: 'center', padding: 15, justifyContent: 'space-around' }}
+    >
+      <H2 style={{ textTransform: 'capitalise' }}>Sign in to {Constants?.expoConfig?.name}</H2>
+      <Formik
+        initialValues={{ email: '', password: '' }}
+        validationSchema={SigninSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
+          <View
+            style={{
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flex: 0.6,
+            }}
+          >
+            <Input
+              placeholder='Email'
+              placeholderTextColor={colors.gray}
+              name='email'
+              required
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+              error={errors.email}
+            />
+            <Input
+              placeholder='Password'
+              placeholderTextColor={colors.gray}
+              name='password'
+              required
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+              error={errors.password}
+              secureEntry
+              isPassword
+              style={{ marginVertical: 20 }}
+            />
+            <Horizontal style={{ width: '100%' }}>
+              <Horizontal>
+                <Checkbox
+                  value={isChecked}
+                  onValueChange={setChecked}
+                  color={isChecked ? '#4630EB' : undefined}
                 />
-              </View>
-              <View w-100 mb={40}>
-                <Input
-                  placeholder='Password'
-                  // label='Password'
-                  name='password'
-                  required
-                  handleChange={handleChange}
-                  handleBlur={handleBlur}
-                  error={errors.password}
-                  secureEntry
-                  isPassword
-                />
-              </View>
-
-              <View flex-row space-between w-100 items-center>
-                <View flex-row items-center>
-                  <Checkbox
-                    value={isChecked}
-                    onValueChange={setChecked}
-                    color={isChecked ? '#4630EB' : undefined}
-                  />
-                  <Paragraph ml={10} size={16}>
-                    Remember me
-                  </Paragraph>
-                </View>
-                <ForgotPassword size={16}>Forgot password?</ForgotPassword>
-              </View>
-
-              <View mt={50} w-100 items-center>
-                <Button text='Sign in' onPress={handleSubmit} loading={isLoading} />
-                <Paragraph mb={22} mt={22} size={16} color='#8D8D8D'>
-                  OR
-                </Paragraph>
-                <Button
-                  text='Sign in with Facebook'
-                  onPress={handleGetStarted}
-                  bg='#475996'
-                  icon={FacebookLogo}
-                />
-                <BottomText>
-                  <Paragraph>By using Ulli you agree to our </Paragraph>
-                  <Pressable>
-                    <Terms>Terms & Conditions</Terms>
-                  </Pressable>
-                </BottomText>
-              </View>
-            </>
-          )}
-        </Formik>
-      </View>
-    </Container>
+                <H5 style={{ textTransform: 'none', marginLeft: 5 }}>Remember me</H5>
+              </Horizontal>
+              <Button>Forgot password?</Button>
+            </Horizontal>
+            <FakeButton
+              containerStyle={{ width: '100%' }}
+              text='Sign in'
+              onPress={handleSubmit}
+              loading={isLoading}
+            />
+          </View>
+        )}
+      </Formik>
+      <Horizontal style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
+        <H5 style={{ textTransform: 'none' }}>
+          By using {Constants.expoConfig?.name} you agree to our
+        </H5>
+        <Button mode='text' compact onPress={() => openBrowser()}>
+          Terms & Conditions
+        </Button>
+      </Horizontal>
+    </SafeAreaView>
   );
-}
-
-const Container = styled(View)`
-  flex: 1;
-  padding-left: 24px;
-  padding-right: 24px;
-  background-color: white;
-`;
-
-const Title = styled(Paragraph)`
-  font-size: 24px;
-  font-weight: 700;
-`;
-
-const PasswordInfo = styled(Paragraph)`
-  color: #8d8d8d;
-`;
-
-const Terms = styled(Paragraph)`
-  color: ${props => props.theme.primary};
-  font-weight: bold;
-`;
-
-const BottomText = styled(View)`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin-top: 37px;
-  font-size: 14px;
-`;
-
-const ForgotPassword = styled(Paragraph)`
-  color: ${props => props.theme.primary};
-`;
+};
 
 export default LoginScreen;

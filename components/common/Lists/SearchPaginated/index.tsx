@@ -3,6 +3,7 @@ import React, { ComponentType, FC, memo, useEffect, useMemo, useRef, useState } 
 import {
   ActivityIndicator,
   FlatList,
+  FlatListProps,
   ListRenderItem,
   StyleSheet,
   View,
@@ -12,7 +13,7 @@ import { H4, H5, Horizontal } from '../../../../styles/styled-elements';
 import Searchbar from '../../Inputs/Searchbar';
 import { useTheme } from 'react-native-paper';
 
-type SearchPaginatedProps = {
+type SearchPaginatedProps = FlatListProps<any> & {
   searchable?: boolean;
   fetchMethod: Function;
   params?: { [key: string]: any };
@@ -69,6 +70,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
     style,
     scrollOnContentChange = false,
     paginatable = true,
+    ...props
   }) => {
     const [state, setState] = useState<StateProps>({ page: 1, text: '' });
     const { page, text } = state;
@@ -111,12 +113,12 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
 
     const handleContentSizeChange = () => {
       if (scrollOnContentChange) {
-        listRef.current?.scrollToEnd?.({ animated: false });
+        listRef.current?.scrollToEnd?.();
       }
     };
 
     return (
-      <View style={{ ...styles.container, ...style, backgroundColor: colors.background }}>
+      <View style={[styles.container, style, { backgroundColor: colors.background }]}>
         {searchable ? (
           <Searchbar
             clearText={clearText}
@@ -149,6 +151,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
           ListEmptyComponent={ListEmptyComponent}
           onContentSizeChange={handleContentSizeChange}
           onLayout={handleContentSizeChange}
+          {...props}
         />
       </View>
     );

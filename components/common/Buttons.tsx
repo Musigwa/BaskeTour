@@ -26,7 +26,7 @@ const Button = ({
   textSize,
   bg,
   textColor,
-  containerStyle = { width: '100%' },
+  containerStyle = { width: '90%' },
   small,
   onPress = () => {},
   loading = false,
