@@ -1,14 +1,15 @@
 import { useTheme } from '@react-navigation/native';
 import _ from 'lodash';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, TextInput, TouchableOpacity, View } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
 import PhotoUploader from '../../../components/PhotoUploader';
 import KeyboardAvoid from '../../../components/common/containers/KeyboardAvoid';
-import { useAppSelector } from '../../../hooks/useStore';
+import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
 import { useUploadProfileDetailsMutation } from '../../../store/api-queries/auth-queries';
 import { H4, H5, H6, Horizontal, Separator } from '../../../styles/styled-elements';
 import { createFormData, objDiff } from '../../../utils/methods';
+import { updateProfile } from '../../../store/slices/authSlice';
 
 const ProfileScreen = () => {
   const { colors } = useTheme();
@@ -20,17 +21,18 @@ const ProfileScreen = () => {
   const selectable = ['email', 'firstName', 'lastName', 'profilePic'];
   const newProfile = _.pick(newUser, selectable);
   const prevProfile = _.pick(user, selectable);
-
-  const disabled = _.isEqual(newProfile, prevProfile) || isLoading;
+  const dispatch = useAppDispatch();
+  const disabled = useMemo(() => _.isEqual(newProfile, prevProfile) || isLoading, []);
 
   const handleUpload = async () => {
     const difference = objDiff(user, newUser);
     const data = difference?.photo
       ? createFormData(difference?.photo, _.omit(difference, ['profilePic', 'photo']))
       : difference;
-    const { status } = await uploadDetails(data).unwrap();
+    const { status, data: resp } = await uploadDetails(data).unwrap();
     if (status === 200) {
       setNewUser(user);
+      dispatch(updateProfile(resp));
       const message = 'Profile updated successfully!';
       toast.show(message, { type: 'success', placement: 'center', animationType: 'zoom-in' });
     }

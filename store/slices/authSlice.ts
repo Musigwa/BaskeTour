@@ -39,6 +39,9 @@ const authSlice = createSlice({
     hasLoggedIn: (state, action) => {
       state.isLoggedIn = action.payload;
     },
+    updateProfile: (state, action) => {
+      state.user = action.payload;
+    },
   },
   extraReducers: builder => {
     builder.addMatcher(authApi.endpoints.signup.matchFulfilled, (state, { payload }) => {
@@ -60,6 +63,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { logOut, completedOnboarding, hasLoggedIn } = authSlice.actions;
+export const { logOut, completedOnboarding, hasLoggedIn, updateProfile } = authSlice.actions;
 
 export default authSlice.reducer;
