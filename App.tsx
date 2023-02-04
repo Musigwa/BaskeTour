@@ -16,7 +16,7 @@ import { StatusBar } from 'expo-status-bar';
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
-  const theme = colorScheme === 'dark' ? AppDarkTheme : AppDefaultTheme;
+  const theme = AppDefaultTheme;
 
   useEffect(() => {
     const storeListener = setupListeners(store.dispatch);

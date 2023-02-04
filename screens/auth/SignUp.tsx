@@ -168,7 +168,12 @@ const SignUpScreen = ({ navigation }: AuthScreenProps<'SignUp'>) => {
         <H5 style={{ textTransform: 'none' }}>
           By using {Constants.expoConfig?.name} you agree to our
         </H5>
-        <Button mode='text' compact onPress={() => openBrowser()}>
+        <Button
+          mode='text'
+          compact
+          labelStyle={{ textTransform: 'none' }}
+          onPress={() => openBrowser()}
+        >
           Terms & Conditions
         </Button>
       </Horizontal>

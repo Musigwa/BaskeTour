@@ -22,13 +22,12 @@ const ProfileScreen = () => {
   const newProfile = _.pick(newUser, selectable);
   const prevProfile = _.pick(user, selectable);
   const dispatch = useAppDispatch();
-  const disabled = useMemo(() => _.isEqual(newProfile, prevProfile) || isLoading, []);
+  const disabled = useMemo(() => _.isEqual(newProfile, prevProfile) || isLoading, [newUser, user]);
 
   const handleUpload = async () => {
-    const difference = objDiff(user, newUser);
-    const data = difference?.photo
-      ? createFormData(difference?.photo, _.omit(difference, ['profilePic', 'photo']))
-      : difference;
+    const updated = { ...user, ...newUser };
+    const body = _.pick(updated, ['email', 'firstName', 'lastName']);
+    const data = updated?.photo ? createFormData(updated.photo, body) : body;
     const { status, data: resp } = await uploadDetails(data).unwrap();
     if (status === 200) {
       setNewUser(user);
@@ -43,7 +42,7 @@ const ProfileScreen = () => {
   };
 
   const cancelPhoto = () => {
-    setNewUser(state => ({ ..._.omit(state, ['photo']), profilePic: user.profilePic }));
+    setNewUser(state => ({ ...state, photo: undefined, profilePic: user.profilePic }));
   };
 
   return (

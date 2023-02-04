@@ -103,7 +103,9 @@ const LoginScreen = () => {
                 />
                 <H5 style={{ textTransform: 'none', marginLeft: 5 }}>Remember me</H5>
               </Horizontal>
-              <Button>Forgot password?</Button>
+              <Button mode='text' labelStyle={{ textTransform: 'none' }} compact>
+                Forgot password?
+              </Button>
             </Horizontal>
             <FakeButton
               containerStyle={{ width: '100%' }}
@@ -118,7 +120,12 @@ const LoginScreen = () => {
         <H5 style={{ textTransform: 'none' }}>
           By using {Constants.expoConfig?.name} you agree to our
         </H5>
-        <Button mode='text' compact onPress={() => openBrowser()}>
+        <Button
+          mode='text'
+          labelStyle={{ textTransform: 'none' }}
+          compact
+          onPress={() => openBrowser()}
+        >
           Terms & Conditions
         </Button>
       </Horizontal>
