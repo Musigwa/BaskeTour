@@ -12,17 +12,18 @@ import PhotoUploader from '../../components/PhotoUploader';
 import Button from '../../components/common/Buttons';
 import Input from '../../components/common/Input';
 
-import { Alert, SafeAreaView } from 'react-native';
+import { Alert, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 import KeyboardAvoid from '../../components/common/containers/KeyboardAvoid';
 import { hasLoggedIn } from '../../store/slices/authSlice';
-import { Paragraph, View } from '../../styles/styled-elements';
+import { H2, Paragraph } from '../../styles/styled-elements';
 
 function PhotoScreen() {
   const [photo, setPhoto] = useState<any>();
   const dispatch = useAppDispatch();
   const [uploadDetails, { isLoading, error, isError }] = useUploadProfileDetailsMutation();
-
+  const { colors } = useTheme();
   const onImageSelect = (image: any) => {
     setPhoto(image);
   };
@@ -42,90 +43,83 @@ function PhotoScreen() {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <KeyboardAvoid contentContainerStyle={{ paddingHorizontal: 20 }}>
-        <IndicatorHeader
-          // showBackIcon={true}
-          count={2}
-          currentStep={2}
-          // handleBackPress={() => navigation.goBack()}
-        />
-        <View items-center w-100 mb={20} mt={20}>
-          <Title>Profile photo</Title>
-        </View>
+    <KeyboardAvoid
+      contentContainerStyle={{ flex: 1, justifyContent: 'space-evenly', alignItems: 'center' }}
+    >
+      <IndicatorHeader count={2} currentStep={2} />
+      <H2>Profile photo</H2>
+      <View style={{ alignItems: 'center' }}>
+        <PhotoUploader onSelect={onImageSelect} imageUrl={photo} />
+        <Paragraph color='#4F1473' style={{}}>
+          Add photo
+        </Paragraph>
+      </View>
+      <Formik
+        initialValues={{ firstName: '', lastName: '' }}
+        validationSchema={ProfileSchema}
+        onSubmit={async values => {
+          try {
+            if (!photo) {
+              Alert.alert('Please upload a photo');
+              return;
+            }
+            console.log('values', values);
+            const data = createFormData(photo, values);
+            console.log('values', data);
 
-        <View w-100 items-center>
-          <PhotoUploader onSelect={onImageSelect} imageUrl={photo} />
-          <Paragraph mt={18} color='#4F1473'>
-            Add photo
-          </Paragraph>
-        </View>
-
-        <View mt={50} w-100>
-          <Formik
-            initialValues={{ firstName: '', lastName: '' }}
-            validationSchema={ProfileSchema}
-            onSubmit={async values => {
-              try {
-                if (!photo) {
-                  Alert.alert('Please upload a photo');
-                  return;
-                }
-                console.log('values', values);
-                const data = createFormData(photo, values);
-                console.log('values', data);
-
-                const res = await uploadDetails(data).unwrap();
-                console.log('res---', res);
-                if (res.status === 200) dispatch(hasLoggedIn(true));
-                else Alert.alert('Something went wrong');
-              } catch (error) {
-                console.log('error', error);
-              }
+            const res = await uploadDetails(data).unwrap();
+            console.log('res---', res);
+            if (res.status === 200) dispatch(hasLoggedIn(true));
+            else Alert.alert('Something went wrong');
+          } catch (error) {
+            console.log('error', error);
+          }
+        }}
+      >
+        {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
+          <View
+            style={{
+              flex: 0.9,
+              justifyContent: 'space-around',
+              width: '100%',
+              alignItems: 'center',
             }}
           >
-            {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
-              <>
-                <View w-100 mb={34}>
-                  <Input
-                    placeholder='First name'
-                    // label='First name'
-                    name='firstName'
-                    required
-                    handleChange={handleChange}
-                    handleBlur={handleBlur}
-                    error={errors.firstName}
-                  />
-                </View>
-                <View w-100 mb={34}>
-                  <Input
-                    placeholder='Last name'
-                    // label='Last name'
-                    name='lastName'
-                    required
-                    handleChange={handleChange}
-                    handleBlur={handleBlur}
-                    error={errors.lastName}
-                  />
-                </View>
-                <View mt={50} w-100 items-center>
-                  <Button text='Next' onPress={handleSubmit} loading={isLoading} />
-                </View>
-              </>
-            )}
-          </Formik>
-        </View>
-      </KeyboardAvoid>
-    </SafeAreaView>
+            <View
+              style={{
+                justifyContent: 'space-around',
+                flex: 0.5,
+                paddingHorizontal: 20,
+                alignItems: 'center',
+              }}
+            >
+              <Input
+                placeholder='First name'
+                placeholderTextColor={colors.gray}
+                name='firstName'
+                required
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                error={errors.firstName}
+              />
+              <Input
+                placeholder='Last name'
+                placeholderTextColor={colors.gray}
+                name='lastName'
+                required
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                error={errors.lastName}
+                style={{ marginTop: 15 }}
+              />
+            </View>
+            <Button text='Next' onPress={() => handleSubmit()} loading={isLoading} />
+          </View>
+        )}
+      </Formik>
+    </KeyboardAvoid>
   );
 }
-
-const Container = styled(View)`
-  flex: 1;
-  padding-left: 24px;
-  padding-right: 24px;
-  background-color: white;
-`;
 
 const Title = styled(Paragraph)`
   font-size: 24px;
