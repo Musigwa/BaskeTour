@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Ulli Picks",
+    "name": "Ulli",
     "slug": "ulli",
     "owner": "ulli",
     "githubUrl": "https://github.com/MangoDev-HireMango/ulli-mobile.git",
@@ -33,7 +33,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ulli.ulliapp",
-      "buildNumber": "1"
+      "buildNumber": "3"
     },
     "android": {
       "adaptiveIcon": {
