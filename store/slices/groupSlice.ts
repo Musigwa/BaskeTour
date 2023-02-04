@@ -49,7 +49,9 @@ const groupSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addMatcher(groupApi.endpoints.getGroups.matchFulfilled, (state, { payload }) => {
-      state.groups = payload.data;
+      const { page } = payload.meta;
+      if (page === 1) state.groups = payload.data;
+      else state.groups = [...state.groups, ...payload.data];
     });
 
     builder.addMatcher(groupApi.endpoints.getMyGroups.matchFulfilled, (state, { payload }) => {
@@ -58,9 +60,6 @@ const groupSlice = createSlice({
       else state.myGroups = [...state.myGroups, ...payload.data];
     });
 
-    builder.addMatcher(groupApi.endpoints.getUserGroups.matchFulfilled, (state, { payload }) => {
-      state.userGroups = payload.data;
-    });
     builder.addMatcher(groupApi.endpoints.joinGroup.matchFulfilled, (state, { payload }) => {
       state.joinGroup.data = payload.data;
       state.joinGroup.error = payload.error;

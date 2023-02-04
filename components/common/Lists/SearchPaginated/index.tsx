@@ -118,7 +118,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
     };
 
     return (
-      <View style={{ ...styles.container, ...style, backgroundColor: colors.background }}>
+      <View style={[styles.container, style, { backgroundColor: colors.background }]}>
         {searchable ? (
           <Searchbar
             clearText={clearText}

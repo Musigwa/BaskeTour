@@ -8,8 +8,8 @@ export const CURRENT_USER = '/users/me';
 // Groups endpoints
 export const GROUPS = '/groups';
 export const SINGLE_GROUP = groupId => `${GROUPS}/${groupId}`;
-export const GET_GROUPS = (groupName = '', userId, page, perPage) =>
-  `${GROUPS}?searchQuery=${groupName}&userId=${userId}&page=${page}&perPage=${perPage}`;
+export const GET_GROUPS = (groupName = '', page, perPage) =>
+  `${GROUPS}?searchQuery=${groupName}&page=${page}&perPage=${perPage}`;
 export const MY_GROUPS = (groupName = '', page, perPage) =>
   `${GROUPS}?searchQuery=${groupName}&page=${page}&perPage=${perPage}`;
 export const GET_USER_GROUPS = (searchQuery = '') =>
