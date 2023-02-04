@@ -1,17 +1,16 @@
 import { Formik } from 'formik';
 import React, { useState } from 'react';
-import styled from 'styled-components/native';
 import * as Yup from 'yup';
 
 import Checkbox from 'expo-checkbox';
 import Constants from 'expo-constants';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import FakeButton from '../../components/common/Buttons';
 import Input from '../../components/common/Input';
 
 import { View } from 'react-native';
-import { H2, H5, Horizontal, Paragraph } from '../../styles/styled-elements';
+import { H2, H5, Horizontal } from '../../styles/styled-elements';
 
 import { Button, useTheme } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
@@ -23,13 +22,10 @@ import { openBrowser } from '../../utils/methods';
 
 const LoginScreen = () => {
   const [isChecked, setChecked] = useState(false);
-  const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const [loginUser, { isLoading, data }] = useLoginMutation();
   const toast = useToast();
-  const TCUrl =
-    'https://app.termly.io/document/terms-of-use-for-ios-app/5d1bcb2f-41c0-423e-9466-9223ac430cd3';
 
   const handleSubmit = async ({ email: accountIdentifier, password }) => {
     try {
@@ -129,38 +125,5 @@ const LoginScreen = () => {
     </SafeAreaView>
   );
 };
-
-const Container = styled(View)`
-  flex: 1;
-  padding-left: 24px;
-  padding-right: 24px;
-  background-color: white;
-`;
-
-const Title = styled(Paragraph)`
-  font-size: 24px;
-  font-weight: 700;
-`;
-
-const PasswordInfo = styled(Paragraph)`
-  color: #8d8d8d;
-`;
-
-const Terms = styled(Paragraph)`
-  color: ${props => props.theme.primary};
-  font-weight: bold;
-`;
-
-const BottomText = styled(View)`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin-top: 37px;
-  font-size: 14px;
-`;
-
-const ForgotPassword = styled(Paragraph)`
-  color: ${props => props.theme.primary};
-`;
 
 export default LoginScreen;

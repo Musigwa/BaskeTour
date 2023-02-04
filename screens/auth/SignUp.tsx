@@ -17,11 +17,11 @@ import { useTheme } from '@react-navigation/native';
 import { Alert, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
-import { H5, Horizontal, Paragraph } from '../../styles/styled-elements';
+import { H2, H5, Horizontal, Paragraph } from '../../styles/styled-elements';
 import { AuthScreenProps } from '../../types';
 import { openBrowser } from '../../utils/methods';
 
-function SignUpScreen({ navigation }: AuthScreenProps<'SignUp'>) {
+const SignUpScreen = ({ navigation }: AuthScreenProps<'SignUp'>) => {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const { token, user } = useAppSelector(state => state.auth);
@@ -69,7 +69,7 @@ function SignUpScreen({ navigation }: AuthScreenProps<'SignUp'>) {
       }}
     >
       <IndicatorHeader count={2} currentStep={1} />
-      <Title>Create Account</Title>
+      <H2>Create Account</H2>
 
       <Formik
         initialValues={{ email: '', password: '', confirmPassword: '' }}
@@ -174,12 +174,7 @@ function SignUpScreen({ navigation }: AuthScreenProps<'SignUp'>) {
       </Horizontal>
     </SafeAreaView>
   );
-}
-
-const Title = styled(Paragraph)`
-  font-size: 24px;
-  font-weight: 700;
-`;
+};
 
 const PasswordInfo = styled(Paragraph)`
   color: #8d8d8d;

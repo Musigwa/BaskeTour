@@ -16,7 +16,7 @@ const Wrapper = styled(View)`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 271px;
+  height: 235px;
   border-radius: 24px;
   background-color: #e5e3ee;
 `;

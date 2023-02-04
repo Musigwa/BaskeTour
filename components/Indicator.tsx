@@ -21,9 +21,9 @@ const Indicator = ({
 
   return (
     <Wrapper>
-      {showBackIcon && (
+      {showBackIcon && currentStep !== 1 && (
         <Back onPress={handleBackPress}>
-          <MaterialIcons name='arrow-back-ios' size={18} color='black' />
+          <MaterialIcons name='arrow-back-ios' size={24} color='black' />
         </Back>
       )}
 
