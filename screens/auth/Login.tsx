@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 
 import Checkbox from 'expo-checkbox';
 import Constants from 'expo-constants';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import FakeButton from '../../components/common/Buttons';
 import Input from '../../components/common/Input';
@@ -13,13 +13,13 @@ import Input from '../../components/common/Input';
 import { View } from 'react-native';
 import { H2, H5, Horizontal, Paragraph } from '../../styles/styled-elements';
 
-import * as WebBrowser from 'expo-web-browser';
 import { Button, useTheme } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 import { ToastOptions } from 'react-native-toast-notifications/lib/typescript/toast';
 import { useAppDispatch } from '../../hooks/useStore';
 import { useLoginMutation } from '../../store/api-queries/auth-queries';
 import { hasLoggedIn } from '../../store/slices/authSlice';
+import { openBrowser } from '../../utils/methods';
 
 const LoginScreen = () => {
   const [isChecked, setChecked] = useState(false);
@@ -58,12 +58,10 @@ const LoginScreen = () => {
       ),
   });
 
-  const openBrowser = async (url = TCUrl) => {
-    await WebBrowser.openBrowserAsync(url);
-  };
-
   return (
-    <View style={{ flex: 1, alignItems: 'center', padding: 15, justifyContent: 'space-evenly' }}>
+    <SafeAreaView
+      style={{ flex: 1, alignItems: 'center', padding: 15, justifyContent: 'space-around' }}
+    >
       <H2 style={{ textTransform: 'capitalise' }}>Sign in to {Constants?.expoConfig?.name}</H2>
       <Formik
         initialValues={{ email: '', password: '' }}
@@ -76,7 +74,7 @@ const LoginScreen = () => {
               width: '100%',
               alignItems: 'center',
               justifyContent: 'space-between',
-              flex: 0.5,
+              flex: 0.6,
             }}
           >
             <Input
@@ -128,7 +126,7 @@ const LoginScreen = () => {
           Terms & Conditions
         </Button>
       </Horizontal>
-    </View>
+    </SafeAreaView>
   );
 };
 

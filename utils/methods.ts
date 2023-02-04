@@ -1,4 +1,6 @@
+import * as WebBrowser from 'expo-web-browser';
 import { Platform } from 'react-native';
+import { TCUrl } from '../constants';
 
 type ColorType =
   | 'solo'
@@ -157,4 +159,8 @@ export const genColor = (args?: ColorGenArgs) => {
     default:
       return color;
   }
+};
+
+export const openBrowser = async (url = TCUrl) => {
+  await WebBrowser.openBrowserAsync(url);
 };

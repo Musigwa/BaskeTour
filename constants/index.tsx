@@ -13,3 +13,6 @@ export const defaultScreenOptions = {
   headerTintColor: 'black',
   headerTitleStyle,
 };
+
+export const TCUrl =
+  'https://app.termly.io/document/terms-of-use-for-ios-app/5d1bcb2f-41c0-423e-9466-9223ac430cd3';

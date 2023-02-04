@@ -1,8 +1,8 @@
-import React from "react";
-import { MaterialIcons } from "@expo/vector-icons";
-import styled from "styled-components/native";
+import React from 'react';
+import { MaterialIcons } from '@expo/vector-icons';
+import styled from 'styled-components/native';
 
-import { View } from "../styles/styled-elements";
+import { View } from '../styles/styled-elements';
 
 interface IProps {
   count: number;
@@ -23,11 +23,11 @@ const Indicator = ({
     <Wrapper>
       {showBackIcon && (
         <Back onPress={handleBackPress}>
-          <MaterialIcons name="arrow-back-ios" size={18} color="black" />
+          <MaterialIcons name='arrow-back-ios' size={18} color='black' />
         </Back>
       )}
 
-      <View flex-row style={{ alignSelf: "center" }}>
+      <View flex-row style={{ alignSelf: 'center' }}>
         {stepArray.map((step, idx) => (
           <IndicatorItem
             key={idx}
@@ -46,14 +46,13 @@ const Wrapper = styled(View)`
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-bottom: 20px;
   margin-top: 10px;
 `;
 
 const IndicatorItem = styled(View)<{ active: boolean }>`
   width: 35px;
   height: 4px;
-  background-color: ${(props) => (props.active ? "#4F1473" : "#C4C4C4")};
+  background-color: ${props => (props.active ? '#4F1473' : '#C4C4C4')};
 `;
 
 const Back = styled.Pressable`
