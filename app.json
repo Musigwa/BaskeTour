@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Ulli",
+    "name": "Ulli Picks",
     "slug": "ulli",
     "owner": "ulli",
     "githubUrl": "https://github.com/MangoDev-HireMango/ulli-mobile.git",
@@ -32,7 +32,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ulli.ullipicks",
+      "bundleIdentifier": "com.ulli.ulliapp",
       "buildNumber": "1"
     },
     "android": {
@@ -40,7 +40,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ulli.ullipicks",
+      "package": "com.ulli.ulliapp",
       "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
