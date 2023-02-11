@@ -16,6 +16,9 @@ export const authApi = createApi({
     login: builder.mutation({
       query: body => ({ url: LOGIN, method: 'POST', body }),
     }),
+    deleteAccount: builder.mutation({
+      query: () => ({ url: CURRENT_USER, method: 'DELETE' }),
+    }),
     uploadProfileDetails: builder.mutation({
       query: body => ({ url: CURRENT_USER, method: 'PUT', body }),
     }),
@@ -27,4 +30,5 @@ export const {
   useSignupMutation,
   useUploadProfileDetailsMutation,
   useLoginMutation,
+  useDeleteAccountMutation,
 } = authApi;
