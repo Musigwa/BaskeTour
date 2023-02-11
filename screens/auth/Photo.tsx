@@ -42,6 +42,25 @@ function PhotoScreen() {
     lastName: Yup.string().min(2, 'Too Short').required('Field is required'),
   });
 
+  const handleSubmit = async values => {
+    try {
+      if (!photo) {
+        Alert.alert('Please upload a photo');
+        return;
+      }
+      console.log('values', values);
+      const data = createFormData(photo, values);
+      console.log('values', data);
+
+      const res = await uploadDetails(data).unwrap();
+      console.log('res---', res);
+      if (res.status === 200) dispatch(hasLoggedIn(true));
+      else Alert.alert('Something went wrong');
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
   return (
     <KeyboardAvoid
       contentContainerStyle={{ flex: 1, justifyContent: 'space-evenly', alignItems: 'center' }}
@@ -57,26 +76,9 @@ function PhotoScreen() {
       <Formik
         initialValues={{ firstName: '', lastName: '' }}
         validationSchema={ProfileSchema}
-        onSubmit={async values => {
-          try {
-            if (!photo) {
-              Alert.alert('Please upload a photo');
-              return;
-            }
-            console.log('values', values);
-            const data = createFormData(photo, values);
-            console.log('values', data);
-
-            const res = await uploadDetails(data).unwrap();
-            console.log('res---', res);
-            if (res.status === 200) dispatch(hasLoggedIn(true));
-            else Alert.alert('Something went wrong');
-          } catch (error) {
-            console.log('error', error);
-          }
-        }}
+        onSubmit={handleSubmit}
       >
-        {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
+        {({ handleChange, handleBlur, handleSubmit: submitHandler, values, errors }) => (
           <View
             style={{
               flex: 0.9,
@@ -113,7 +115,7 @@ function PhotoScreen() {
                 style={{ marginTop: 15 }}
               />
             </View>
-            <Button text='Next' onPress={() => handleSubmit()} loading={isLoading} />
+            <Button text='Next' onPress={submitHandler} loading={isLoading} />
           </View>
         )}
       </Formik>

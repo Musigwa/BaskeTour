@@ -27,6 +27,9 @@ import { AppDarkTheme, AppDefaultTheme } from '../styles/theme';
 import { ellipsizeText } from '../utils/methods';
 import LinkingConfiguration from './LinkingConfiguration';
 import BottomTabNavigator from './main/BottomTab';
+import ForgetPwdScreen from '../screens/auth/Forget';
+import VerifyScreen from '../screens/auth/Verify';
+import ResetPwdScreen from '../screens/auth/Reset';
 
 const Stack = createStackNavigator();
 
@@ -101,6 +104,9 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
               <Stack.Screen name='Login' component={LoginScreen} />
               <Stack.Screen name='SignUp' component={SignUpScreen} />
               <Stack.Screen name='Photo' component={PhotoScreen} />
+              <Stack.Screen name='Forget' component={ForgetPwdScreen} />
+              <Stack.Screen name='Verify' component={VerifyScreen} />
+              <Stack.Screen name='Reset' component={ResetPwdScreen} />
             </Stack.Group>
           )}
         </Stack.Navigator>

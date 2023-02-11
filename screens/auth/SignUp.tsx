@@ -59,6 +59,23 @@ const SignUpScreen = ({ navigation }: AuthScreenProps<'SignUp'>) => {
     }
   }, [token, user]);
 
+  const handleSubmit = async values => {
+    try {
+      console.log('values', values);
+      const res = await signUp({
+        email: values.email,
+        password: values.password,
+      }).unwrap();
+      if (res.status === 201) {
+        navigation.navigate('Photo');
+      } else {
+        Alert.alert('Something went wrong');
+      }
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -74,24 +91,9 @@ const SignUpScreen = ({ navigation }: AuthScreenProps<'SignUp'>) => {
       <Formik
         initialValues={{ email: '', password: '', confirmPassword: '' }}
         validationSchema={SignUpScreenSchema}
-        onSubmit={async values => {
-          try {
-            console.log('values', values);
-            const res = await signUp({
-              email: values.email,
-              password: values.password,
-            }).unwrap();
-            if (res.status === 201) {
-              navigation.navigate('Photo');
-            } else {
-              Alert.alert('Something went wrong');
-            }
-          } catch (error) {
-            console.log('error', error);
-          }
-        }}
+        onSubmit={handleSubmit}
       >
-        {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
+        {({ handleChange, handleBlur, handleSubmit: submitHandler, values, errors }) => (
           <View
             style={{
               width: '100%',
@@ -158,7 +160,7 @@ const SignUpScreen = ({ navigation }: AuthScreenProps<'SignUp'>) => {
             <FakeButton
               containerStyle={{ width: '100%' }}
               text='Create Account'
-              onPress={handleSubmit}
+              onPress={submitHandler}
               loading={isLoading}
             />
           </View>
