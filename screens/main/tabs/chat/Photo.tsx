@@ -16,7 +16,7 @@ const PhotoModal = ({ visible, hideModal, imageUrl }) => {
       >
         <ImageBackground
           style={{
-            width: '100%',
+            width,
             height: Math.floor(width / 1.6),
             justifyContent: 'center',
             alignItems: 'center',

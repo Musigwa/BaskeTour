@@ -1,21 +1,20 @@
-import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Image,
   View as RNView,
   ScrollView,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { Avatar } from 'react-native-paper';
 import styled from 'styled-components/native';
+import GroupDropdown from '../../../../components/common/GroupSelector';
 import TopTab from '../../../../components/common/TopTab';
 import { useAppSelector } from '../../../../hooks/useStore';
 import { useGetGRankingsQuery } from '../../../../store/api-queries/group-queries';
 import { useGetTournamentsQuery } from '../../../../store/api-queries/tournaments';
 import { H2, H4, H5, H6, Horizontal, Separator } from '../../../../styles/styled-elements';
-import GroupDropdown from '../../../../components/common/GroupSelector';
 
 const RankingScreen = () => {
   const { colors } = useTheme();
@@ -71,29 +70,18 @@ const RankingScreen = () => {
                     <View>
                       <Horizontal>
                         {player?.profilePic ? (
-                          <Image
+                          <Avatar.Image
+                            size={48}
                             source={{ uri: player.profilePic }}
-                            style={{
-                              width: 48,
-                              height: 48,
-                              borderRadius: 24,
-                              marginRight: 10,
-                              backgroundColor: colors.gray,
-                            }}
-                            resizeMode='cover'
+                            style={{ marginRight: 10 }}
                           />
                         ) : (
-                          <RNView
-                            style={{
-                              padding: 10,
-                              borderRadius: 50,
-                              borderWidth: 0.5,
-                              borderColor: 'gray',
-                              marginRight: 10,
-                            }}
-                          >
-                            <MaterialIcons name='no-photography' size={30} color='gray' />
-                          </RNView>
+                          <Avatar.Text
+                            size={48}
+                            label={`${player?.firstName.charAt('0')} ${player?.lastName.charAt(
+                              '0'
+                            )}`}
+                          />
                         )}
 
                         <View>
@@ -126,11 +114,15 @@ const RankingScreen = () => {
                       marginLeft: 50,
                     }}
                   >
-                    {picks.map(({ team }, idx) => (
-                      <H6 key={idx} style={{}}>
-                        {idx + 1}. ({team?.ranking}) {team?.abbreviation}
-                      </H6>
-                    ))}
+                    {picks.length
+                      ? picks.map(({ team }, idx) => {
+                          return (
+                            <H6 key={idx} style={{}}>
+                              {idx + 1}. ({team?.ranking}) {team?.abbreviation}
+                            </H6>
+                          );
+                        })
+                      : null}
                   </RNView>
                 </View>
                 <Separator />

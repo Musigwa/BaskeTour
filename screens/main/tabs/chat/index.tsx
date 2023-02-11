@@ -113,6 +113,7 @@ const ChatListScreen = ({ navigation }) => {
       data={conversations}
       fetchMethod={useGetMyGroupsQuery}
       renderItem={args => renderItem({ ...args, navigation, colors })}
+    
     />
   );
 };

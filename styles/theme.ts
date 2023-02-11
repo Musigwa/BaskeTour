@@ -13,6 +13,7 @@ export const AppDarkTheme: typeof DefaultTheme = {
     disabled: 'rgba(214, 212, 212, 1)',
     gray: 'rgba(144, 160, 175, 1)',
     violet: 'rgba(167, 97, 255, 1)',
+    backdrop: 'rgba(0, 0, 0, 0.9)',
   },
 };
 
@@ -29,5 +30,6 @@ export const AppDefaultTheme: typeof DarkTheme = {
     disabled: 'rgba(214, 212, 212, 1)',
     gray: 'rgba(144, 160, 175, 1)',
     violet: 'rgba(167, 97, 255, 1)',
+    backdrop: 'rgba(255, 255, 255, 0.9)',
   },
 };

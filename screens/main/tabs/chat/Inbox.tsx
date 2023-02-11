@@ -14,6 +14,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { Avatar } from 'react-native-paper';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import useSocketIO from '../../../../hooks/socketIO';
 import { useAppSelector } from '../../../../hooks/useStore';
@@ -27,8 +28,9 @@ const renderItem = ({ item, index, colors, user, onMessagePress }) => {
   return (
     <Horizontal style={{ alignSelf: isMe ? 'flex-end' : 'flex-start' }} key={index}>
       {isMe ? null : (
-        <Image
-          style={[styles.avatar, { backgroundColor: colors.gray }]}
+        <Avatar.Image
+          style={[styles.avatar]}
+          size={50}
           source={item?.sender?.profilePic ? { uri: item?.sender?.profilePic } : {}}
         />
       )}
@@ -77,7 +79,6 @@ const InboxScreen = ({ route }: any) => {
   const socket = useSocketIO();
   const tabBarHeight = useBottomTabBarHeight();
   const [modalVisible, setModalVisible] = useState(false);
-  const [attachVisible, setAttachVisible] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>('');
 
   const handleUnMount = () => {
@@ -159,9 +160,9 @@ const InboxScreen = ({ route }: any) => {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       aspect: [9, 5],
       quality: 1,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
     });
     if (!result.cancelled) setPhoto(result);
   };
@@ -260,27 +261,11 @@ export default InboxScreen;
 
 const styles = StyleSheet.create({
   container: { paddingHorizontal: 15 },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-    alignSelf: 'flex-end',
-    marginRight: 5,
-  },
-  bubble: {
-    padding: 12,
-    marginVertical: 10,
-    minWidth: '50%',
-    maxWidth: '85%',
-    borderRadius: 15,
-  },
+  avatar: { alignSelf: 'flex-end', marginRight: 5 },
+  bubble: { padding: 12, marginVertical: 10, minWidth: '50%', maxWidth: '85%', borderRadius: 15 },
   senderName: { color: 'white', fontFamily: 'Poppins_700Bold' },
   message: { color: 'white', maxWidth: '75%', textTransform: 'none' },
-  timestamp: {
-    color: 'white',
-    alignSelf: 'flex-end',
-    textTransform: 'uppercase',
-  },
+  timestamp: { color: 'white', alignSelf: 'flex-end', textTransform: 'uppercase' },
   inputContainer: { backgroundColor: 'rgba(241, 243, 245, 1)', padding: 5 },
   input: {
     fontSize: 16,
@@ -289,9 +274,5 @@ const styles = StyleSheet.create({
     flex: 0.9,
     height: '100%',
   },
-  inputBtnContainer: {
-    padding: 10,
-    borderRadius: 30,
-    backgroundColor: 'transparent',
-  },
+  inputBtnContainer: { padding: 10, borderRadius: 30, backgroundColor: 'transparent' },
 });

@@ -24,7 +24,10 @@ export const Container = styled.View`
   font-family: 'space-mono';
 `;
 
-export const Paragraph: React.FC<IntStyleProps> = styled.Text`
+export const Paragraph: React.FC<any> = styled.Text.attrs((props: any) => ({
+  ellipsizeMode: 'tail',
+  adjustFonttofit: true,
+}))`
   font-weight: 500;
   font-size: ${(props: IntStyleProps) => (props.size ? props.size + 'px' : '12px')};
   font-family: Poppins_500Medium;
