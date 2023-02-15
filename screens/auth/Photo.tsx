@@ -19,7 +19,7 @@ import KeyboardAvoid from '../../components/common/containers/KeyboardAvoid';
 import { hasLoggedIn } from '../../store/slices/authSlice';
 import { H2, Paragraph } from '../../styles/styled-elements';
 
-function PhotoScreen() {
+const PhotoScreen = () => {
   const [photo, setPhoto] = useState<any>();
   const dispatch = useAppDispatch();
   const [uploadDetails, { isLoading, error, isError }] = useUploadProfileDetailsMutation();
@@ -121,11 +121,6 @@ function PhotoScreen() {
       </Formik>
     </KeyboardAvoid>
   );
-}
-
-const Title = styled(Paragraph)`
-  font-size: 24px;
-  font-weight: 700;
-`;
+};
 
 export default PhotoScreen;

@@ -11,40 +11,25 @@ import { H2, H3 } from '../../styles/styled-elements';
 import { Button, useTheme } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 import { useAppDispatch } from '../../hooks/useStore';
-import { useLoginMutation } from '../../store/api-queries/auth-queries';
+import { useForgotPassordMutation } from '../../store/api-queries/auth-queries';
 
 const ForgetPwdScreen = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
-  const [loginUser, { isLoading }] = useLoginMutation();
+  const [requestForgotPassword, { isLoading }] = useForgotPassordMutation();
   const toast = useToast();
 
   const handleSubmit = async ({ email }) => {
-    // navigation.navigate('Verify', { email });
-    // try {
-    //   const res = await loginUser({ accountIdentifier }).unwrap();
-    //   if (res.status === 200) dispatch(hasLoggedIn(true));
-    //   else throw new Error(res);
-    // } catch ({ data }) {
-    //   const options: ToastOptions = {
-    //     type: 'danger',
-    //     placement: 'center',
-    //     animationType: 'zoom-in',
-    //   };
-    //   toast.show(data?.message, options);
-    // }
+    try {
+      const { status } = await requestForgotPassword({ email }).unwrap();
+      if (status === 200) navigation.navigate('Verify', { email });
+    } catch ({ data }) {
+      toast.show(data?.message, { placement: 'center', type: 'danger' });
+    }
   };
 
   const SigninSchema = Yup.object().shape({
-    email: Yup.string().email().required('Field is required'),
-    password: Yup.string()
-      .min(8, 'Too Short!')
-      .max(20, 'Too Long!')
-      .required('Field is required')
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/,
-        'Password must contain a lowercase, an uppercase, a number and a special character'
-      ),
+    email: Yup.string().email().required('Email is required'),
   });
 
   return (
@@ -56,7 +41,7 @@ const ForgetPwdScreen = ({ navigation }) => {
         </H3>
       </View>
       <Formik initialValues={{ email: '' }} validationSchema={SigninSchema} onSubmit={handleSubmit}>
-        {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
+        {({ handleChange, handleBlur, handleSubmit: submitHandler, values, errors }) => (
           <View
             style={{
               width: '100%',
@@ -78,7 +63,7 @@ const ForgetPwdScreen = ({ navigation }) => {
             <FakeButton
               containerStyle={{ width: '100%' }}
               text='Reset password'
-              onPress={() => navigation.navigate('Verify', { email: values.email })}
+              onPress={submitHandler}
               loading={isLoading}
             />
             <Button

@@ -1,9 +1,13 @@
 import { GAME_STATUS } from '../types';
 
 export const TODOS = 'https://jsonplaceholder.typicode.com/todos';
+// Users endpoints
+
 export const SIGN_UP = '/users/sign-up';
 export const LOGIN = 'users/login';
 export const CURRENT_USER = '/users/me';
+export const FORGOT_PASSWORD = '/users/recover-password';
+export const RESET_PASSWORD = '/users/reset-password';
 
 // Groups endpoints
 export const GROUPS = '/groups';

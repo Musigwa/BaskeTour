@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { useState } from 'react';
+import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Yup from 'yup';
 
@@ -13,20 +13,20 @@ import { useTheme } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 import { ToastOptions } from 'react-native-toast-notifications/lib/typescript/toast';
 import { useAppDispatch } from '../../hooks/useStore';
-import { useLoginMutation } from '../../store/api-queries/auth-queries';
+import { useResetPassordMutation } from '../../store/api-queries/auth-queries';
 import { hasLoggedIn } from '../../store/slices/authSlice';
 
-const ResetPwdScreen = () => {
+const ResetPwdScreen = ({ route }) => {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
-  const [loginUser, { isLoading, data }] = useLoginMutation();
+  const [requestPasswordRest, { isLoading }] = useResetPassordMutation();
   const toast = useToast();
+  const { email, verificationCode } = route.params;
 
-  const handleSubmit = async ({ email: accountIdentifier, password }) => {
+  const handleSubmit = async ({ password }) => {
     try {
-      const res = await loginUser({ accountIdentifier, password }).unwrap();
-      if (res.status === 200) dispatch(hasLoggedIn(true));
-      else throw new Error(res);
+      const { status } = await requestPasswordRest({ email, verificationCode, password }).unwrap();
+      if (status === 201) dispatch(hasLoggedIn(true));
     } catch ({ data }) {
       const options: ToastOptions = {
         type: 'danger',
@@ -38,7 +38,6 @@ const ResetPwdScreen = () => {
   };
 
   const SigninSchema = Yup.object().shape({
-    email: Yup.string().email().required('Field is required'),
     password: Yup.string()
       .min(8, 'Too Short!')
       .max(20, 'Too Long!')
@@ -47,6 +46,9 @@ const ResetPwdScreen = () => {
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/,
         'Password must contain a lowercase, an uppercase, a number and a special character'
       ),
+    confirmPassword: Yup.string()
+      .required()
+      .oneOf([Yup.ref('password'), null], 'Passwords must match'),
   });
 
   return (
@@ -58,8 +60,8 @@ const ResetPwdScreen = () => {
         <H3 style={{ textTransform: 'capitalise' }}>Please enter your new password.</H3>
       </View>
       <Formik
-        initialValues={{ password: '', restpassword: '' }}
         validationSchema={SigninSchema}
+        initialValues={{ password: '', confirmPassword: '' }}
         onSubmit={handleSubmit}
       >
         {({ handleChange, handleBlur, handleSubmit: submitHandler, values, errors }) => (
@@ -79,20 +81,21 @@ const ResetPwdScreen = () => {
               handleChange={handleChange}
               handleBlur={handleBlur}
               error={errors.password}
-              secureEntry
               isPassword
+              secureEntry
             />
             <Input
               placeholder='Repeat Password'
               placeholderTextColor={colors.gray}
-              name='verifypassword'
+              name='confirmPassword'
               required
               handleChange={handleChange}
               handleBlur={handleBlur}
-              error={errors.password}
-              secureEntry
+              error={errors.confirmPassword}
               isPassword
+              secureEntry
             />
+
             <FakeButton
               containerStyle={{ width: '100%' }}
               text='Set new password'
