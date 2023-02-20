@@ -48,12 +48,15 @@ const SearchGroup = ({ navigation }) => {
 
   return (
     <Container style={{ marginBottom: bottom }}>
-      <SearchPaginated
-        fetchMethod={useGetGroupsQuery}
-        data={groups}
-        ItemSeparatorComponent={Separator}
-        renderItem={renderItem}
-      />
+      {
+        <SearchPaginated
+          fetchMethod={useGetGroupsQuery}
+          data={groups}
+          ItemSeparatorComponent={Separator}
+          renderItem={renderItem}
+          defaultBlank
+        />
+      }
     </Container>
   );
 };

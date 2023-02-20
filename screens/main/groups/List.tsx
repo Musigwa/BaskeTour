@@ -2,7 +2,7 @@ import { Entypo } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import React, { FC, PropsWithChildren } from 'react';
 import { Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Avatar } from 'react-native-paper';
+import RenderAvatar from '../../../components/common/Avatar';
 import SearchPaginated from '../../../components/common/Lists/SearchPaginated';
 import { useAppSelector } from '../../../hooks/useStore';
 import { useGetMyGroupsQuery } from '../../../store/api-queries/group-queries';
@@ -61,15 +61,7 @@ const renderItem: FC<PropsWithChildren<RenderItemProps>> = ({
                   : `${player?.email?.slice(0, 2)}`;
               return (
                 <View style={[styles.avatarContainer, { left: -(20 * idx) }]} key={idx}>
-                  {player?.profilePic ? (
-                    <Avatar.Image
-                      size={50}
-                      source={{ uri: player.profilePic }}
-                      style={[styles.image]}
-                    />
-                  ) : (
-                    <Avatar.Text size={50} label={label} labelStyle={{ fontSize: 18 }} />
-                  )}
+                  <RenderAvatar uri={player?.profilePic} label={label} />
                 </View>
               );
             })

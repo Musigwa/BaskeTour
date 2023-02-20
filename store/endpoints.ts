@@ -15,7 +15,7 @@ export const SINGLE_GROUP = groupId => `${GROUPS}/${groupId}`;
 export const GET_GROUPS = (groupName = '', page, perPage) =>
   `${GROUPS}?searchQuery=${groupName}&page=${page}&perPage=${perPage}`;
 export const MY_GROUPS = (groupName = '', page, perPage) =>
-  `${GROUPS}?searchQuery=${groupName}&page=${page}&perPage=${perPage}`;
+  `user-groups?searchQuery=${groupName}&page=${page}&perPage=${perPage}`;
 export const GET_USER_GROUPS = (searchQuery = '') =>
   `${GROUPS}/user-groups?searchQuery=${searchQuery}`;
 export const GROUP_RANKING = (groupId, roundId) =>
