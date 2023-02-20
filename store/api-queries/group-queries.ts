@@ -12,10 +12,9 @@ import {
 import baseQuery from './baseQuery';
 
 type MyGroupProps = {
-  searchQuery: string;
-  userId: string;
-  page: number;
-  perPage: number;
+  searchQuery?: string;
+  page?: number;
+  perPage?: number;
 };
 
 export const groupApi = createApi({

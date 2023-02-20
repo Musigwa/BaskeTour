@@ -1,17 +1,11 @@
-import { Entypo, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import _ from 'lodash';
 import React, { useLayoutEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  View,
-} from 'react-native';
-import { Avatar, Divider, Menu } from 'react-native-paper';
+import { ActivityIndicator, Alert, SafeAreaView, ScrollView, TextInput, View } from 'react-native';
+import { Divider, Menu } from 'react-native-paper';
+import { useToast } from 'react-native-toast-notifications';
+import RenderAvatar from '../../../components/common/Avatar';
 import { useAppSelector } from '../../../hooks/useStore';
 import {
   useRemoveGroupMutation,
@@ -19,7 +13,6 @@ import {
 } from '../../../store/api-queries/group-queries';
 import { H2, H3, H5, H6, Horizontal, Separator } from '../../../styles/styled-elements';
 import { ellipsizeText } from '../../../utils/methods';
-import { useToast } from 'react-native-toast-notifications';
 
 const GroupDetailsScreen = ({ route, navigation }) => {
   const [requestGroupRemoval, { isLoading: isFetching }] = useRemoveGroupMutation({});
@@ -195,15 +188,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
             <View key={idx} style={{ backgroundColor: isMe ? colors.pink : undefined }}>
               <Horizontal key={idx} style={{ padding: 24 }}>
                 <Horizontal>
-                  {player?.profilePic ? (
-                    <Avatar.Image
-                      size={50}
-                      source={{ uri: player.profilePic }}
-                      style={[styles.image]}
-                    />
-                  ) : (
-                    <Avatar.Text size={50} label={label} labelStyle={{ fontSize: 18 }} />
-                  )}
+                  <RenderAvatar uri={player?.profilePic} label={label} />
                   <View style={{ marginLeft: 10 }}>
                     <H5>{name}</H5>
                     <H6 style={{ color: colors.gray }}>{isAdmin ? 'Admin' : 'Player'}</H6>
@@ -233,15 +218,3 @@ const GroupDetailsScreen = ({ route, navigation }) => {
 };
 
 export default GroupDetailsScreen;
-
-const styles = StyleSheet.create({
-  image: { width: 48, height: 48, borderRadius: 24 },
-  noImage: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: StyleSheet.hairlineWidth,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

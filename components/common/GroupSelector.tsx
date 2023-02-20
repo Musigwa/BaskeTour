@@ -11,6 +11,7 @@ import SearchPaginated from './Lists/SearchPaginated';
 
 const GroupDropdown = () => {
   const dispatch = useAppDispatch();
+  useGetMyGroupsQuery({});
   const { selectedGroup, myGroups } = useAppSelector(({ groups: { selectedGroup, myGroups } }) => ({
     selectedGroup,
     myGroups,
