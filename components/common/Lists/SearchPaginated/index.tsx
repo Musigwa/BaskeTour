@@ -152,20 +152,20 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
           keyExtractor={(item, index) => `[${index}]${item?.id}`}
           ListFooterComponent={
             <View style={styles.footerContainer}>
-              {isListEnd && !isFetching && data.length ? (
+              {/* {isListEnd && !isFetching && data.length ? (
                 ListEndComponent ? (
                   <ListEndComponent />
                 ) : (
                   <DefaultListEndComponent text={listEndText} />
                 )
-              ) : null}
-              {isFetching && page > 1 ? (
+              ) : null} */}
+              {/* {isFetching && page > 1 ? (
                 ListLoadMoreComponent ? (
                   <ListLoadMoreComponent />
                 ) : (
                   <DefaultLoadMoreComponent text={loadingMoreText} />
                 )
-              ) : null}
+              ) : null} */}
               {ListFooterComponent}
             </View>
           }
@@ -175,7 +175,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
             ) : ListEmptyComponent ? (
               <ListEmptyComponent />
             ) : (
-              <DefaultEmptyComponent text={listEndText} />
+              <DefaultEmptyComponent text='' />
             )
           }
           onContentSizeChange={handleContentSizeChange}

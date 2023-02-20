@@ -65,6 +65,10 @@ const authSlice = createSlice({
       state.user = { ...payload.data };
       state.token = payload.token;
     });
+    builder.addMatcher(authApi.endpoints.updatePassword.matchFulfilled, (state, { payload }) => {
+      state.user = { ...payload.data };
+      state.token = payload.token;
+    });
   },
 });
 
