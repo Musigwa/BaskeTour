@@ -8,6 +8,7 @@ export const LOGIN = 'users/login';
 export const CURRENT_USER = '/users/me';
 export const FORGOT_PASSWORD = '/users/recover-password';
 export const RESET_PASSWORD = '/users/reset-password';
+export const CHANGE_PASSWORD = '/users/me/change-password';
 
 // Groups endpoints
 export const GROUPS = '/groups';
@@ -15,9 +16,7 @@ export const SINGLE_GROUP = groupId => `${GROUPS}/${groupId}`;
 export const GET_GROUPS = (groupName = '', page, perPage) =>
   `${GROUPS}?searchQuery=${groupName}&page=${page}&perPage=${perPage}`;
 export const MY_GROUPS = (groupName = '', page, perPage) =>
-  `${GROUPS}?searchQuery=${groupName}&page=${page}&perPage=${perPage}`;
-export const GET_USER_GROUPS = (searchQuery = '') =>
-  `${GROUPS}/user-groups?searchQuery=${searchQuery}`;
+  `${GROUPS}/user-groups?searchQuery=${groupName}&page=${page}&perPage=${perPage}`;
 export const GROUP_RANKING = (groupId, roundId) =>
   `${SINGLE_GROUP(groupId)}/leader-board?roundId=${roundId}`;
 export const JOIN_GROUP = (groupId: string) => `${SINGLE_GROUP(groupId)}/join-group`;

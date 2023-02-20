@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Avatar } from 'react-native-paper';
 import styled from 'styled-components/native';
+import RenderAvatar from '../../../../components/common/Avatar';
 import GroupDropdown from '../../../../components/common/GroupSelector';
 import TopTab from '../../../../components/common/TopTab';
 import { useAppSelector } from '../../../../hooks/useStore';
@@ -69,21 +69,11 @@ const RankingScreen = () => {
                   <Horizontal>
                     <View>
                       <Horizontal>
-                        {player?.profilePic ? (
-                          <Avatar.Image
-                            size={48}
-                            source={{ uri: player.profilePic }}
-                            style={{ marginRight: 10 }}
-                          />
-                        ) : (
-                          <Avatar.Text
-                            size={48}
-                            label={`${player?.firstName.charAt('0')} ${player?.lastName.charAt(
-                              '0'
-                            )}`}
-                          />
-                        )}
-
+                        <RenderAvatar
+                          size={48}
+                          label={`${player?.firstName.charAt('0')} ${player?.lastName.charAt('0')}`}
+                          uri={player?.profilePic}
+                        />
                         <View>
                           <H5>{player?.firstName}</H5>
                           <H5>{player?.lastName}</H5>

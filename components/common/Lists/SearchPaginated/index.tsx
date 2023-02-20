@@ -36,6 +36,7 @@ type SearchPaginatedProps = FlatListProps<any> & {
   loadingMoreText?: string;
   emptyListText?: string;
   listEndText?: string;
+  defaultBlank?: boolean;
 };
 
 type StateProps = { page: number; text: string };
@@ -70,12 +71,13 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
     ListFooterComponent,
     ItemSeparatorComponent,
     data,
+    style,
     searchKeyName = 'searchQuery',
     perPageCountName = 'perPage',
     itemsPerPage = 12,
-    style,
     scrollOnContentChange = false,
     paginatable = true,
+    defaultBlank = false,
     loadingMoreText = 'Fetching more items...',
     emptyListText = 'No data matching your search to display!',
     listEndText = 'End of list, no more data to fetch!',
@@ -140,7 +142,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
           refreshing={isFetching}
           onRefresh={refetch}
           contentContainerStyle={{ flexGrow: 1, paddingVertical: 5 }}
-          data={data}
+          data={!text.length && defaultBlank ? [] : data}
           onEndReachedThreshold={1}
           initialNumToRender={5}
           onEndReached={paginatable ? fetchMoreData : undefined}
@@ -150,20 +152,20 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
           keyExtractor={(item, index) => `[${index}]${item?.id}`}
           ListFooterComponent={
             <View style={styles.footerContainer}>
-              {isListEnd && !isFetching && data.length ? (
+              {/* {isListEnd && !isFetching && data.length ? (
                 ListEndComponent ? (
                   <ListEndComponent />
                 ) : (
                   <DefaultListEndComponent text={listEndText} />
                 )
-              ) : null}
-              {isFetching && page > 1 ? (
+              ) : null} */}
+              {/* {isFetching && page > 1 ? (
                 ListLoadMoreComponent ? (
                   <ListLoadMoreComponent />
                 ) : (
                   <DefaultLoadMoreComponent text={loadingMoreText} />
                 )
-              ) : null}
+              ) : null} */}
               {ListFooterComponent}
             </View>
           }
@@ -173,7 +175,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
             ) : ListEmptyComponent ? (
               <ListEmptyComponent />
             ) : (
-              <DefaultEmptyComponent text={listEndText} />
+              <DefaultEmptyComponent text='' />
             )
           }
           onContentSizeChange={handleContentSizeChange}

@@ -30,6 +30,7 @@ import BottomTabNavigator from './main/BottomTab';
 import ForgetPwdScreen from '../screens/auth/Forget';
 import VerifyScreen from '../screens/auth/Verify';
 import ResetPwdScreen from '../screens/auth/Reset';
+import UpdatePwdScreen from '../screens/auth/UpdatePassword';
 
 const Stack = createStackNavigator();
 
@@ -63,6 +64,11 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                   name='Profile'
                   component={ProfileScreen}
                   options={{ title: 'Profile Settings' }}
+                />
+                <Stack.Screen
+                  name='PwdUpdate'
+                  component={UpdatePwdScreen}
+                  options={{ title: 'Change Password' }}
                 />
               </Stack.Group>
               {/* The groups entity screens */}

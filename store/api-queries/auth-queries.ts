@@ -1,7 +1,15 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import baseQuery from './baseQuery';
 
-import { CURRENT_USER, FORGOT_PASSWORD, LOGIN, RESET_PASSWORD, SIGN_UP, TODOS } from '../endpoints';
+import {
+  CHANGE_PASSWORD,
+  CURRENT_USER,
+  FORGOT_PASSWORD,
+  LOGIN,
+  RESET_PASSWORD,
+  SIGN_UP,
+  TODOS,
+} from '../endpoints';
 
 export const authApi = createApi({
   reducerPath: 'authApi',
@@ -25,6 +33,9 @@ export const authApi = createApi({
     >({
       query: body => ({ url: RESET_PASSWORD, method: 'POST', body }),
     }),
+    updatePassword: builder.mutation<any, { newPassword: string; password: string }>({
+      query: body => ({ url: CHANGE_PASSWORD, method: 'PUT', body }),
+    }),
     deleteAccount: builder.mutation({
       query: () => ({ url: CURRENT_USER, method: 'DELETE' }),
     }),
@@ -42,4 +53,5 @@ export const {
   useDeleteAccountMutation,
   useForgotPassordMutation,
   useResetPassordMutation,
+  useUpdatePasswordMutation,
 } = authApi;
