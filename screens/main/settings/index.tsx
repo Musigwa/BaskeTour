@@ -17,7 +17,7 @@ const options = [
   { title: 'Tutorial', screen: 'Slider' },
   // { title: 'Detailed rules' },
   { title: 'Notifications' },
-  { title: 'Change Password', screen: 'PwdReset' },
+  // { title: 'Change Password', screen: 'PwdReset' },
   { title: 'Delete Account', dangerous: true },
   { title: 'Logout', dangerous: true },
 ];

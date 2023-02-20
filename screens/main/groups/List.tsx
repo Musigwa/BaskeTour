@@ -53,12 +53,12 @@ const renderItem: FC<PropsWithChildren<RenderItemProps>> = ({
         <Entypo name='chevron-small-right' size={24} color={'black'} />
       </Horizontal>
       <Horizontal style={{ justifyContent: 'flex-start', marginTop: 5 }}>
-        {group.players.length
-          ? group.players.slice(0, showCount).map((player, idx) => {
+        {group?.players?.length
+          ? group?.players?.slice(0, showCount)?.map((player, idx) => {
               const label =
-                player.firstName && player.lastName
-                  ? `${player.firstName.charAt(0)} ${player.lastName.charAt(0)}`
-                  : `${player.email.slice(0, 2)}`;
+                player?.firstName && player?.lastName
+                  ? `${player?.firstName.charAt(0)}${player?.lastName?.charAt(0)}`
+                  : `${player?.email?.slice(0, 2)}`;
               return (
                 <View style={[styles.avatarContainer, { left: -(20 * idx) }]} key={idx}>
                   {player?.profilePic ? (
@@ -68,7 +68,7 @@ const renderItem: FC<PropsWithChildren<RenderItemProps>> = ({
                       style={[styles.image]}
                     />
                   ) : (
-                    <Avatar.Text size={50} label={label} />
+                    <Avatar.Text size={50} label={label} labelStyle={{ fontSize: 18 }} />
                   )}
                 </View>
               );

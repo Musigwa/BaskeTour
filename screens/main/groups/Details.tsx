@@ -122,7 +122,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
         }
         contentStyle={{ backgroundColor: 'white' }}
       >
-        <Menu.Item onPress={handleGroupShare} title='Share Group' leadingIcon='share' />
+        {/* <Menu.Item onPress={handleGroupShare} title='Share Group' leadingIcon='share' /> */}
         <Divider />
         <Menu.Item
           onPress={handleDeleteGroup}
@@ -172,9 +172,9 @@ const GroupDetailsScreen = ({ route, navigation }) => {
       <Separator style={{ marginVertical: 15 }} />
       <Horizontal style={{ paddingHorizontal: 15, paddingBottom: 15 }}>
         <H3>Group Members</H3>
-        <View style={{ backgroundColor: 'rgba(255, 111, 97, 0.29)', borderRadius: 30, padding: 5 }}>
+        {/* <View style={{ backgroundColor: 'rgba(255, 111, 97, 0.29)', borderRadius: 30, padding: 5 }}>
           <Entypo name='plus' size={24} color={colors.primary} onPress={handleAddPlayers} />
-        </View>
+        </View> */}
       </Horizontal>
       <ScrollView contentContainerStyle={{ paddingBottom: 50 }}>
         {_.sortBy(group.players, p => !p.isAdmin).map((player, idx) => {
@@ -184,8 +184,8 @@ const GroupDetailsScreen = ({ route, navigation }) => {
               : `${player.firstName} ${player.lastName}`;
           const label =
             player.firstName && player.lastName
-              ? `${player.firstName.charAt(0)} ${player.lastName.charAt(0)}`
-              : `${player.email.slice(0, 2)}`;
+              ? `${player.firstName.charAt(0)}${player.lastName.charAt(0)}`
+              : `${player?.email?.slice(0, 2)}`;
           const isAdmin = player.isAdmin || group?.creator === player?.id;
           const isMe = player.id === user?.id;
           const isPressed = pressedPlayer?.id === player.id;
@@ -202,7 +202,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                       style={[styles.image]}
                     />
                   ) : (
-                    <Avatar.Text size={50} label={label} />
+                    <Avatar.Text size={50} label={label} labelStyle={{ fontSize: 18 }} />
                   )}
                   <View style={{ marginLeft: 10 }}>
                     <H5>{name}</H5>

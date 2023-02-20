@@ -25,6 +25,7 @@ const PhotoScreen = () => {
   const [uploadDetails, { isLoading, error, isError }] = useUploadProfileDetailsMutation();
   const { colors } = useTheme();
   const onImageSelect = (image: any) => {
+    console.log('image', image);
     setPhoto(image);
   };
 
@@ -68,7 +69,7 @@ const PhotoScreen = () => {
       <IndicatorHeader count={2} currentStep={2} />
       <H2>Profile photo</H2>
       <View style={{ alignItems: 'center' }}>
-        <PhotoUploader onSelect={onImageSelect} imageUrl={photo} />
+        <PhotoUploader onSelect={onImageSelect} imageUrl={photo?.uri} />
         <Paragraph color='#4F1473' style={{}}>
           Add photo
         </Paragraph>
