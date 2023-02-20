@@ -1,12 +1,10 @@
+// Absolute imports
 import { NavigationContainer } from '@react-navigation/native';
-import { Alert, ColorSchemeName, View } from 'react-native';
-
-import LinkingConfiguration from './LinkingConfiguration';
-
-import { MaterialIcons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
+import { ColorSchemeName } from 'react-native';
 import { ToastProvider } from 'react-native-toast-notifications';
+// Relative imports
 import { defaultScreenOptions } from '../constants';
 import { useAppSelector } from '../hooks/useStore';
 import InitialScreen from '../screens/auth/Initial';
@@ -27,24 +25,17 @@ import NotificationScreen from '../screens/main/settings/Notification';
 import ProfileScreen from '../screens/main/settings/Profile';
 import { AppDarkTheme, AppDefaultTheme } from '../styles/theme';
 import { ellipsizeText } from '../utils/methods';
+import LinkingConfiguration from './LinkingConfiguration';
 import BottomTabNavigator from './main/BottomTab';
+import ForgetPwdScreen from '../screens/auth/Forget';
+import VerifyScreen from '../screens/auth/Verify';
+import ResetPwdScreen from '../screens/auth/Reset';
 
 const Stack = createStackNavigator();
 
 const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
   const { isLoggedIn } = useAppSelector(state => state.auth);
   const isOnboarded = useAppSelector(({ auth }) => auth.completedOnboarding);
-  const handleDelete = group => {
-    Alert.alert(
-      'Confirm your choice',
-      `Are you sure you want to delete the "${group.groupName}" group?`,
-      [
-        { text: 'Cancel', style: 'cancel', onPress: () => {} },
-        { text: 'Delete', style: 'destructive' },
-      ],
-      { cancelable: true }
-    );
-  };
 
   return (
     <ToastProvider textStyle={{ fontSize: 18 }}>
@@ -90,22 +81,6 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                   component={GroupDetailsScreen}
                   options={({ route: { params } }) => ({
                     title: ellipsizeText(params?.group?.groupName, 18),
-                    headerRight: () => (
-                      <View
-                        style={{
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          padding: 7,
-                        }}
-                      >
-                        <MaterialIcons
-                          name='delete'
-                          size={24}
-                          color='black'
-                          onPress={() => handleDelete(params?.group)}
-                        />
-                      </View>
-                    ),
                     headerRightContainerStyle: { paddingRight: 5 },
                   })}
                 />
@@ -113,7 +88,7 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
                   name='SearchGroup'
                   component={SearchGroup}
                   options={({ route }) => ({
-                    title: route.params.title ?? 'Join Existing Group',
+                    title: route?.params?.title ?? 'Join Existing Group',
                   })}
                 />
               </Stack.Group>
@@ -129,6 +104,9 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
               <Stack.Screen name='Login' component={LoginScreen} />
               <Stack.Screen name='SignUp' component={SignUpScreen} />
               <Stack.Screen name='Photo' component={PhotoScreen} />
+              <Stack.Screen name='Forget' component={ForgetPwdScreen} />
+              <Stack.Screen name='Verify' component={VerifyScreen} />
+              <Stack.Screen name='Reset' component={ResetPwdScreen} />
             </Stack.Group>
           )}
         </Stack.Navigator>

@@ -12,42 +12,48 @@ import {
 import { H4, H5, Horizontal } from '../../../../styles/styled-elements';
 import Searchbar from '../../Inputs/Searchbar';
 import { useTheme } from 'react-native-paper';
+import Loading from '../../Loading';
 
 type SearchPaginatedProps = FlatListProps<any> & {
-  searchable?: boolean;
+  // Required properties
+  renderItem: ListRenderItem<any>;
+  data: any[];
   fetchMethod: Function;
+  // Optional properties
+  searchable?: boolean;
   params?: { [key: string]: any };
   ListEndComponent?: ComponentType;
   ListEmptyComponent?: ComponentType;
   ListLoadMoreComponent?: ComponentType;
   ItemSeparatorComponent?: ComponentType;
   ListFooterComponent?: JSX.Element;
-  renderItem: ListRenderItem<any>;
-  data: any[];
   searchKeyName?: string;
   perPageCountName?: string;
   itemsPerPage?: number;
   style?: ViewStyle;
   scrollOnContentChange?: boolean;
   paginatable?: boolean;
+  loadingMoreText?: string;
+  emptyListText?: string;
+  listEndText?: string;
 };
 
 type StateProps = { page: number; text: string };
 
-const DefaultEmptyComponent = () => (
-  <H5 style={styles.empty}>No data matching your search to display!</H5>
+const DefaultEmptyComponent: FC<{ text: string }> = ({ text }) => (
+  <H5 style={styles.empty}>{text}</H5>
 );
 
-const DefaultListEndComponent = () => (
-  <H4 style={{ textTransform: 'none' }}>End of list, no more data to fetch!</H4>
+const DefaultListEndComponent: FC<{ text?: string }> = ({ text }) => (
+  <H4 style={{ textTransform: 'none' }}>{text}</H4>
 );
 
-const DefaultLoadMoreComponent = () => {
+const DefaultLoadMoreComponent: FC<{ text?: string }> = ({ text }) => {
   const { colors } = useTheme();
   return (
     <Horizontal>
       <ActivityIndicator size='large' color={colors.gray} style={{ marginRight: 20 }} />
-      <H4 styles={{ textAlign: 'right' }}>Fetching more items...</H4>
+      <H4 styles={{ textAlign: 'right' }}>{text}</H4>
     </Horizontal>
   );
 };
@@ -58,9 +64,9 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
     fetchMethod,
     params,
     renderItem,
-    ListEndComponent = DefaultListEndComponent,
-    ListEmptyComponent = DefaultEmptyComponent,
-    ListLoadMoreComponent = DefaultLoadMoreComponent,
+    ListEndComponent,
+    ListEmptyComponent,
+    ListLoadMoreComponent,
     ListFooterComponent,
     ItemSeparatorComponent,
     data,
@@ -70,6 +76,9 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
     style,
     scrollOnContentChange = false,
     paginatable = true,
+    loadingMoreText = 'Fetching more items...',
+    emptyListText = 'No data matching your search to display!',
+    listEndText = 'End of list, no more data to fetch!',
     ...props
   }) => {
     const [state, setState] = useState<StateProps>({ page: 1, text: '' });
@@ -78,9 +87,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
     const listRef = useRef(null);
     const { colors } = useTheme();
 
-    const debCallback = text => {
-      setState({ text, page: 1 });
-    };
+    const debCallback = text => setState({ text, page: 1 });
 
     const {
       isFetching,
@@ -143,12 +150,32 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
           keyExtractor={(item, index) => `[${index}]${item?.id}`}
           ListFooterComponent={
             <View style={styles.footerContainer}>
-              {isListEnd && !isFetching && data.length ? <ListEndComponent /> : null}
-              {isFetching && page > 1 ? <ListLoadMoreComponent /> : null}
+              {isListEnd && !isFetching && data.length ? (
+                ListEndComponent ? (
+                  <ListEndComponent />
+                ) : (
+                  <DefaultListEndComponent text={listEndText} />
+                )
+              ) : null}
+              {isFetching && page > 1 ? (
+                ListLoadMoreComponent ? (
+                  <ListLoadMoreComponent />
+                ) : (
+                  <DefaultLoadMoreComponent text={loadingMoreText} />
+                )
+              ) : null}
               {ListFooterComponent}
             </View>
           }
-          ListEmptyComponent={ListEmptyComponent}
+          ListEmptyComponent={
+            isFetching ? (
+              <Loading show={isFetching} text='Loading items...' showBall={false} />
+            ) : ListEmptyComponent ? (
+              <ListEmptyComponent />
+            ) : (
+              <DefaultEmptyComponent text={listEndText} />
+            )
+          }
           onContentSizeChange={handleContentSizeChange}
           onLayout={handleContentSizeChange}
           {...props}

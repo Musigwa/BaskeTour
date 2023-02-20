@@ -9,7 +9,7 @@ import { useCreateGroupMutation } from '../../../store/api-queries/group-queries
 
 import Button from '../../../components/common/Buttons';
 import Input from '../../../components/common/Input';
-import Loader from '../../../components/common/Loader';
+import Loading from '../../../components/common/Loading';
 import PinCodeInput from '../../../components/common/PinCodeInput';
 
 import { useToast } from 'react-native-toast-notifications';
@@ -41,7 +41,7 @@ const CreateGroupScreen = ({ navigation }: SetupStackScreenProps<'CreateGroup'>)
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}
     >
-      <Loader show={isLoading} text='Genrating Group ID' />
+      <Loading show={isLoading} text='Genrating Group ID' />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Container pb={insets.bottom} content-center items-center>
           <Title mb={80}>Create New Group</Title>

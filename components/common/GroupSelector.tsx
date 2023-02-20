@@ -1,6 +1,6 @@
 import { AntDesign, Entypo } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 import { Menu } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../../hooks/useStore';
@@ -24,6 +24,12 @@ const GroupDropdown = () => {
     setOpen(false);
   };
 
+  const disabled = useMemo(() => myGroups.length === 1, [myGroups.length]);
+
+  useEffect(() => {
+    if (disabled) dispatch(selectGroup(myGroups[0]));
+  }, [myGroups.length]);
+
   return (
     <Menu
       visible={open}
@@ -31,31 +37,33 @@ const GroupDropdown = () => {
       style={styles.container}
       contentStyle={styles.contentStyle}
       anchor={
-        <Pressable onPress={toggleMenu} style={styles.anchorContainer}>
+        <Pressable onPress={toggleMenu} style={styles.anchorContainer} disabled={disabled}>
           <H4>{selectedGroup?.groupName ?? 'Select group'}</H4>
-          <Entypo name={`chevron-small-${open ? 'up' : 'down'}`} size={20} />
+          {disabled ? null : <Entypo name={`chevron-small-${open ? 'up' : 'down'}`} size={20} />}
         </Pressable>
       }
     >
-      <SearchPaginated
-        data={myGroups}
-        fetchMethod={useGetMyGroupsQuery}
-        searchable={false}
-        renderItem={({ item, index }) => {
-          const selected = selectedGroup?.groupName === item.groupName;
-          return (
-            <Pressable onPress={() => handleSelect(item)}>
-              <Horizontal key={index} style={{ paddingVertical: 15 }}>
-                <H5 style={{ color: selected ? colors.primary : '' }}>{item.groupName}</H5>
-                {selected ? <AntDesign name='check' size={24} color={colors.primary} /> : null}
-              </Horizontal>
-            </Pressable>
-          );
-        }}
-        ItemSeparatorComponent={Separator}
-        ListLoadMoreComponent={() => <ActivityIndicator size='large' />}
-        ListEndComponent={() => <H5>End of list!</H5>}
-      />
+      {disabled ? null : (
+        <SearchPaginated
+          data={myGroups}
+          fetchMethod={useGetMyGroupsQuery}
+          searchable={false}
+          renderItem={({ item, index }) => {
+            const selected = selectedGroup?.groupName === item.groupName;
+            return (
+              <Pressable onPress={() => handleSelect(item)}>
+                <Horizontal key={index} style={{ paddingVertical: 15 }}>
+                  <H5 style={{ color: selected ? colors.primary : '' }}>{item.groupName}</H5>
+                  {selected ? <AntDesign name='check' size={24} color={colors.primary} /> : null}
+                </Horizontal>
+              </Pressable>
+            );
+          }}
+          ItemSeparatorComponent={Separator}
+          ListLoadMoreComponent={() => <ActivityIndicator size='large' />}
+          ListEndComponent={() => <H5>End of list!</H5>}
+        />
+      )}
     </Menu>
   );
 };

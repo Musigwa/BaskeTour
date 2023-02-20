@@ -1,5 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import {
+  DELETE_GROUP,
+  DELETE_GROUP_PLAYER,
   GET_GROUPS,
   GROUPS,
   GROUP_RANKING,
@@ -44,6 +46,16 @@ export const groupApi = createApi({
     getGRankings: builder.query<any, { groupId: string; roundId?: string }>({
       query: ({ groupId, roundId }) => GROUP_RANKING(groupId, roundId),
     }),
+    removeGroup: builder.mutation<any, { groupId: string }>({
+      query: ({ groupId }) => ({ url: DELETE_GROUP(groupId), method: 'DELETE' }),
+    }),
+    removeGroupPlayer: builder.mutation<any, { groupId: string; playerId: string }>({
+      query: payload => ({
+        url: DELETE_GROUP_PLAYER(payload.groupId),
+        method: 'DELETE',
+        body: { playerId: payload.playerId },
+      }),
+    }),
   }),
 });
 
@@ -54,4 +66,6 @@ export const {
   useCreateGroupMutation,
   useGetMyGroupsQuery,
   useGetSingleGroupQuery,
+  useRemoveGroupPlayerMutation,
+  useRemoveGroupMutation,
 } = groupApi;

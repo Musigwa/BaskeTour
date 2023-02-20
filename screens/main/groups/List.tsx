@@ -1,7 +1,8 @@
-import { Entypo, MaterialIcons } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import React, { FC, PropsWithChildren } from 'react';
-import { Image, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Avatar } from 'react-native-paper';
 import SearchPaginated from '../../../components/common/Lists/SearchPaginated';
 import { useAppSelector } from '../../../hooks/useStore';
 import { useGetMyGroupsQuery } from '../../../store/api-queries/group-queries';
@@ -52,23 +53,27 @@ const renderItem: FC<PropsWithChildren<RenderItemProps>> = ({
         <Entypo name='chevron-small-right' size={24} color={'black'} />
       </Horizontal>
       <Horizontal style={{ justifyContent: 'flex-start', marginTop: 5 }}>
-        {group.players.slice(0, showCount).map((player, idx) => {
-          return (
-            <View style={[styles.avatarContainer, { left: -(20 * idx) }]} key={idx}>
-              {player.profilePic ? (
-                <Image
-                  source={{ uri: player.profilePic }}
-                  style={[styles.image, { backgroundColor: colors.gray }]}
-                  resizeMode='cover'
-                />
-              ) : (
-                <View style={[styles.noImage, { borderColor: colors.gray }]}>
-                  <MaterialIcons name='no-photography' size={24} color={colors.gray} />
+        {group?.players?.length
+          ? group?.players?.slice(0, showCount)?.map((player, idx) => {
+              const label =
+                player?.firstName && player?.lastName
+                  ? `${player?.firstName.charAt(0)}${player?.lastName?.charAt(0)}`
+                  : `${player?.email?.slice(0, 2)}`;
+              return (
+                <View style={[styles.avatarContainer, { left: -(20 * idx) }]} key={idx}>
+                  {player?.profilePic ? (
+                    <Avatar.Image
+                      size={50}
+                      source={{ uri: player.profilePic }}
+                      style={[styles.image]}
+                    />
+                  ) : (
+                    <Avatar.Text size={50} label={label} labelStyle={{ fontSize: 18 }} />
+                  )}
                 </View>
-              )}
-            </View>
-          );
-        })}
+              );
+            })
+          : null}
         {lastIdx !== length ? (
           <View style={[styles.extra, { backgroundColor: colors.gray, left: -(20 * lastIdx) }]}>
             <H3 style={{ color: 'white', fontWeight: 'bold' }}>+{length - showCount}</H3>
@@ -80,11 +85,11 @@ const renderItem: FC<PropsWithChildren<RenderItemProps>> = ({
 };
 
 const GroupListScreen: FC<PropsWithChildren<{ navigation: any }>> = ({ navigation }) => {
-  const {
-    myGroups,
-    user: { id: userId },
-  } = useAppSelector(({ auth: { user }, groups: { myGroups } }) => ({ user, myGroups }));
   const { colors } = useTheme();
+  const { myGroups } = useAppSelector(({ auth: { user }, groups: { myGroups } }) => ({
+    user,
+    myGroups,
+  }));
 
   return (
     <SearchPaginated

@@ -1,9 +1,13 @@
 import { GAME_STATUS } from '../types';
 
 export const TODOS = 'https://jsonplaceholder.typicode.com/todos';
+// Users endpoints
+
 export const SIGN_UP = '/users/sign-up';
 export const LOGIN = 'users/login';
 export const CURRENT_USER = '/users/me';
+export const FORGOT_PASSWORD = '/users/recover-password';
+export const RESET_PASSWORD = '/users/reset-password';
 
 // Groups endpoints
 export const GROUPS = '/groups';
@@ -17,6 +21,8 @@ export const GET_USER_GROUPS = (searchQuery = '') =>
 export const GROUP_RANKING = (groupId, roundId) =>
   `${SINGLE_GROUP(groupId)}/leader-board?roundId=${roundId}`;
 export const JOIN_GROUP = (groupId: string) => `${SINGLE_GROUP(groupId)}/join-group`;
+export const DELETE_GROUP = (groupId: string) => `${GROUPS}/${groupId}`;
+export const DELETE_GROUP_PLAYER = (groupId: string) => `${SINGLE_GROUP(groupId)}/remove-player`;
 
 // Games endpoints
 export const TOURNAMENTS = `/tournaments`;

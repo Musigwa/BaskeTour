@@ -19,12 +19,13 @@ import KeyboardAvoid from '../../components/common/containers/KeyboardAvoid';
 import { hasLoggedIn } from '../../store/slices/authSlice';
 import { H2, Paragraph } from '../../styles/styled-elements';
 
-function PhotoScreen() {
+const PhotoScreen = () => {
   const [photo, setPhoto] = useState<any>();
   const dispatch = useAppDispatch();
   const [uploadDetails, { isLoading, error, isError }] = useUploadProfileDetailsMutation();
   const { colors } = useTheme();
   const onImageSelect = (image: any) => {
+    console.log('image', image);
     setPhoto(image);
   };
 
@@ -42,6 +43,25 @@ function PhotoScreen() {
     lastName: Yup.string().min(2, 'Too Short').required('Field is required'),
   });
 
+  const handleSubmit = async values => {
+    try {
+      if (!photo) {
+        Alert.alert('Please upload a photo');
+        return;
+      }
+      console.log('values', values);
+      const data = createFormData(photo, values);
+      console.log('values', data);
+
+      const res = await uploadDetails(data).unwrap();
+      console.log('res---', res);
+      if (res.status === 200) dispatch(hasLoggedIn(true));
+      else Alert.alert('Something went wrong');
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
   return (
     <KeyboardAvoid
       contentContainerStyle={{ flex: 1, justifyContent: 'space-evenly', alignItems: 'center' }}
@@ -49,7 +69,7 @@ function PhotoScreen() {
       <IndicatorHeader count={2} currentStep={2} />
       <H2>Profile photo</H2>
       <View style={{ alignItems: 'center' }}>
-        <PhotoUploader onSelect={onImageSelect} imageUrl={photo} />
+        <PhotoUploader onSelect={onImageSelect} imageUrl={photo?.uri} />
         <Paragraph color='#4F1473' style={{}}>
           Add photo
         </Paragraph>
@@ -57,26 +77,9 @@ function PhotoScreen() {
       <Formik
         initialValues={{ firstName: '', lastName: '' }}
         validationSchema={ProfileSchema}
-        onSubmit={async values => {
-          try {
-            if (!photo) {
-              Alert.alert('Please upload a photo');
-              return;
-            }
-            console.log('values', values);
-            const data = createFormData(photo, values);
-            console.log('values', data);
-
-            const res = await uploadDetails(data).unwrap();
-            console.log('res---', res);
-            if (res.status === 200) dispatch(hasLoggedIn(true));
-            else Alert.alert('Something went wrong');
-          } catch (error) {
-            console.log('error', error);
-          }
-        }}
+        onSubmit={handleSubmit}
       >
-        {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
+        {({ handleChange, handleBlur, handleSubmit: submitHandler, values, errors }) => (
           <View
             style={{
               flex: 0.9,
@@ -113,17 +116,12 @@ function PhotoScreen() {
                 style={{ marginTop: 15 }}
               />
             </View>
-            <Button text='Next' onPress={() => handleSubmit()} loading={isLoading} />
+            <Button text='Next' onPress={submitHandler} loading={isLoading} />
           </View>
         )}
       </Formik>
     </KeyboardAvoid>
   );
-}
-
-const Title = styled(Paragraph)`
-  font-size: 24px;
-  font-weight: 700;
-`;
+};
 
 export default PhotoScreen;

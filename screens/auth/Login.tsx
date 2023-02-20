@@ -20,7 +20,7 @@ import { useLoginMutation } from '../../store/api-queries/auth-queries';
 import { hasLoggedIn } from '../../store/slices/authSlice';
 import { openBrowser } from '../../utils/methods';
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
@@ -64,7 +64,7 @@ const LoginScreen = () => {
         validationSchema={SigninSchema}
         onSubmit={handleSubmit}
       >
-        {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
+        {({ handleChange, handleBlur, handleSubmit: submitHandler, values, errors }) => (
           <View
             style={{
               width: '100%',
@@ -103,14 +103,19 @@ const LoginScreen = () => {
                 />
                 <H5 style={{ textTransform: 'none', marginLeft: 5 }}>Remember me</H5>
               </Horizontal>
-              <Button mode='text' labelStyle={{ textTransform: 'none' }} compact>
+              <Button
+                mode='text'
+                labelStyle={{ textTransform: 'none' }}
+                compact
+                onPress={() => navigation.navigate('Forget')}
+              >
                 Forgot password?
               </Button>
             </Horizontal>
             <FakeButton
               containerStyle={{ width: '100%' }}
               text='Sign in'
-              onPress={handleSubmit}
+              onPress={submitHandler}
               loading={isLoading}
             />
           </View>

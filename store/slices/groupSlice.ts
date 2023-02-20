@@ -78,6 +78,22 @@ const groupSlice = createSlice({
       if (!exists) state.myGroups = [...state.myGroups, payload.data];
       else state.myGroups = [...state.myGroups, { ...exists, ...payload.data }];
     });
+
+    builder.addMatcher(groupApi.endpoints.removeGroup.matchFulfilled, (state, { meta }) => {
+      const { originalArgs } = meta.arg;
+      const existsId = state.myGroups.findIndex(g => g.id === originalArgs.groupId);
+      if (existsId !== -1)
+        state.myGroups = [...state.myGroups.filter(g => g.id !== originalArgs.groupId)];
+    });
+
+    builder.addMatcher(groupApi.endpoints.removeGroupPlayer.matchFulfilled, (state, { meta }) => {
+      const { originalArgs } = meta.arg;
+      const group = state.myGroups.find(g => g.id === originalArgs.groupId);
+      if (!group) return;
+      const index = group.players?.findIndex(p => p.id === originalArgs.playerId);
+      if (index !== -1) group.players?.splice(index, 1);
+      state.myGroups = [group, ...state.myGroups.filter(g => g.id !== group.id)];
+    });
   },
 });
 
