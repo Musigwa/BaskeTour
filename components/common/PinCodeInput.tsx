@@ -1,19 +1,19 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { TextInput, Keyboard } from 'react-native';
+import { TextInput, Keyboard, TextInputProps } from 'react-native';
 import styled from 'styled-components/native';
 import { H6, Paragraph, View } from '../../styles/styled-elements';
 import { useTheme } from 'react-native-paper';
 
-interface IPinCodeInputProps {
+type IPinCodeInputProps = TextInputProps & {
   numberOfInputs?: number;
-  value?: string;
-  onChangeText?: (arg: string) => void;
-}
+};
 
 const PinCodeInput: React.FC<IPinCodeInputProps> = ({
   numberOfInputs = 4,
   value,
   onChangeText,
+  defaultValue,
+  ...props
 }) => {
   const digitRefs = useRef<Array<TextInput>>([]);
   const [digitWithFocus, setDigitWithFocus] = useState(0);
@@ -109,9 +109,12 @@ const PinCodeInput: React.FC<IPinCodeInputProps> = ({
             onChangeText={handleValueChange(inputName)}
             onKeyPress={handleKeyPress(inputName)}
             key={inputName}
-            value={inputValues[inputName]}
             keyboardType='numeric'
             returnKeyType='done'
+            placeholderTextColor={colors.gray}
+            defaultValue={defaultValue?.[index]}
+            // value={inputValues[inputName]}
+            {...props}
           />
         ))}
       </PinRow>
@@ -132,6 +135,7 @@ const PinInput = styled.TextInput`
   font-size: 16px;
   font-weight: 500;
   line-height: 18px;
+  color: 'black';
 `;
 
 const Label = styled(Paragraph)`

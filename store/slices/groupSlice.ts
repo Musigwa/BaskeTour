@@ -95,6 +95,15 @@ const groupSlice = createSlice({
       if (index !== -1) group.players?.splice(index, 1);
       state.myGroups = [group, ...state.myGroups.filter(g => g.id !== group.id)];
     });
+
+    builder.addMatcher(
+      groupApi.endpoints.updateGroup.matchFulfilled,
+      (state, { payload, meta }) => {
+        const { originalArgs } = meta.arg;
+        const groups = state.myGroups.filter(g => g.id !== originalArgs.groupId);
+        state.myGroups = [...groups, payload.data];
+      }
+    );
   },
 });
 

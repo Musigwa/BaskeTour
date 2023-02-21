@@ -57,7 +57,7 @@ const ProfileScreen = () => {
       <View style={{ flex: 0.65, justifyContent: 'space-between' }}>
         <Horizontal style={{ justifyContent: 'flex-start' }}>
           <PhotoUploader
-            imageUrl={newUser.profilePic}
+            imageUrl={user.profilePic ?? newUser.profilePic}
             onSelect={result => handleInputChange({ profilePic: result.uri, photo: result })}
             style={{ width: 96, height: 96, borderRadius: 48, marginRight: 15 }}
           />

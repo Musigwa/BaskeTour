@@ -16,7 +16,7 @@ export const defaultScreenOptions = {
 
 export const TCUrl =
   'https://app.termly.io/document/terms-of-use-for-ios-app/5d1bcb2f-41c0-423e-9466-9223ac430cd3';
-
+export const RULES = 'https://ullipicks.com/';
 export const steps = [
   {
     title: 'Make Your Picks',

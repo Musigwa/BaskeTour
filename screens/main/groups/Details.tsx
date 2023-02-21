@@ -1,36 +1,68 @@
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import _ from 'lodash';
-import React, { useLayoutEffect, useState } from 'react';
-import { ActivityIndicator, Alert, SafeAreaView, ScrollView, TextInput, View } from 'react-native';
-import { Divider, Menu } from 'react-native-paper';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  SafeAreaView,
+  ScrollView,
+  TextInput,
+  View,
+  Text,
+  StyleSheet,
+} from 'react-native';
+import { Menu } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 import RenderAvatar from '../../../components/common/Avatar';
+import Loading from '../../../components/common/Loading';
+import PinCodeInput from '../../../components/common/PinCodeInput';
 import { useAppSelector } from '../../../hooks/useStore';
 import {
   useRemoveGroupMutation,
   useRemoveGroupPlayerMutation,
+  useUpdateGroupMutation,
 } from '../../../store/api-queries/group-queries';
 import { H2, H3, H5, H6, Horizontal, Separator } from '../../../styles/styled-elements';
 import { ellipsizeText } from '../../../utils/methods';
 
+import {
+  CodeField,
+  Cursor,
+  useBlurOnFulfill,
+  useClearByFocusCell,
+} from 'react-native-confirmation-code-field';
+
+const CELL_COUNT = 4;
+
 const GroupDetailsScreen = ({ route, navigation }) => {
-  const [requestGroupRemoval, { isLoading: isFetching }] = useRemoveGroupMutation({});
-  useLayoutEffect(() => {
-    navigation.setOptions({ headerRight });
-  }, [navigation, isFetching]);
-  const [pressedPlayer, setPressedPlayer] = useState({});
-  const { group: passedGroup } = route.params;
-  const { colors } = useTheme();
-  const toast = useToast();
+  const [requestGroupRemoval, { isLoading: isFetching }] = useRemoveGroupMutation();
+  const [requestGroupUpdate, { isLoading: inProgress }] = useUpdateGroupMutation();
   const { user, myGroups } = useAppSelector(({ auth: { user }, groups: { myGroups } }) => ({
     user,
     myGroups,
   }));
+  const { group: passedGroup } = route.params;
   const group = myGroups.find(group => group.id === passedGroup.id) || passedGroup;
+  const isAdmin = useMemo(() => group.creator === user.id, [group.creator, user.id]);
+  const [visible, setVisible] = useState(false);
+  const [PIN, setPIN] = useState(group.groupPIN || '');
+  const [groupName, setGroupName] = useState(group.groupName || '');
+  const ref = useBlurOnFulfill({ value: PIN, cellCount: CELL_COUNT });
+  const [props, getCellOnLayoutHandler] = useClearByFocusCell({
+    value: PIN,
+    setValue: setPIN,
+  });
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ headerRight: isAdmin ? headerRight : null });
+  }, [navigation, isFetching, visible]);
+
+  const { colors } = useTheme();
+  const toast = useToast();
+  const [pressedPlayer, setPressedPlayer] = useState({});
   const [requestPlayerRemoval, { isLoading }] = useRemoveGroupPlayerMutation({});
 
-  const handleTextChange = text => {};
   const handleAddPlayers = () => {
     if (group.availableSpots === 0) toast.show('This group is full!', { type: 'danger' });
     // ADD THE PLAYER TO THE GROUP
@@ -49,7 +81,6 @@ const GroupDetailsScreen = ({ route, navigation }) => {
           groupId: group.id,
           playerId: player.id,
         }).unwrap();
-        console.log('data.message', message);
       } catch (e) {
         toast.show(e.data.message);
       }
@@ -86,13 +117,13 @@ const GroupDetailsScreen = ({ route, navigation }) => {
   };
 
   const headerRight = () => {
-    const [visible, setVisible] = useState(false);
     const openMenu = () => setVisible(true);
     const closeMenu = () => setVisible(false);
     const handleDeleteGroup = () => {
       removeGroup(group);
       closeMenu();
     };
+
     const handleGroupShare = () => {
       closeMenu();
     };
@@ -116,7 +147,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
         contentStyle={{ backgroundColor: 'white' }}
       >
         {/* <Menu.Item onPress={handleGroupShare} title='Share Group' leadingIcon='share' /> */}
-        <Divider />
+        {/* <Divider /> */}
         <Menu.Item
           onPress={handleDeleteGroup}
           title='Delete Group'
@@ -126,31 +157,88 @@ const GroupDetailsScreen = ({ route, navigation }) => {
     );
   };
 
-  return (
+  const blurHandler = async e => {
+    try {
+      if (
+        PIN.length === CELL_COUNT &&
+        groupName.length > 0 &&
+        (PIN !== group.groupPIN || groupName !== group.groupName)
+      ) {
+        const { status } = await requestGroupUpdate({
+          groupName,
+          groupPIN: PIN,
+          groupId: group.id,
+        }).unwrap();
+        if (status === 201)
+          toast.show('Updating group succeeded!', { type: 'success', placement: 'center' });
+      } else toast.show('Please input valid entries!', { type: 'warning', placement: 'center' });
+    } catch (error) {
+      setPIN(group.groupPIN);
+      setGroupName(group.groupName);
+      toast.show(error?.data?.message ?? 'Something went wrong, try again!', {
+        type: 'danger',
+        placement: 'center',
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (PIN.length === CELL_COUNT) ref.current?.blur();
+  }, [PIN]);
+
+  return inProgress ? (
+    <Loading show={inProgress} text='Saving changes...' showBall={false} />
+  ) : (
     <SafeAreaView style={{ flex: 1 }}>
       <Separator style={{ marginVertical: 5 }} />
       <View style={{ padding: 15 }}>
         <H6 style={{ color: colors.gray, marginBottom: 5 }}>Group Name</H6>
         <TextInput
-          defaultValue={group.groupName}
+          defaultValue={groupName}
           underlineColorAndroid='transparent'
-          onChangeText={handleTextChange}
-          editable={!!_.find(group.players, { id: user.id }) ? true : false}
+          onChangeText={setGroupName}
+          editable={isAdmin}
+          onBlur={blurHandler}
         />
+
         <Separator style={{ marginTop: 10, marginBottom: 15 }} />
-        <H6 style={{ color: colors.gray, textTransform: 'none' }}>Group PIN Code</H6>
-        <Horizontal style={{ marginTop: 10 }}>
-          {group.groupPIN.split('').map((digit, idx) => {
-            return (
-              <View style={{ flex: 0.15 }} key={idx}>
-                <H6 key={idx} style={{ textAlign: 'center' }}>
-                  {digit}
-                </H6>
-                <Separator size='md' style={{ marginTop: 5 }} />
-              </View>
-            );
-          })}
-        </Horizontal>
+        <H6 style={{ color: colors.gray, textTransform: 'none' }}>Group PIN code</H6>
+        <CodeField
+          ref={ref}
+          {...props}
+          value={PIN}
+          onChangeText={setPIN}
+          cellCount={CELL_COUNT}
+          keyboardType='number-pad'
+          textContentType='oneTimeCode'
+          onBlur={blurHandler}
+          renderCell={({ index, symbol, isFocused }) => (
+            <View
+              key={index}
+              onLayout={getCellOnLayoutHandler(index)}
+              style={[styles.cell, isFocused && styles.focusCell, { borderColor: colors.gray }]}
+            >
+              <Text>{symbol || (isFocused ? <Cursor /> : null)}</Text>
+            </View>
+          )}
+          // renderCell={({ index, symbol, isFocused }) => (
+          //   <Text
+          //     key={index}
+          //     style={[styles.cell, isFocused && styles.focusCell]}
+          //     onLayout={getCellOnLayoutHandler(index)}
+          //   >
+          //     {symbol || (isFocused ? <Cursor /> : null)}
+          //   </Text>
+          // )}
+        />
+        {/* <PinCodeInput
+          value={values.groupPIN}
+          onChangeText={groupPIN => textChangeHandler({ groupPIN })}
+          editable={isAdmin}
+          defaultValue={group.groupPIN}
+          // onBlur={blurHandler}
+        /> */}
+        {/* <Separator style={{ marginTop: 10, marginBottom: 15 }} /> */}
       </View>
       <Horizontal style={{ marginHorizontal: 15 }}>
         <View style={{ flex: 0.8 }}>
@@ -218,3 +306,20 @@ const GroupDetailsScreen = ({ route, navigation }) => {
 };
 
 export default GroupDetailsScreen;
+
+const styles = StyleSheet.create({
+  root: { flex: 1, padding: 20 },
+  title: { textAlign: 'center', fontSize: 30 },
+  cell: {
+    width: 40,
+    height: 40,
+    lineHeight: 10,
+    fontSize: 24,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  focusCell: {
+    borderColor: '#000',
+  },
+});

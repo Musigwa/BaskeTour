@@ -55,6 +55,13 @@ export const groupApi = createApi({
         body: { playerId: payload.playerId },
       }),
     }),
+    updateGroup: builder.mutation<any, { groupId: string; groupName: string; groupPIN: string }>({
+      query: ({ groupId, groupName, groupPIN }) => ({
+        url: SINGLE_GROUP(groupId),
+        method: 'PUT',
+        body: { groupName, groupPIN },
+      }),
+    }),
   }),
 });
 
@@ -67,4 +74,5 @@ export const {
   useGetSingleGroupQuery,
   useRemoveGroupPlayerMutation,
   useRemoveGroupMutation,
+  useUpdateGroupMutation,
 } = groupApi;
