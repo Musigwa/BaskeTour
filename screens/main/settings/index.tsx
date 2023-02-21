@@ -1,16 +1,16 @@
 import { AntDesign, Entypo } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { ActivityIndicator, Alert, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useToast } from 'react-native-toast-notifications';
+import { RULES } from '../../../constants';
 import { useAppDispatch } from '../../../hooks/useStore';
 import { persistor } from '../../../store';
+import { useDeleteAccountMutation } from '../../../store/api-queries/auth-queries';
 import { completedOnboarding, logOut } from '../../../store/slices/authSlice';
 import { H4, Horizontal } from '../../../styles/styled-elements';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDeleteAccountMutation } from '../../../store/api-queries/auth-queries';
-import { useToast } from 'react-native-toast-notifications';
 import { openBrowser } from '../../../utils/methods';
-import { RULES } from '../../../constants';
 
 const options = [
   { title: 'Groups' },
