@@ -16,18 +16,21 @@ import { ellipsizeText } from '../../../utils/methods';
 
 const GroupDetailsScreen = ({ route, navigation }) => {
   const [requestGroupRemoval, { isLoading: isFetching }] = useRemoveGroupMutation({});
-  useLayoutEffect(() => {
-    navigation.setOptions({ headerRight });
-  }, [navigation, isFetching]);
-  const [pressedPlayer, setPressedPlayer] = useState({});
-  const { group: passedGroup } = route.params;
-  const { colors } = useTheme();
-  const toast = useToast();
   const { user, myGroups } = useAppSelector(({ auth: { user }, groups: { myGroups } }) => ({
     user,
     myGroups,
   }));
+  const { group: passedGroup } = route.params;
   const group = myGroups.find(group => group.id === passedGroup.id) || passedGroup;
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ headerRight: group.creator === user.id ? headerRight : null });
+  }, [navigation, isFetching]);
+
+  const { colors } = useTheme();
+  const toast = useToast();
+  const [pressedPlayer, setPressedPlayer] = useState({});
+
   const [requestPlayerRemoval, { isLoading }] = useRemoveGroupPlayerMutation({});
 
   const handleTextChange = text => {};
@@ -116,7 +119,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
         contentStyle={{ backgroundColor: 'white' }}
       >
         {/* <Menu.Item onPress={handleGroupShare} title='Share Group' leadingIcon='share' /> */}
-        <Divider />
+        {/* <Divider /> */}
         <Menu.Item
           onPress={handleDeleteGroup}
           title='Delete Group'
