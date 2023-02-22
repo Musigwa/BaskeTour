@@ -1,6 +1,5 @@
 import { Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components/native';
 import * as Yup from 'yup';
 import { createFormData } from '../../utils/methods';
 

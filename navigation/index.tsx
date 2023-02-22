@@ -1,12 +1,12 @@
 // Absolute imports
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ColorSchemeName } from 'react-native';
 import { ToastProvider } from 'react-native-toast-notifications';
 // Relative imports
 import { defaultScreenOptions } from '../constants';
-import { useAppSelector } from '../hooks/useStore';
+import { useAppDispatch, useAppSelector } from '../hooks/useStore';
 import InitialScreen from '../screens/auth/Initial';
 import LoginScreen from '../screens/auth/Login';
 import PhotoScreen from '../screens/auth/Photo';
@@ -31,12 +31,20 @@ import ForgetPwdScreen from '../screens/auth/Forget';
 import VerifyScreen from '../screens/auth/Verify';
 import ResetPwdScreen from '../screens/auth/Reset';
 import UpdatePwdScreen from '../screens/auth/UpdatePassword';
+import { useGetMyProfileQuery } from '../store/api-queries/auth-queries';
+import { hasLoggedIn } from '../store/slices/authSlice';
 
 const Stack = createStackNavigator();
 
 const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
   const { isLoggedIn } = useAppSelector(state => state.auth);
   const isOnboarded = useAppSelector(({ auth }) => auth.completedOnboarding);
+  const dispatch = useAppDispatch();
+  const { isFetching, data } = useGetMyProfileQuery({});
+
+  useEffect(() => {
+    if (!isFetching && data) dispatch(hasLoggedIn(true));
+  }, [isFetching, data, dispatch]);
 
   return (
     <ToastProvider textStyle={{ fontSize: 18 }}>

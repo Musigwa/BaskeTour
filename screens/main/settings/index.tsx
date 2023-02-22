@@ -8,8 +8,9 @@ import { RULES } from '../../../constants';
 import { useAppDispatch } from '../../../hooks/useStore';
 import { persistor } from '../../../store';
 import { useDeleteAccountMutation } from '../../../store/api-queries/auth-queries';
-import { completedOnboarding, logOut } from '../../../store/slices/authSlice';
+import { completedOnboarding } from '../../../store/slices/authSlice';
 import { H4, Horizontal } from '../../../styles/styled-elements';
+import { actions } from '../../../types/api';
 import { openBrowser } from '../../../utils/methods';
 
 const options = [
@@ -41,7 +42,7 @@ const SettingsScreen = ({ navigation }) => {
 
   const handleLogout = async () => {
     await persistor.flush();
-    return dispatch(logOut());
+    return dispatch({ type: actions.LOGOUT });
   };
 
   const handlePress = async (element: { title: string; screen?: string; dangerous?: boolean }) => {

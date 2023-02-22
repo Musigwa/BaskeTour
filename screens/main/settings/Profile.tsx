@@ -1,20 +1,26 @@
 import { useTheme } from '@react-navigation/native';
 import _ from 'lodash';
 import React, { useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, TextInput, TouchableOpacity, View } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
 import PhotoUploader from '../../../components/PhotoUploader';
 import KeyboardAvoid from '../../../components/common/containers/KeyboardAvoid';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
-import { useUploadProfileDetailsMutation } from '../../../store/api-queries/auth-queries';
-import { H4, H5, H6, Horizontal, Separator } from '../../../styles/styled-elements';
-import { createFormData, objDiff } from '../../../utils/methods';
+import {
+  useGetMyProfileQuery,
+  useUploadProfileDetailsMutation,
+} from '../../../store/api-queries/auth-queries';
 import { updateProfile } from '../../../store/slices/authSlice';
+import { H4, H5, H6, Horizontal, Separator } from '../../../styles/styled-elements';
+import { createFormData } from '../../../utils/methods';
 
 const ProfileScreen = () => {
   const { colors } = useTheme();
   const toast = useToast();
-  const { user } = useAppSelector(state => state.auth);
+  const {
+    data: { data: user },
+  } = useGetMyProfileQuery({});
+  // const { user } = useAppSelector(state => state.auth);
   const [uploadDetails, { isLoading }] = useUploadProfileDetailsMutation();
   const [newUser, setNewUser] = useState(user);
 
@@ -57,13 +63,11 @@ const ProfileScreen = () => {
       <View style={{ flex: 0.65, justifyContent: 'space-between' }}>
         <Horizontal style={{ justifyContent: 'flex-start' }}>
           <PhotoUploader
-            imageUrl={user.profilePic ?? newUser.profilePic}
+            imageUrl={newUser?.profilePic ?? user?.profilePic}
             onSelect={result => handleInputChange({ profilePic: result.uri, photo: result })}
             style={{ width: 96, height: 96, borderRadius: 48, marginRight: 15 }}
           />
-          <Pressable onPress={newUser.photo ? cancelPhoto : null}>
-            <H5 style={{ color: colors.primary }}>{newUser.photo ? 'Discard' : 'Edit photo'}</H5>
-          </Pressable>
+          <H5 style={{ color: colors.primary }}>Edit photo</H5>
         </Horizontal>
         <View style={{ flex: 0.2, justifyContent: 'space-evenly' }}>
           <H6 style={{ color: colors.gray }}>First Name</H6>

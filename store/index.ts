@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore } from '@reduxjs/toolkit';
 import { AnyAction, combineReducers, Reducer } from 'redux';
 import {
@@ -13,24 +12,25 @@ import {
 } from 'redux-persist';
 
 import { actions } from '../types/api';
-import { authApi } from './api-queries/auth-queries';
-import { groupApi } from './api-queries/group-queries';
-import tournamentApi from './api-queries/tournaments';
 import authReducer from './slices/authSlice';
 import groupReducer from './slices/groupSlice';
+import tournamentReducer from './slices/tournament';
 
-const persistConfig = {
-  key: 'root',
-  version: 1,
-  storage: AsyncStorage,
-  blacklist: [authApi.reducerPath],
-};
+import storage from '@react-native-async-storage/async-storage';
+import { authApi } from './api-queries/auth-queries';
+import { groupApi } from './api-queries/group-queries';
+import { tournamentApi } from './api-queries/tournaments';
+
+const whitelist = ['auth'];
+const persistConfig = { key: 'root', storage, whitelist };
+const authPersistConfig = { key: 'auth', storage: storage, whitelist: ['token'] };
 
 const appReducer = combineReducers({
-  auth: authReducer,
+  auth: persistReducer(authPersistConfig, authReducer),
   [authApi.reducerPath]: authApi.reducer,
   groups: groupReducer,
   [groupApi.reducerPath]: groupApi.reducer,
+  tournament: tournamentReducer,
   [tournamentApi.reducerPath]: tournamentApi.reducer,
 });
 
@@ -55,7 +55,8 @@ export const store = configureStore({
 export const persistor = persistStore(store);
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof appReducer>;
+// export type RootState = ReturnType<typeof appReducer>;
+export type RootState = ReturnType<typeof rootReducer>;
 // export type RootState = ReturnType<typeof store.getState>;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;

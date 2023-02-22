@@ -1,19 +1,18 @@
 import { setupListeners } from '@reduxjs/toolkit/dist/query';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
-import { ActivityIndicator } from 'react-native';
 import 'react-native-gesture-handler';
 import { Provider as PaperProvider, configureFonts } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider } from 'styled-components/native';
+import Loading from './components/common/Loading';
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import { persistor, store } from './store';
 import { AppDefaultTheme } from './styles/theme';
-import Loading from './components/common/Loading';
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
@@ -22,6 +21,7 @@ export default function App() {
     ...theme,
     fonts: configureFonts({ config: { fontFamily: 'Poppins_500Medium' } }),
   };
+
   useEffect(() => {
     const storeListener = setupListeners(store.dispatch);
     return storeListener;

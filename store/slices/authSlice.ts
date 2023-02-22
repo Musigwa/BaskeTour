@@ -28,11 +28,6 @@ const authSlice = createSlice({
   name: 'auth',
   initialState: initialState,
   reducers: {
-    /**
-     * Left blank intentionally
-     * The store will cleared when an action with a type matching this reducer name is dispatched
-     */
-    logOut: () => {},
     completedOnboarding: (state, action) => {
       state.completedOnboarding = action.payload;
     },
@@ -54,6 +49,10 @@ const authSlice = createSlice({
       state.token = payload.token;
     });
 
+    builder.addMatcher(authApi.endpoints.getMyProfile.matchFulfilled, (state, { payload }) => {
+      state.user = payload.data;
+    });
+
     builder.addMatcher(
       authApi.endpoints.uploadProfileDetails.matchFulfilled,
       (state, { payload }) => {
@@ -65,6 +64,7 @@ const authSlice = createSlice({
       state.user = { ...payload.data };
       state.token = payload.token;
     });
+
     builder.addMatcher(authApi.endpoints.updatePassword.matchFulfilled, (state, { payload }) => {
       state.user = { ...payload.data };
       state.token = payload.token;
@@ -72,6 +72,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { logOut, completedOnboarding, hasLoggedIn, updateProfile } = authSlice.actions;
+export const { completedOnboarding, hasLoggedIn, updateProfile } = authSlice.actions;
 
 export default authSlice.reducer;

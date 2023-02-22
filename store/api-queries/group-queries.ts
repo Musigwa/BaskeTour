@@ -19,6 +19,8 @@ type MyGroupProps = {
 
 export const groupApi = createApi({
   reducerPath: 'groupApi',
+  keepUnusedDataFor: 1,
+  refetchOnMountOrArgChange: 1,
   baseQuery: baseQuery,
   endpoints: builder => ({
     createGroup: builder.mutation({

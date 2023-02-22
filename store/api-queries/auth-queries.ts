@@ -8,21 +8,22 @@ import {
   LOGIN,
   RESET_PASSWORD,
   SIGN_UP,
-  TODOS,
 } from '../endpoints';
 
 export const authApi = createApi({
   reducerPath: 'authApi',
+  keepUnusedDataFor: 1,
+  refetchOnMountOrArgChange: 1,
   baseQuery: baseQuery,
   endpoints: builder => ({
-    getTodos: builder.query<any, void>({
-      query: () => TODOS,
-    }),
     signup: builder.mutation({
       query: body => ({ url: SIGN_UP, method: 'POST', body }),
     }),
     login: builder.mutation({
       query: body => ({ url: LOGIN, method: 'POST', body }),
+    }),
+    getMyProfile: builder.query<any, unknown>({
+      query: () => ({ url: CURRENT_USER, method: 'GET' }),
     }),
     forgotPassord: builder.mutation<any, { email: string }>({
       query: body => ({ url: FORGOT_PASSWORD, method: 'POST', body }),
@@ -46,7 +47,6 @@ export const authApi = createApi({
 });
 
 export const {
-  useGetTodosQuery,
   useSignupMutation,
   useUploadProfileDetailsMutation,
   useLoginMutation,
@@ -54,4 +54,5 @@ export const {
   useForgotPassordMutation,
   useResetPassordMutation,
   useUpdatePasswordMutation,
+  useGetMyProfileQuery,
 } = authApi;

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { IGame, IPick, ITournament } from '../../interfaces/index';
-import tournamentApi from '../api-queries/tournaments';
+import { tournamentApi } from '../api-queries/tournaments';
 
 export interface ITournamentState {
   picks: Array<IPick>;

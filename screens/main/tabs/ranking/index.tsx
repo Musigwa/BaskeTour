@@ -15,12 +15,16 @@ import { useAppSelector } from '../../../../hooks/useStore';
 import { useGetGRankingsQuery } from '../../../../store/api-queries/group-queries';
 import { useGetTournamentsQuery } from '../../../../store/api-queries/tournaments';
 import { H2, H4, H5, H6, Horizontal, Separator } from '../../../../styles/styled-elements';
+import { useGetMyProfileQuery } from '../../../../store/api-queries/auth-queries';
 
 const RankingScreen = () => {
   const { colors } = useTheme();
 
   const { data: [tournament] = [] } = useGetTournamentsQuery();
-  const { selectedGroup, user } = useAppSelector(({ groups, auth }) => ({
+  const {
+    data: { data: user },
+  } = useGetMyProfileQuery({});
+  const { selectedGroup } = useAppSelector(({ groups, auth }) => ({
     selectedGroup: groups.selectedGroup,
     user: auth.user,
   }));
@@ -74,7 +78,7 @@ const RankingScreen = () => {
                           label={`${player?.firstName.charAt('0')} ${player?.lastName.charAt('0')}`}
                           uri={player?.profilePic}
                         />
-                        <View>
+                        <View style={{ marginLeft: 10 }}>
                           <H5>{player?.firstName}</H5>
                           <H5>{player?.lastName}</H5>
                         </View>
