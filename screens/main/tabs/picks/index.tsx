@@ -160,7 +160,7 @@ const PicksScreen = ({ navigation }) => {
       <Separator size='sm' />
       <>
         {games.length ? (
-          <View style={{ padding: 5 }}>
+          <View style={{ padding: 15 }}>
             <Headline style={{ color: colors.primary }}>Time remaining to make picks</Headline>
             <CountDown date={games[0]?.eventDate} />
             <Separator />
@@ -174,7 +174,6 @@ const PicksScreen = ({ navigation }) => {
         ) : null}
 
         <SearchPaginated
-          style={{ padding: 0 }}
           fetchMethod={useGetGamesQuery}
           data={[]}
           searchable={false}

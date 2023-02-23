@@ -22,6 +22,7 @@ type SearchPaginatedProps = FlatListProps<any> & {
   // Optional properties
   searchable?: boolean;
   params?: { [key: string]: any };
+  options?: { [key: string]: any };
   ListEndComponent?: ComponentType;
   ListEmptyComponent?: ComponentType;
   ListLoadMoreComponent?: ComponentType;
@@ -42,7 +43,9 @@ type SearchPaginatedProps = FlatListProps<any> & {
 type StateProps = { page: number; text: string };
 
 const DefaultEmptyComponent: FC<{ text: string }> = ({ text }) => (
-  <H5 style={styles.empty}>{text}</H5>
+  <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+    <H5 style={styles.empty}>{text}</H5>
+  </View>
 );
 
 const DefaultListEndComponent: FC<{ text?: string }> = ({ text }) => (
@@ -64,6 +67,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
     searchable = true,
     fetchMethod,
     params,
+    options,
     renderItem,
     ListEndComponent,
     ListEmptyComponent,
@@ -79,7 +83,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
     paginatable = true,
     defaultBlank = false,
     loadingMoreText = 'Fetching more items...',
-    emptyListText = 'No data matching your search to display!',
+    emptyListText = '',
     listEndText = 'End of list, no more data to fetch!',
     ...props
   }) => {
@@ -95,12 +99,15 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
       isFetching,
       refetch,
       data: { meta = {}, data: items = [] } = {},
-    } = fetchMethod({
-      [searchKeyName]: text,
-      ...params,
-      page,
-      [perPageCountName]: itemsPerPage,
-    });
+    } = fetchMethod(
+      {
+        [searchKeyName]: text,
+        ...params,
+        page,
+        [perPageCountName]: itemsPerPage,
+      },
+      options
+    );
     const isListEnd = useMemo(() => meta.page === meta.totalPages, [meta.page, meta.totalPages]);
     const handleDebTextChange = useMemo(() => _.debounce(debCallback, 300), [isFetching]);
 
@@ -141,7 +148,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
           ref={listRef}
           refreshing={isFetching}
           onRefresh={refetch}
-          contentContainerStyle={{ flexGrow: 1, paddingVertical: 5 }}
+          contentContainerStyle={[{ flexGrow: 1, paddingVertical: 5 }, props.contentContainerStyle]}
           data={!text.length && defaultBlank ? [] : items?.length ? items : data}
           onEndReachedThreshold={1}
           initialNumToRender={5}
@@ -175,7 +182,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
             ) : ListEmptyComponent ? (
               <ListEmptyComponent />
             ) : (
-              <DefaultEmptyComponent text='' />
+              <DefaultEmptyComponent text={emptyListText} />
             )
           }
           onContentSizeChange={handleContentSizeChange}

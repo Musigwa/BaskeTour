@@ -57,16 +57,7 @@ const ChatListScreen = ({ navigation }) => {
   const { colors } = useTheme();
   const socket = useSocketIO();
   const { user, token } = useAppSelector(({ auth }) => auth);
-
   const [conversations, setConversations] = useState<any[]>([]);
-  // const groupedChats = Object.values(
-  //   chats.reduce((acc, next) => {
-  //     const { group } = next;
-  //     acc[group.groupName] = acc[group.groupName] ?? [];
-  //     acc[group.groupName].push(next);
-  //     return acc;
-  //   }, {})
-  // );
 
   useEffect(() => {
     if (conversations.length === 1) {

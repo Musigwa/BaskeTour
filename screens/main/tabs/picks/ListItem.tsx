@@ -26,9 +26,12 @@ const pickItem = ({
         const groupId = selectedGroup.id;
         const selected = _.findIndex(picks, { teamId, eventId, groupId }) !== -1;
         return (
-          <View key={i} style={{ paddingHorizontal: 10 }}>
+          <View key={i}>
             <Card
-              style={{ backgroundColor: selected ? colors.primary : colors.card }}
+              style={{
+                backgroundColor: selected ? colors.primary : colors.card,
+                paddingHorizontal: 0,
+              }}
               activeOpacity={0.8}
               onPress={() => handlePress({ teamId, eventId, groupId })}
             >
