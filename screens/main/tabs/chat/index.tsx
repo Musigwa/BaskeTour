@@ -59,14 +59,14 @@ const ChatListScreen = ({ navigation }) => {
   const { user, token } = useAppSelector(({ auth }) => auth);
 
   const [conversations, setConversations] = useState<any[]>([]);
-  const groupedChats = Object.values(
-    chats.reduce((acc, next) => {
-      const { group } = next;
-      acc[group.groupName] = acc[group.groupName] ?? [];
-      acc[group.groupName].push(next);
-      return acc;
-    }, {})
-  );
+  // const groupedChats = Object.values(
+  //   chats.reduce((acc, next) => {
+  //     const { group } = next;
+  //     acc[group.groupName] = acc[group.groupName] ?? [];
+  //     acc[group.groupName].push(next);
+  //     return acc;
+  //   }, {})
+  // );
 
   useEffect(() => {
     if (conversations.length === 1) {
@@ -113,7 +113,6 @@ const ChatListScreen = ({ navigation }) => {
       data={conversations}
       fetchMethod={useGetMyGroupsQuery}
       renderItem={args => renderItem({ ...args, navigation, colors })}
-    
     />
   );
 };

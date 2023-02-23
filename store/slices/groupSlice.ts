@@ -55,7 +55,7 @@ const groupSlice = createSlice({
     });
 
     builder.addMatcher(groupApi.endpoints.getMyGroups.matchFulfilled, (state, { payload }) => {
-      if (payload.data.length) state.selectedGroup = payload.data[0];
+      if (payload.data.length && !state.selectedGroup.id) state.selectedGroup = payload.data[0];
       const { page } = payload.meta;
       if (page === 1) state.myGroups = payload.data;
       else state.myGroups = [...state.myGroups, ...payload.data];

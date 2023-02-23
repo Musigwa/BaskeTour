@@ -17,7 +17,7 @@ import Loading from '../../Loading';
 type SearchPaginatedProps = FlatListProps<any> & {
   // Required properties
   renderItem: ListRenderItem<any>;
-  data: any[];
+  data?: any[];
   fetchMethod: Function;
   // Optional properties
   searchable?: boolean;
@@ -94,7 +94,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
     const {
       isFetching,
       refetch,
-      data: { meta = {} } = {},
+      data: { meta = {}, data: items = [] } = {},
     } = fetchMethod({
       [searchKeyName]: text,
       ...params,
@@ -142,7 +142,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = memo(
           refreshing={isFetching}
           onRefresh={refetch}
           contentContainerStyle={{ flexGrow: 1, paddingVertical: 5 }}
-          data={!text.length && defaultBlank ? [] : data}
+          data={!text.length && defaultBlank ? [] : items?.length ? items : data}
           onEndReachedThreshold={1}
           initialNumToRender={5}
           onEndReached={paginatable ? fetchMoreData : undefined}

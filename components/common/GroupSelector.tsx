@@ -50,11 +50,11 @@ const GroupDropdown = () => {
           fetchMethod={useGetMyGroupsQuery}
           searchable={false}
           renderItem={({ item, index }) => {
-            const selected = selectedGroup?.groupName === item.groupName;
+            const selected = selectedGroup?.id === item.id;
             return (
               <Pressable onPress={() => handleSelect(item)}>
                 <Horizontal key={index} style={{ paddingVertical: 15 }}>
-                  <H5 style={{ color: selected ? colors.primary : '' }}>{item.groupName}</H5>
+                  <H5 style={{ color: selected ? colors.primary : 'black' }}>{item.groupName}</H5>
                   {selected ? <AntDesign name='check' size={24} color={colors.primary} /> : null}
                 </Horizontal>
               </Pressable>

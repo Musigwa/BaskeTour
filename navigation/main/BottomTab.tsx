@@ -6,13 +6,13 @@ import ScoresScreen from '../../screens/main/tabs/scores';
 
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation, useTheme } from '@react-navigation/native';
-import { ActivityIndicator, SafeAreaView, View } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
 import styled from 'styled-components/native';
 import TopTab from '../../components/common/TopTab';
 import { defaultScreenOptions } from '../../constants';
 import { useCreatePickMutation } from '../../store/api-queries/tournaments';
-import { H2, H3, Horizontal } from '../../styles/styled-elements';
+import { Horizontal } from '../../styles/styled-elements';
 import ChatNavigator from './Chat';
 
 const Touchable = styled.Pressable`
@@ -28,14 +28,6 @@ const BottomTabNavigator = () => {
   const { colors } = useTheme();
   const navigation = useNavigation();
   const toast = useToast();
-  const [savePicks, { isLoading, isError, error }] = useCreatePickMutation();
-
-  useEffect(() => {
-    if (isError) {
-      const { message } = error?.data;
-      toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
-    }
-  }, [isError, error]);
 
   const goToSettings = () => {
     navigation.navigate('SettingList');
@@ -94,33 +86,6 @@ const BottomTabNavigator = () => {
         name='Picks'
         component={PicksScreen}
         options={{
-          header: ({ route: { params } }) => {
-            const { picks = [], roundId, canSubmit, groupId } = params ?? {};
-            const shouldSubmit = canSubmit && !isLoading;
-            return (
-              <SafeAreaView style={{ backgroundColor: 'white' }}>
-                <Horizontal style={{ marginRight: 20 }}>
-                  <View style={{ flex: 0.4 }} />
-                  <H2>Picks</H2>
-                  <Touchable
-                    style={{ borderColor: shouldSubmit ? colors.primary : colors.disabled }}
-                    disabled={!shouldSubmit}
-                    onPress={() => {
-                      savePicks({ picks, roundId, groupId });
-                    }}
-                  >
-                    {isLoading ? (
-                      <ActivityIndicator color={colors.primary} />
-                    ) : (
-                      <H3 style={{ color: shouldSubmit ? colors.primary : colors.disabled }}>
-                        Save
-                      </H3>
-                    )}
-                  </Touchable>
-                </Horizontal>
-              </SafeAreaView>
-            );
-          },
           tabBarIcon: props => <MaterialCommunityIcons name='checkbox-marked-circle' {...props} />,
         }}
       />
