@@ -1,7 +1,6 @@
 import { useTheme } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View as RNView, TouchableOpacity, View } from 'react-native';
-import styled from 'styled-components/native';
 import RenderAvatar from '../../../../components/common/Avatar';
 import GroupDropdown from '../../../../components/common/GroupSelector';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
@@ -14,24 +13,28 @@ import { H2, H5, H6, Horizontal, Separator } from '../../../../styles/styled-ele
 
 const RankingScreen = () => {
   const { colors } = useTheme();
-
-  const { data: [tournament] = [] } = useGetTournamentsQuery();
-  const {
-    data: { data: user },
-  } = useGetMyProfileQuery({});
-  const { selectedGroup } = useAppSelector(({ groups, auth }) => ({
-    selectedGroup: groups.selectedGroup,
-    user: auth.user,
-  }));
-  const rounds = tournament?.rounds?.map(r => ({ title: r.name, ...r }));
-  const [round = [], setRound] = useState<any>(rounds?.[0]);
+  useGetTournamentsQuery();
+  const { data: { data: user } = {} } = useGetMyProfileQuery({});
+  const { selectedGroup, activeRound, tournament } = useAppSelector(
+    ({ groups, auth, tournament }) => ({
+      selectedGroup: groups.selectedGroup,
+      user: auth.user,
+      tournament: tournament.selectedTour,
+      activeRound: tournament.activeRound,
+    })
+  );
+  const rounds = useMemo(
+    () => tournament?.rounds?.map(r => ({ title: r.name, ...r })),
+    [tournament?.rounds?.length]
+  );
+  const [round, setRound] = useState(activeRound);
   const [rankings, setRankings] = useState([]);
 
   return (
-    <Container>
+    <>
       <GroupDropdown />
       <Separator size='sm' />
-      {rounds?.length ? <TopTab tabs={rounds} onTabPress={setRound} /> : null}
+      {rounds?.length ? <TopTab tabs={rounds} onTabPress={setRound} selected={round.name} /> : null}
       <Separator size='sm' />
       <SearchPaginated
         data={rankings}
@@ -89,13 +92,11 @@ const RankingScreen = () => {
                   }}
                 >
                   {picks.length
-                    ? picks.map(({ team }, idx) => {
-                        return (
-                          <H6 key={idx} style={{}}>
-                            {idx + 1}. ({team?.ranking}) {team?.abbreviation}
-                          </H6>
-                        );
-                      })
+                    ? picks.map(({ team }, idx) => (
+                        <H6 key={idx} style={{}}>
+                          {idx + 1}. ({team?.ranking}) {team?.abbreviation}
+                        </H6>
+                      ))
                     : null}
                 </RNView>
               </View>
@@ -104,13 +105,8 @@ const RankingScreen = () => {
           );
         }}
       />
-    </Container>
+    </>
   );
 };
-
-const Container = styled.View`
-  flex: 1;
-  background-color: white;
-`;
 
 export default RankingScreen;

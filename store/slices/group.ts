@@ -100,8 +100,10 @@ const groupSlice = createSlice({
       groupApi.endpoints.updateGroup.matchFulfilled,
       (state, { payload, meta }) => {
         const { originalArgs } = meta.arg;
+        // Find the group
+        const group = state.myGroups.find(g => g.id === originalArgs.groupId);
         const groups = state.myGroups.filter(g => g.id !== originalArgs.groupId);
-        state.myGroups = [...groups, payload.data];
+        state.myGroups = [...groups, { ...group, ...payload.data }];
       }
     );
   },

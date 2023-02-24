@@ -141,10 +141,10 @@ const InboxScreen = ({ route }: any) => {
       const newMessage = { message, createdAt };
       const newMessageMeta = { ...newMessage, sender: user, group: chat.group, fileUrl };
       setMessages(state => [...state, { ...newMessage, ...newMessageMeta }]);
+      inputRef?.current?.clear?.();
       const formData = createFormData(photo, newMessage, 'messageFile');
       const body = photo.uri ? formData : newMessage;
       await requestMessageSend({ body, groupId: chat.group.id }).unwrap();
-      inputRef?.current?.clear?.();
     } catch (error) {
       console.log('error', error);
     }
@@ -168,17 +168,15 @@ const InboxScreen = ({ route }: any) => {
     showModal();
   };
 
-  console.log('messages', messages);
-
   return (
     <View
       style={Platform.select({ ios: { flex: 1, bottom: keyboardHeight }, android: { flex: 1 } })}
     >
       <PhotoModal visible={modalVisible} hideModal={hideModal} imageUrl={imageUrl} />
       <SearchPaginated
-        data={messages
-          .slice()
-          .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())}
+        data={[...messages].sort(
+          (a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        )}
         renderItem={args =>
           renderItem({ ...args, colors, user, onMessagePress: handleMessagePress })
         }

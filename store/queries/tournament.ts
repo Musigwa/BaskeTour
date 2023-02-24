@@ -13,10 +13,7 @@ export const tournamentApi = createApi({
   refetchOnMountOrArgChange: 1,
   baseQuery,
   endpoints: builder => ({
-    getTournaments: builder.query<any, void>({
-      query: () => TOURNAMENTS,
-      transformResponse: (response: any) => response.data,
-    }),
+    getTournaments: builder.query<any, void>({ query: () => TOURNAMENTS }),
     getGames: builder.query<any, GQueryParamsType>({
       query: ({ roundId, status, myScores = false }: GQueryParamsType) => {
         if (myScores) return GET_MY_SCORES(roundId, status);

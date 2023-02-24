@@ -4,7 +4,6 @@ import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Alert, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
-import styled from 'styled-components/native';
 import CountDown from '../../../../components/common/CountDown';
 import GroupSelector from '../../../../components/common/GroupSelector';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
@@ -17,7 +16,6 @@ import {
   useGetTournamentsQuery,
 } from '../../../../store/queries/tournament';
 import { H3, Separator } from '../../../../styles/styled-elements';
-import { getActiveRound } from '../../../../utils/methods';
 import pickItem from './ListItem';
 
 type Pick = { eventId: string; teamId: string; groupId: string };
@@ -27,9 +25,12 @@ const PicksScreen = ({ navigation }) => {
   const { colors } = useTheme();
   const toast = useToast();
 
-  const { data: [tournament] = [] } = useGetTournamentsQuery();
-  const round = useMemo(() => getActiveRound(tournament), [tournament]) ?? tournament?.rounds[0];
-  const selectedGroup = useAppSelector(({ groups }) => groups.selectedGroup);
+  useGetTournamentsQuery();
+  const { selectedGroup, round, tournament } = useAppSelector(({ groups, tournament }) => ({
+    selectedGroup: groups.selectedGroup,
+    round: tournament.activeRound,
+    tournament: tournament.selectedTour,
+  }));
 
   const {
     refetch: refetchPicks,
@@ -134,60 +135,47 @@ const PicksScreen = ({ navigation }) => {
   useEffect(refetchPicks, [selectedGroup?.id, round?.id]);
 
   return (
-    <Container>
+    <>
       <GroupSelector />
       <Separator size='sm' />
       <TopTab tabs={statuses} />
       <Separator size='sm' />
-      <>
-        {games.length ? (
-          <View style={{ paddingHorizontal: 15, paddingTop: 5 }}>
-            <Headline style={{ color: colors.primary }}>Time remaining to make picks</Headline>
-            <CountDown date={round?.startDate} />
-            <Separator />
-            <H3 style={{ paddingVertical: 8, textTransform: 'none' }}>Pick teams to win</H3>
-            <H3 style={{ color: colors.primary }}>
-              Select {limit} teams for {round?.name}
-            </H3>
-          </View>
-        ) : null}
+      {games.length ? (
+        <View style={{ paddingHorizontal: 15, paddingTop: 2 }}>
+          <H3 style={{ color: colors.primary, textTransform: 'none' }}>
+            Time remaining to make picks
+          </H3>
+          <CountDown date={round?.startDate} />
+          <Separator />
+          <H3 style={{ paddingVertical: 8, textTransform: 'none' }}>Pick teams to win</H3>
+          <H3 style={{ color: colors.primary, textTransform: 'none' }}>
+            Select {limit} teams for {round?.name}
+          </H3>
+        </View>
+      ) : null}
 
-        <SearchPaginated
-          fetchMethod={useGetGamesQuery}
-          data={games}
-          updateData={setGames}
-          searchable={false}
-          params={{ roundId: round?.id, status: 'STATUS_SCHEDULED' }}
-          renderItem={({ item, index }) =>
-            pickItem({
-              item,
-              index,
-              handlePress: updatePicks,
-              colors,
-              selectedGroup,
-              prevPicks,
-              picks,
-              games,
-            })
-          }
-          emptyListText='No scheduled games yet to pick from!'
-        />
-      </>
-    </Container>
+      <SearchPaginated
+        fetchMethod={useGetGamesQuery}
+        data={games}
+        updateData={setGames}
+        searchable={false}
+        params={{ roundId: round?.id, status: 'STATUS_SCHEDULED' }}
+        renderItem={({ item, index }) =>
+          pickItem({
+            item,
+            index,
+            handlePress: updatePicks,
+            colors,
+            selectedGroup,
+            prevPicks,
+            picks,
+            games,
+          })
+        }
+        emptyListText='No scheduled games yet to pick from!'
+      />
+    </>
   );
 };
-
-const Container = styled.View`
-  flex: 1;
-  background-color: white;
-`;
-
-const Headline = styled.Text`
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 20px;
-  letter-spacing: 0.8px;
-  text-align: left;
-`;
 
 export default PicksScreen;

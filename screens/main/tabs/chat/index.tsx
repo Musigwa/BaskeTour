@@ -57,7 +57,7 @@ const ChatListScreen = ({ navigation }) => {
   const socket = useSocketIO();
   const { user } = useAppSelector(({ auth }) => auth);
   const [conversations, setConversations] = useState([]);
-  const [refetchOnFocus, setRefetchOnFocus] = useState(false);
+  const [triggerRefetch, setTriggerRefetch] = useState(false);
 
   useEffect(() => {
     if (conversations.length === 1) {
@@ -71,29 +71,26 @@ const ChatListScreen = ({ navigation }) => {
   }, []);
 
   const handleNGMessage = (message: any) => {
+    setTriggerRefetch(false);
     setConversations(prev => {
-      const found = prev.find(c => c?.group?.id === message.group.id) ?? {};
+      let found;
+      found = prev.find(c => c?.group?.id === message.group.id);
       const without = _.without(prev, found);
-      found['lastMessage'] = message;
-      if (user?.id !== message.sender.id) {
-        found['unreadMessages'] = (found['unreadMessages'] ?? 0) + 1;
-      }
-      return [found, ...without];
+      found = { ...found, lastMessage: message };
+      if (user?.id !== message.sender.id)
+        found = { ...found, unreadMessages: (found.unreadMessages ?? 0) + 1 };
+      return [found, ...without] as never[];
     });
-    setRefetchOnFocus(!refetchOnFocus);
   };
 
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', handleNGMessage);
-  //   return unsubscribe;
-  // }, [navigation]);
+  useEffect(() => navigation.addListener('focus', () => setTriggerRefetch(true)), [navigation]);
 
   return (
     <SearchPaginated
       style={{ backgroundColor: 'white' }}
       data={conversations}
-      options={{ refetchOnFocus }}
       updateData={setConversations}
+      shouldRefetch={triggerRefetch}
       fetchMethod={useGetConversationsQuery}
       renderItem={args => renderItem({ ...args, navigation, colors })}
     />
@@ -104,11 +101,7 @@ export default ChatListScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center' },
-  listItem: {
-    width: '100%',
-    backgroundColor: 'white',
-    paddingVertical: 20,
-  },
+  listItem: { width: '100%', backgroundColor: 'white', paddingVertical: 20 },
   avatarContainer: {
     height: 56,
     width: 56,

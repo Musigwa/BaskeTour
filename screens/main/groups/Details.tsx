@@ -7,16 +7,15 @@ import {
   Alert,
   SafeAreaView,
   ScrollView,
+  StyleSheet,
+  Text,
   TextInput,
   View,
-  Text,
-  StyleSheet,
 } from 'react-native';
 import { Menu } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 import RenderAvatar from '../../../components/common/Avatar';
 import Loading from '../../../components/common/Loading';
-import PinCodeInput from '../../../components/common/PinCodeInput';
 import { useAppSelector } from '../../../hooks/useStore';
 import {
   useRemoveGroupMutation,
@@ -55,8 +54,8 @@ const GroupDetailsScreen = ({ route, navigation }) => {
   });
 
   useLayoutEffect(() => {
-    navigation.setOptions({ headerRight: isAdmin ? headerRight : null });
-  }, [navigation, isFetching, visible]);
+    navigation.setOptions({ headerRight: isAdmin ? headerRight : null, title: group.groupName });
+  }, [navigation, isFetching, inProgress, visible]);
 
   const { colors } = useTheme();
   const toast = useToast();
@@ -77,10 +76,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
 
     const deletePlayer = async () => {
       try {
-        const { message } = await requestPlayerRemoval({
-          groupId: group.id,
-          playerId: player.id,
-        }).unwrap();
+        await requestPlayerRemoval({ groupId: group.id, playerId: player.id }).unwrap();
       } catch (e) {
         toast.show(e.data.message);
       }
@@ -124,10 +120,6 @@ const GroupDetailsScreen = ({ route, navigation }) => {
       closeMenu();
     };
 
-    const handleGroupShare = () => {
-      closeMenu();
-    };
-
     return (
       <Menu
         visible={visible}
@@ -146,8 +138,6 @@ const GroupDetailsScreen = ({ route, navigation }) => {
         }
         contentStyle={{ backgroundColor: 'white' }}
       >
-        {/* <Menu.Item onPress={handleGroupShare} title='Share Group' leadingIcon='share' /> */}
-        {/* <Divider /> */}
         <Menu.Item
           onPress={handleDeleteGroup}
           title='Delete Group'
@@ -221,28 +211,11 @@ const GroupDetailsScreen = ({ route, navigation }) => {
               <Text>{symbol || (isFocused ? <Cursor /> : null)}</Text>
             </View>
           )}
-          // renderCell={({ index, symbol, isFocused }) => (
-          //   <Text
-          //     key={index}
-          //     style={[styles.cell, isFocused && styles.focusCell]}
-          //     onLayout={getCellOnLayoutHandler(index)}
-          //   >
-          //     {symbol || (isFocused ? <Cursor /> : null)}
-          //   </Text>
-          // )}
         />
-        {/* <PinCodeInput
-          value={values.groupPIN}
-          onChangeText={groupPIN => textChangeHandler({ groupPIN })}
-          editable={isAdmin}
-          defaultValue={group.groupPIN}
-          // onBlur={blurHandler}
-        /> */}
-        {/* <Separator style={{ marginTop: 10, marginBottom: 15 }} /> */}
       </View>
       <Horizontal style={{ marginHorizontal: 15 }}>
         <View style={{ flex: 0.8 }}>
-          <H2>{group.availableSpots}</H2>
+          <H2>{group?.availableSpots}</H2>
           <H6>available spots</H6>
         </View>
         <View style={{ flex: 0.2 }}>

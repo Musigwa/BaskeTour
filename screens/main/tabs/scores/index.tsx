@@ -12,9 +12,9 @@ import SearchPaginated from '../../../../components/common/Lists/SearchPaginated
 import RadioButton from '../../../../components/common/RadioButton';
 import TopTab from '../../../../components/common/TopTab';
 import TeamContainer from '../../../../components/scores/TeamContainer';
+import { useAppSelector } from '../../../../hooks/useStore';
 import { useGetGamesQuery, useGetTournamentsQuery } from '../../../../store/queries/tournament';
 import { GAME_STATUS } from '../../../../types';
-import { getActiveRound } from '../../../../utils/methods';
 
 const ScoresScreen = ({ route }) => {
   const statuses = {
@@ -44,19 +44,20 @@ const ScoresScreen = ({ route }) => {
   }, [currentTab]);
   const myScores = !!params?.scoreType?.toLowerCase().includes('my score');
   const options = currentTab === 'STATUS_IN_PROGRESS' ? { pollingInterval: 5000 } : undefined;
-  const { data: [tournament] = [] } = useGetTournamentsQuery();
-
-  const activeRound =
-    useMemo(() => getActiveRound(tournament), [tournament]) ?? tournament?.rounds[0];
+  useGetTournamentsQuery();
+  const { activeRound, tournament } = useAppSelector(({ tournament }) => ({
+    activeRound: tournament.activeRound,
+    tournament: tournament.selectedTour,
+  }));
 
   const [selectedRound, setSelectedRound] = useState(activeRound);
   const [games, setGames] = useState([]);
 
-  const response = useGetGamesQuery(
-    { roundId: selectedRound?.id, status: currentTab, myScores },
-    options
-  );
-  const { refetch, isError, error: err } = response;
+  const {
+    refetch,
+    isError,
+    error: err,
+  } = useGetGamesQuery({ roundId: selectedRound?.id, status: currentTab, myScores }, options);
 
   useEffect(() => {
     if (isError) {
@@ -66,7 +67,11 @@ const ScoresScreen = ({ route }) => {
     }
   }, [isError, err]);
 
-  useEffect(refetch, [currentTab, myScores, selectedRound]);
+  useEffect(() => {
+    if (activeRound?.id) setSelectedRound(activeRound);
+  }, [activeRound?.id]);
+
+  useEffect(refetch, [currentTab, myScores, selectedRound?.id]);
 
   return (
     <Container>
@@ -93,14 +98,14 @@ const ScoresScreen = ({ route }) => {
           alignItems: 'center',
         }}
       >
-        {tournament?.rounds.map((r, idx) => (
+        {tournament?.rounds?.map((r, idx) => (
           <RadioButton
             key={idx}
-            selected={selectedRound === r}
+            selected={selectedRound?.id === r?.id}
             color={colors.primary}
             text={r.name}
             onClick={() => {
-              setSelectedRound(tournament?.rounds[idx]);
+              setSelectedRound(tournament?.rounds?.[idx]);
               actionSheetRef.current?.hide();
             }}
           />
@@ -171,6 +176,7 @@ const TeamsWrapper = styled.View`
   min-height: 80px;
   margin: 10px 0px;
 `;
+
 const Container = styled(View)`
   flex: 1;
   width: 100%;
