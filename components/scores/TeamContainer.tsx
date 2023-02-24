@@ -1,10 +1,10 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { Image, View } from 'react-native';
+import { Image } from 'react-native';
+import { Avatar } from 'react-native-paper';
+import { Iteam } from '../../interfaces';
 import { H6, Horizontal } from '../../styles/styled-elements';
 import { GAME_STATUS } from '../../types';
-import { useTheme } from '@react-navigation/native';
-import { Iteam } from '../../interfaces';
-import { MaterialIcons } from '@expo/vector-icons';
 
 type TeamProps = {
   team: Iteam;
@@ -13,19 +13,24 @@ type TeamProps = {
 
 const TeamContainer = ({ team, currentTab }: TeamProps) => {
   const { colors } = useTheme();
+  const [first, last] = team.name;
+  const label = `${first?.slice(0, 1)}${last ? last?.slice(0, 1) : first?.slice(1, 2)}`;
   return (
     <Horizontal>
       <Horizontal style={{ justifyContent: 'flex-start' }}>
         {team.logo ? (
           <Image
-            source={team.logo ? { uri: team.logo } : {}}
-            style={{ width: 30, height: 30, marginRight: 10, borderRadius: 15 }}
+            source={{ uri: team.logo }}
+            style={{ width: 30, height: 30, marginRight: 10, borderRadius: 5 }}
             resizeMode='contain'
           />
         ) : (
-          <View style={{ width: 30, height: 30, marginRight: 10 }}>
-            <MaterialIcons name='no-photography' size={28} color='#cdcfd1' />
-          </View>
+          <Avatar.Text
+            labelStyle={{ fontSize: 18, textTransform: 'uppercase', fontWeight: 'bold' }}
+            label={label}
+            style={{ marginRight: 10, borderRadius: 5, backgroundColor: 'white' }}
+            size={30}
+          />
         )}
         <H6 style={{ color: '#CBB7B7' }}>
           {`${team?.ranking}\u0020`}

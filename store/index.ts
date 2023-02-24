@@ -12,14 +12,14 @@ import {
 } from 'redux-persist';
 
 import { actions } from '../types/api';
-import authReducer from './slices/authSlice';
-import groupReducer from './slices/groupSlice';
+import authReducer from './slices/auth';
+import groupReducer from './slices/group';
 import tournamentReducer from './slices/tournament';
 
 import storage from '@react-native-async-storage/async-storage';
-import { authApi } from './api-queries/auth-queries';
-import { groupApi } from './api-queries/group-queries';
-import { tournamentApi } from './api-queries/tournaments';
+import { authApi } from './queries/auth';
+import { groupApi } from './queries/group';
+import { tournamentApi } from './queries/tournament';
 
 const whitelist = ['auth'];
 const persistConfig = { key: 'root', storage, whitelist };

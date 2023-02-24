@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { IGroup, IJoinGroup } from './../../interfaces/index';
+import { IGroup, IJoinGroup } from '../../interfaces/index';
 
-import { groupApi } from '../api-queries/group-queries';
+import { groupApi } from '../queries/group';
 
 export interface IGroupState {
   groups: Array<IGroup>;

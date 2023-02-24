@@ -1,22 +1,16 @@
 import { useTheme } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  View as RNView,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { useState } from 'react';
+import { View as RNView, TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components/native';
 import RenderAvatar from '../../../../components/common/Avatar';
 import GroupDropdown from '../../../../components/common/GroupSelector';
+import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import TopTab from '../../../../components/common/TopTab';
 import { useAppSelector } from '../../../../hooks/useStore';
-import { useGetGRankingsQuery } from '../../../../store/api-queries/group-queries';
-import { useGetTournamentsQuery } from '../../../../store/api-queries/tournaments';
-import { H2, H4, H5, H6, Horizontal, Separator } from '../../../../styles/styled-elements';
-import { useGetMyProfileQuery } from '../../../../store/api-queries/auth-queries';
-import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
+import { useGetMyProfileQuery } from '../../../../store/queries/auth';
+import { useGetGRankingsQuery } from '../../../../store/queries/group';
+import { useGetTournamentsQuery } from '../../../../store/queries/tournament';
+import { H2, H5, H6, Horizontal, Separator } from '../../../../styles/styled-elements';
 
 const RankingScreen = () => {
   const { colors } = useTheme();
@@ -31,16 +25,7 @@ const RankingScreen = () => {
   }));
   const rounds = tournament?.rounds?.map(r => ({ title: r.name, ...r }));
   const [round = [], setRound] = useState<any>(rounds?.[0]);
-
-  const {
-    data: { data = [] } = {},
-    isFetching,
-    refetch,
-    isError,
-    error: err,
-  } = useGetGRankingsQuery({ groupId: selectedGroup?.id, roundId: round?.id });
-
-  useEffect(refetch, [round, selectedGroup]);
+  const [rankings, setRankings] = useState([]);
 
   return (
     <Container>
@@ -49,7 +34,8 @@ const RankingScreen = () => {
       {rounds?.length ? <TopTab tabs={rounds} onTabPress={setRound} /> : null}
       <Separator size='sm' />
       <SearchPaginated
-        data={[]}
+        data={rankings}
+        updateData={setRankings}
         searchable={false}
         style={{ paddingHorizontal: 0, paddingVertical: 0 }}
         contentContainerStyle={{ paddingVertical: 0 }}

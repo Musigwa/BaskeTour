@@ -11,7 +11,7 @@ import { useToast } from 'react-native-toast-notifications';
 import styled from 'styled-components/native';
 import TopTab from '../../components/common/TopTab';
 import { defaultScreenOptions } from '../../constants';
-import { useCreatePickMutation } from '../../store/api-queries/tournaments';
+import { useCreatePickMutation } from '../../store/queries/tournament';
 import { Horizontal } from '../../styles/styled-elements';
 import ChatNavigator from './Chat';
 

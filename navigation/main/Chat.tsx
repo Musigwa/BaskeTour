@@ -6,7 +6,7 @@ import { View } from 'react-native';
 import { defaultScreenOptions } from '../../constants';
 import ChatListScreen from '../../screens/main/tabs/chat';
 import InboxScreen from '../../screens/main/tabs/chat/Inbox';
-import { useGetSingleGroupQuery } from '../../store/api-queries/group-queries';
+import { useGetSingleGroupQuery } from '../../store/queries/group';
 import { H4, H6 } from '../../styles/styled-elements';
 import { ellipsizeText } from '../../utils/methods';
 

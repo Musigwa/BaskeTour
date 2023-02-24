@@ -10,6 +10,7 @@ export const FORGOT_PASSWORD = '/users/recover-password';
 export const RESET_PASSWORD = '/users/reset-password';
 export const CHANGE_PASSWORD = '/users/me/change-password';
 
+export const CHAT = '/group-chat';
 // Groups endpoints
 export const GROUPS = '/groups';
 export const SINGLE_GROUP = groupId => `${GROUPS}/${groupId}`;
@@ -22,6 +23,9 @@ export const GROUP_RANKING = (groupId, roundId) =>
 export const JOIN_GROUP = (groupId: string) => `${SINGLE_GROUP(groupId)}/join-group`;
 export const DELETE_GROUP = (groupId: string) => `${GROUPS}/${groupId}`;
 export const DELETE_GROUP_PLAYER = (groupId: string) => `${SINGLE_GROUP(groupId)}/remove-player`;
+export const USER_CONVERSATIONS = `${CHAT}/conversations`;
+export const GROUP_CHATS = (groupId: string) => `${CHAT}/${groupId}/messages`;
+export const MARK_AS_READ = (groupId: string) => `${CHAT}/${groupId}/view-messages`;
 
 // Games endpoints
 export const TOURNAMENTS = `/tournaments`;

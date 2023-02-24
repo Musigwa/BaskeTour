@@ -31,8 +31,8 @@ import ForgetPwdScreen from '../screens/auth/Forget';
 import VerifyScreen from '../screens/auth/Verify';
 import ResetPwdScreen from '../screens/auth/Reset';
 import UpdatePwdScreen from '../screens/auth/UpdatePassword';
-import { useGetMyProfileQuery } from '../store/api-queries/auth-queries';
-import { hasLoggedIn } from '../store/slices/authSlice';
+import { useGetMyProfileQuery } from '../store/queries/auth';
+import { hasLoggedIn } from '../store/slices/auth';
 
 const Stack = createStackNavigator();
 

@@ -1,15 +1,14 @@
 import { useTheme } from '@react-navigation/native';
+import _ from 'lodash';
+import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
-import { chats } from '../../../../constants/dummy';
-import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
+import useSocketIO from '../../../../hooks/socketIO';
+import { useAppSelector } from '../../../../hooks/useStore';
+import { useGetConversationsQuery } from '../../../../store/queries/group';
 import { H3, H4, H6, Horizontal, Separator } from '../../../../styles/styled-elements';
 import { ellipsizeText, genColor } from '../../../../utils/methods';
-import moment from 'moment';
-import useSocketIO from '../../../../hooks/socketIO';
-import _ from 'lodash';
-import { useAppSelector } from '../../../../hooks/useStore';
 
 const renderItem = ({ item: chat, index: idx, navigation, colors }) => {
   const handleItemPress = () => {
@@ -26,10 +25,10 @@ const renderItem = ({ item: chat, index: idx, navigation, colors }) => {
               { backgroundColor: genColor({ type: 'shade' }).toString() },
             ]}
           >
-            <H3 style={styles.avatar}>{chat.group?.groupName.slice(0, 2)}</H3>
+            <H3 style={styles.avatar}>{chat?.group?.groupName.slice(0, 2)}</H3>
           </View>
           <View style={{ flex: 0.9 }}>
-            <H4>{ellipsizeText(chat.group?.groupName, 20)}</H4>
+            <H4>{ellipsizeText(chat?.group?.groupName, 20)}</H4>
             <H6 style={{ color: colors.gray, marginTop: 5, textTransform: 'none' }}>
               {ellipsizeText(chat?.lastMessage?.message, 30)}
             </H6>
@@ -56,8 +55,9 @@ const renderItem = ({ item: chat, index: idx, navigation, colors }) => {
 const ChatListScreen = ({ navigation }) => {
   const { colors } = useTheme();
   const socket = useSocketIO();
-  const { user, token } = useAppSelector(({ auth }) => auth);
-  const [conversations, setConversations] = useState<any[]>([]);
+  const { user } = useAppSelector(({ auth }) => auth);
+  const [conversations, setConversations] = useState([]);
+  const [refetchOnFocus, setRefetchOnFocus] = useState(false);
 
   useEffect(() => {
     if (conversations.length === 1) {
@@ -70,17 +70,6 @@ const ChatListScreen = ({ navigation }) => {
     };
   }, []);
 
-  const fetchData = () => {
-    return fetch('https://api.ullipicks.com/api/v1/group-chat/conversations', {
-      headers: {
-        'x-auth-token': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => response.json())
-      .then(result => setConversations(result.data));
-  };
-
   const handleNGMessage = (message: any) => {
     setConversations(prev => {
       const found = prev.find(c => c?.group?.id === message.group.id) ?? {};
@@ -91,18 +80,21 @@ const ChatListScreen = ({ navigation }) => {
       }
       return [found, ...without];
     });
+    setRefetchOnFocus(!refetchOnFocus);
   };
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', fetchData);
-    return unsubscribe;
-  }, [navigation]);
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', handleNGMessage);
+  //   return unsubscribe;
+  // }, [navigation]);
 
   return (
     <SearchPaginated
       style={{ backgroundColor: 'white' }}
       data={conversations}
-      fetchMethod={useGetMyGroupsQuery}
+      options={{ refetchOnFocus }}
+      updateData={setConversations}
+      fetchMethod={useGetConversationsQuery}
       renderItem={args => renderItem({ ...args, navigation, colors })}
     />
   );

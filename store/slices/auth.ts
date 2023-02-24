@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { authApi } from '../api-queries/auth-queries';
+import { authApi } from '../queries/auth';
 
 export interface IAuthState {
   token: string;

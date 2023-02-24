@@ -15,8 +15,8 @@ import {
   useGetGamesQuery,
   useGetPicksQuery,
   useGetTournamentsQuery,
-} from '../../../../store/api-queries/tournaments';
-import { H2, Separator } from '../../../../styles/styled-elements';
+} from '../../../../store/queries/tournament';
+import { H3, Separator } from '../../../../styles/styled-elements';
 import { getActiveRound } from '../../../../utils/methods';
 import pickItem from './ListItem';
 
@@ -42,38 +42,10 @@ const PicksScreen = ({ navigation }) => {
   });
 
   const [picks, setPicks] = useState<Pick[]>([]);
-
-  const {
-    data: { data: scheduled = [] } = {},
-    isError,
-    error: err,
-  } = useGetGamesQuery(
-    { roundId: round?.id, status: 'STATUS_SCHEDULED' },
-    { refetchOnReconnect: true }
-  );
-
-  const { data: { data: completed = [] } = {} } = useGetGamesQuery(
-    { roundId: round?.id, status: 'STATUS_FINAL' },
-    { refetchOnReconnect: true }
-  );
+  const [games, setGames] = useState([]);
   const [limit] = useState(round?.allowedPicks ?? 3);
+  const [savePicks, { isLoading: loading }] = useCreatePickMutation();
 
-  const [savePicks, { isLoading: loading, isError: errorThrown, error }] = useCreatePickMutation();
-
-  useEffect(() => {
-    if (isError) {
-      let { message } = err?.data;
-      if (err?.data?.errors) message = JSON.stringify(err?.data?.errors);
-      toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
-    }
-  }, [isError, err, errorThrown]);
-
-  const games = useMemo(
-    () => (scheduled && scheduled.length ? scheduled : completed ?? []),
-    [scheduled, completed]
-  );
-
-  useEffect(refetchPicks, [selectedGroup?.id]);
   useEffect(() => {
     const prev = prevPicks
       .filter(({ groupId }) => selectedGroup.id === groupId)
@@ -136,6 +108,12 @@ const PicksScreen = ({ navigation }) => {
   };
 
   const updatePicks = (pick: Pick) => {
+    const timedOut = new Date(round?.startDate).getTime() <= new Date().getTime();
+    if (timedOut)
+      return Alert.alert(
+        'Picking timeout!',
+        `You can only make/change your picks before the first game of the current round \u21C0 "${round?.name}" starts!`
+      );
     const temp = [...picks];
     const peIdx = _.findIndex(picks, pick);
     const pickExists = peIdx !== -1;
@@ -152,6 +130,9 @@ const PicksScreen = ({ navigation }) => {
     if (!_.isEqual(picks, temp)) setPicks(temp);
   };
 
+  // Perform a fetch to get the previous picks for the selected group.
+  useEffect(refetchPicks, [selectedGroup?.id, round?.id]);
+
   return (
     <Container>
       <GroupSelector />
@@ -160,22 +141,21 @@ const PicksScreen = ({ navigation }) => {
       <Separator size='sm' />
       <>
         {games.length ? (
-          <View style={{ padding: 15 }}>
+          <View style={{ paddingHorizontal: 15, paddingTop: 5 }}>
             <Headline style={{ color: colors.primary }}>Time remaining to make picks</Headline>
-            <CountDown date={games[0]?.eventDate} />
+            <CountDown date={round?.startDate} />
             <Separator />
-            <H2 style={{ marginTop: 8, marginBottom: 10, textTransform: 'none' }}>
-              Pick teams to win
-            </H2>
-            <Headline style={{ color: colors.primary, marginBottom: 10 }}>
+            <H3 style={{ paddingVertical: 8, textTransform: 'none' }}>Pick teams to win</H3>
+            <H3 style={{ color: colors.primary }}>
               Select {limit} teams for {round?.name}
-            </Headline>
+            </H3>
           </View>
         ) : null}
 
         <SearchPaginated
           fetchMethod={useGetGamesQuery}
-          data={[]}
+          data={games}
+          updateData={setGames}
           searchable={false}
           params={{ roundId: round?.id, status: 'STATUS_SCHEDULED' }}
           renderItem={({ item, index }) =>

@@ -4,7 +4,7 @@ import { H3, H6, Horizontal, Separator } from '../../../../styles/styled-element
 
 import { useTheme } from '@react-navigation/native';
 import moment from 'moment';
-import { Pressable, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import ActionSheet, { ActionSheetRef } from 'react-native-actions-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useToast } from 'react-native-toast-notifications';
@@ -12,10 +12,7 @@ import SearchPaginated from '../../../../components/common/Lists/SearchPaginated
 import RadioButton from '../../../../components/common/RadioButton';
 import TopTab from '../../../../components/common/TopTab';
 import TeamContainer from '../../../../components/scores/TeamContainer';
-import {
-  useGetGamesQuery,
-  useGetTournamentsQuery,
-} from '../../../../store/api-queries/tournaments';
+import { useGetGamesQuery, useGetTournamentsQuery } from '../../../../store/queries/tournament';
 import { GAME_STATUS } from '../../../../types';
 import { getActiveRound } from '../../../../utils/methods';
 
@@ -53,6 +50,7 @@ const ScoresScreen = ({ route }) => {
     useMemo(() => getActiveRound(tournament), [tournament]) ?? tournament?.rounds[0];
 
   const [selectedRound, setSelectedRound] = useState(activeRound);
+  const [games, setGames] = useState([]);
 
   const response = useGetGamesQuery(
     { roundId: selectedRound?.id, status: currentTab, myScores },
@@ -63,7 +61,7 @@ const ScoresScreen = ({ route }) => {
   useEffect(() => {
     if (isError) {
       let { message } = err?.data;
-      if (err.data.errors) message = JSON.stringify(err.data.errors);
+      if (err.data.errors) message = JSON.stringify(err?.data?.errors);
       toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
     }
   }, [isError, err]);
@@ -115,7 +113,8 @@ const ScoresScreen = ({ route }) => {
       />
       <Separator size='sm' />
       <SearchPaginated
-        data={[]}
+        data={games}
+        updateData={setGames}
         searchable={false}
         params={{ roundId: selectedRound?.id, status: currentTab, myScores }}
         options={options}
@@ -124,23 +123,35 @@ const ScoresScreen = ({ route }) => {
           return (
             <View key={idx}>
               <Horizontal>
-                <TeamsWrapper
-                  style={{ flex: 0.76, borderRightWidth: 1.5, borderRightColor: '#e9ebed' }}
-                >
+                <TeamsWrapper style={{ flex: 0.76 }}>
                   {[teamA, teamB].map((team, idx) => (
                     <TeamContainer key={idx} team={team} currentTab={currentTab} />
                   ))}
                 </TeamsWrapper>
+                <View
+                  style={{
+                    minHeight: 50,
+                    width: StyleSheet.hairlineWidth,
+                    backgroundColor: 'gray',
+                  }}
+                />
                 {currentTab === 'STATUS_FINAL' ? (
                   <H6>Final</H6>
                 ) : (
                   <View>
                     {currentTab === 'STATUS_IN_PROGRESS' ? (
                       <H6 style={{ color: colors.primary }}>{gameClock}- 1st</H6>
-                    ) : null}
-                    <H6>{moment(eventDate).format('ddd, MM/DD')}</H6>
-                    <H6>{moment(eventDate).format('LT')}</H6>
-                    {/* <H6>TCU -9.5</H6> Flagsmithed for the Nov, 24 - 27th tournament */}
+                    ) : (
+                      <View>
+                        <H6 style={{ fontWeight: 'bold' }}>
+                          {moment(eventDate).format('ddd, MM/DD')}
+                        </H6>
+                        <H6 style={{ textTransform: 'none', fontWeight: 'bold' }}>
+                          {moment(eventDate).format('LT')}
+                        </H6>
+                      </View>
+                    )}
+                    <H6>TCU -9.5</H6>
                   </View>
                 )}
               </Horizontal>

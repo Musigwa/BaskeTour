@@ -16,8 +16,8 @@ import { Button, useTheme } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 import { ToastOptions } from 'react-native-toast-notifications/lib/typescript/toast';
 import { useAppDispatch } from '../../hooks/useStore';
-import { useLoginMutation } from '../../store/api-queries/auth-queries';
-import { hasLoggedIn } from '../../store/slices/authSlice';
+import { useLoginMutation } from '../../store/queries/auth';
+import { hasLoggedIn } from '../../store/slices/auth';
 import { openBrowser } from '../../utils/methods';
 
 const LoginScreen = ({ navigation }) => {

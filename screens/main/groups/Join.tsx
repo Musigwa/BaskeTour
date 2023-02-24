@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import Button from '../../../components/common/Buttons';
 import PinCodeInput from '../../../components/common/PinCodeInput';
 import { useAppSelector } from '../../../hooks/useStore';
-import { useJoinGroupMutation } from '../../../store/api-queries/group-queries';
+import { useJoinGroupMutation } from '../../../store/queries/group';
 import { ErrorMessage, H2, H6, Paragraph } from '../../../styles/styled-elements';
 
 const JoinGroupScreen = ({ navigation }) => {

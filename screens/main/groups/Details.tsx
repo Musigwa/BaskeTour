@@ -22,7 +22,7 @@ import {
   useRemoveGroupMutation,
   useRemoveGroupPlayerMutation,
   useUpdateGroupMutation,
-} from '../../../store/api-queries/group-queries';
+} from '../../../store/queries/group';
 import { H2, H3, H5, H6, Horizontal, Separator } from '../../../styles/styled-elements';
 import { ellipsizeText } from '../../../utils/methods';
 

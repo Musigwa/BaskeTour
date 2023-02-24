@@ -4,12 +4,15 @@ import {
   DELETE_GROUP_PLAYER,
   GET_GROUPS,
   GROUPS,
+  GROUP_CHATS,
   GROUP_RANKING,
   JOIN_GROUP,
+  MARK_AS_READ,
   MY_GROUPS,
   SINGLE_GROUP,
+  USER_CONVERSATIONS,
 } from '../endpoints';
-import baseQuery from './baseQuery';
+import baseQuery from './';
 
 type MyGroupProps = {
   searchQuery?: string;
@@ -35,7 +38,7 @@ export const groupApi = createApi({
         MY_GROUPS(searchQuery, page, perPage),
     }),
     getSingleGroup: builder.query<any, { groupId: string }>({
-      query: ({ groupId }: { groupId: string }) => SINGLE_GROUP(groupId),
+      query: ({ groupId }) => SINGLE_GROUP(groupId),
     }),
     joinGroup: builder.mutation<any, { groupId: string; groupPIN: string }>({
       query: payload => ({
@@ -64,6 +67,22 @@ export const groupApi = createApi({
         body: { groupName, groupPIN },
       }),
     }),
+
+    getConversations: builder.query<any, any>({
+      query: () => ({ url: USER_CONVERSATIONS, method: 'GET' }),
+    }),
+
+    getGroupChats: builder.query<any, { groupId: string }>({
+      query: ({ groupId }) => ({ url: GROUP_CHATS(groupId), method: 'GET' }),
+    }),
+
+    sendGroupMessage: builder.mutation<any, { groupId: string; body: any }>({
+      query: ({ groupId, body }) => ({ url: GROUP_CHATS(groupId), method: 'POST', body }),
+    }),
+
+    clearUnreadStatus: builder.mutation<any, { groupId: string }>({
+      query: ({ groupId }) => ({ url: MARK_AS_READ(groupId), method: 'PATCH' }),
+    }),
   }),
 });
 
@@ -77,4 +96,8 @@ export const {
   useRemoveGroupPlayerMutation,
   useRemoveGroupMutation,
   useUpdateGroupMutation,
+  useGetConversationsQuery,
+  useGetGroupChatsQuery,
+  useSendGroupMessageMutation,
+  useClearUnreadStatusMutation,
 } = groupApi;

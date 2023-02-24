@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
 import RenderAvatar from '../../../components/common/Avatar';
 import SearchPaginated from '../../../components/common/Lists/SearchPaginated';
 import { useAppSelector } from '../../../hooks/useStore';
-import { useGetMyGroupsQuery } from '../../../store/api-queries/group-queries';
+import { useGetMyGroupsQuery } from '../../../store/queries/group';
 import { H3, H5, H6, Horizontal } from '../../../styles/styled-elements';
 
 const ListFooterComponent = ({ navigation, colors }) => {

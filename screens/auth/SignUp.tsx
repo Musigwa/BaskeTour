@@ -11,7 +11,7 @@ import IndicatorHeader from '../../components/Indicator';
 import FakeButton from '../../components/common/Buttons';
 import Input from '../../components/common/Input';
 
-import { useSignupMutation } from '../../store/api-queries/auth-queries';
+import { useSignupMutation } from '../../store/queries/auth';
 
 import { useTheme } from '@react-navigation/native';
 import { Alert, View } from 'react-native';

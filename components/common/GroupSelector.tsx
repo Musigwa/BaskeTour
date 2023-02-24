@@ -4,8 +4,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 import { Menu } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../../hooks/useStore';
-import { useGetMyGroupsQuery } from '../../store/api-queries/group-queries';
-import { selectGroup } from '../../store/slices/groupSlice';
+import { useGetMyGroupsQuery } from '../../store/queries/group';
+import { selectGroup } from '../../store/slices/group';
 import { H4, H5, Horizontal, Separator } from '../../styles/styled-elements';
 import SearchPaginated from './Lists/SearchPaginated';
 

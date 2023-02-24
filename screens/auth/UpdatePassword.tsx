@@ -13,8 +13,8 @@ import { useTheme } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 import { ToastOptions } from 'react-native-toast-notifications/lib/typescript/toast';
 import { useAppDispatch } from '../../hooks/useStore';
-import { useUpdatePasswordMutation } from '../../store/api-queries/auth-queries';
-import { hasLoggedIn } from '../../store/slices/authSlice';
+import { useUpdatePasswordMutation } from '../../store/queries/auth';
+import { hasLoggedIn } from '../../store/slices/auth';
 
 const UpdatePwdScreen = ({ navigation }) => {
   const dispatch = useAppDispatch();

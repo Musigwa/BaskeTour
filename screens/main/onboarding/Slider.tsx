@@ -10,7 +10,7 @@ import { useAppDispatch } from '../../../hooks/useStore';
 import { View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { steps } from '../../../constants';
-import { completedOnboarding } from '../../../store/slices/authSlice';
+import { completedOnboarding } from '../../../store/slices/auth';
 import { H2, H3, Paragraph } from '../../../styles/styled-elements';
 
 const OnboardingScreen = () => {
