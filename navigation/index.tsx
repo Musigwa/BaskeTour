@@ -32,19 +32,18 @@ import VerifyScreen from '../screens/auth/Verify';
 import ResetPwdScreen from '../screens/auth/Reset';
 import UpdatePwdScreen from '../screens/auth/UpdatePassword';
 import { useGetMyProfileQuery } from '../store/queries/auth';
-import { hasLoggedIn } from '../store/slices/auth';
+import { hasLoggedIn, completedOnboarding as wasOnboarded } from '../store/slices/auth';
 
 const Stack = createStackNavigator();
 
 const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
-  const { isLoggedIn } = useAppSelector(state => state.auth);
-  const isOnboarded = useAppSelector(({ auth }) => auth.completedOnboarding);
+  const { isLoggedIn, completedOnboarding, user } = useAppSelector(state => state.auth);
   const dispatch = useAppDispatch();
-  const { isFetching, data } = useGetMyProfileQuery({});
+  useGetMyProfileQuery({});
 
   useEffect(() => {
-    if (!isFetching && data) dispatch(hasLoggedIn(true));
-  }, [isFetching, data, dispatch]);
+    dispatch(hasLoggedIn(!!user));
+  }, [user?.id]);
 
   return (
     <ToastProvider textStyle={{ fontSize: 18 }}>
@@ -56,8 +55,8 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
           {isLoggedIn ? (
             <Stack.Group>
               <Stack.Screen
-                name={isOnboarded ? 'SetupType' : 'Slider'}
-                component={isOnboarded ? SetupTypeScreen : SliderScreen}
+                name={completedOnboarding ? 'SetupType' : 'Slider'}
+                component={completedOnboarding ? SetupTypeScreen : SliderScreen}
               />
               <Stack.Screen name='Tabs' component={BottomTabNavigator} />
               {/* The user | settings entity screens */}

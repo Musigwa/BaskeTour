@@ -23,7 +23,11 @@ import { tournamentApi } from './queries/tournament';
 
 const whitelist = ['auth'];
 const persistConfig = { key: 'root', storage, whitelist };
-const authPersistConfig = { key: 'auth', storage: storage, whitelist: ['token'] };
+const authPersistConfig = {
+  key: 'auth',
+  storage: storage,
+  whitelist: ['token', 'completedOnboarding'],
+};
 
 const appReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
