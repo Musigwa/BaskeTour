@@ -13,8 +13,8 @@ import { useTheme } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 import { ToastOptions } from 'react-native-toast-notifications/lib/typescript/toast';
 import { useAppDispatch } from '../../hooks/useStore';
-import { useResetPassordMutation } from '../../store/api-queries/auth-queries';
-import { hasLoggedIn } from '../../store/slices/authSlice';
+import { useResetPassordMutation } from '../../store/queries/auth';
+import { hasLoggedIn } from '../../store/slices/auth';
 
 const ResetPwdScreen = ({ route }) => {
   const dispatch = useAppDispatch();

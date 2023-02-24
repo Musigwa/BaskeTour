@@ -1,91 +1,120 @@
-import { AntDesign, MaterialIcons } from '@expo/vector-icons';
-import { useNavigation, useTheme } from '@react-navigation/native';
+import { useTheme } from '@react-navigation/native';
 import _ from 'lodash';
-import moment from 'moment';
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, Image, ScrollView, View } from 'react-native';
+import { Alert, View } from 'react-native';
+import { Button } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
-import styled from 'styled-components/native';
 import CountDown from '../../../../components/common/CountDown';
 import GroupSelector from '../../../../components/common/GroupSelector';
+import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import TopTab from '../../../../components/common/TopTab';
 import { useAppSelector } from '../../../../hooks/useStore';
 import {
+  useCreatePickMutation,
   useGetGamesQuery,
   useGetPicksQuery,
   useGetTournamentsQuery,
-} from '../../../../store/api-queries/tournaments';
-import { H2, H4, Horizontal, Separator } from '../../../../styles/styled-elements';
-import { getActiveRound } from '../../../../utils/methods';
+} from '../../../../store/queries/tournament';
+import { H3, Separator } from '../../../../styles/styled-elements';
+import pickItem from './ListItem';
 
-type Pick = { eventId: string; teamId: string };
+type Pick = { eventId: string; teamId: string; groupId: string };
 const statuses = [{ title: 'East' }, { title: 'South' }, { title: 'Midwest' }, { title: 'West' }];
 
-const PicksScreen = () => {
+const PicksScreen = ({ navigation }) => {
   const { colors } = useTheme();
-  const { data: [tournament] = [] } = useGetTournamentsQuery();
-  const round = useMemo(() => getActiveRound(tournament), [tournament]) ?? tournament?.rounds[0];
-  const selectedGroup = useAppSelector(({ groups }) => groups.selectedGroup);
+  const toast = useToast();
 
-  const resp = useGetPicksQuery({
+  useGetTournamentsQuery();
+  const { selectedGroup, round, tournament } = useAppSelector(({ groups, tournament }) => ({
+    selectedGroup: groups.selectedGroup,
+    round: tournament.activeRound,
+    tournament: tournament.selectedTour,
+  }));
+
+  const {
+    refetch: refetchPicks,
+    isFetching: isFetchingPicks,
+    data: { data: prevPicks = [] } = {},
+  } = useGetPicksQuery({
     tournamentId: tournament?.id,
     roundId: round?.id,
     groupId: selectedGroup?.id,
   });
-  const { refetch: refetchPicks, isSuccess, isLoading, data: { data: prevPicks = [] } = {} } = resp;
 
-  const [picks, setPicks] = useState<Pick[]>(
-    prevPicks
-      .filter(p => selectedGroup.id === p.groupId)
-      .map(({ teamId, eventId }) => ({ teamId, eventId }))
-  );
-  const navigation = useNavigation();
-  const toast = useToast();
-
-  const {
-    data: { data: scheduled = [] } = {},
-    isFetching,
-    isError,
-    error: err,
-    refetch: refetchGames,
-  } = useGetGamesQuery(
-    { roundId: round?.id, status: 'STATUS_SCHEDULED' },
-    { refetchOnReconnect: true }
-  );
-  const { data: { data: completed = [] } = {} } = useGetGamesQuery(
-    { roundId: round?.id, status: 'STATUS_FINAL' },
-    { refetchOnReconnect: true }
-  );
+  const [picks, setPicks] = useState<Pick[]>([]);
+  const [games, setGames] = useState([]);
   const [limit] = useState(round?.allowedPicks ?? 3);
+  const [savePicks, { isLoading: loading }] = useCreatePickMutation();
 
   useEffect(() => {
-    if (isError) {
-      let { message } = err?.data;
-      if (err.data.errors) message = JSON.stringify(err.data.errors);
-      toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
-    }
-  }, [isError, err]);
-
-  const games = scheduled && scheduled.length ? scheduled : completed ?? [];
-
-  useEffect(() => {
-    refetchPicks();
     const prev = prevPicks
       .filter(({ groupId }) => selectedGroup.id === groupId)
-      .map(({ teamId, eventId }) => ({ teamId, eventId }));
+      .map(({ groupId, teamId, eventId }) => ({ groupId, teamId, eventId }));
     setPicks(prev);
-  }, [selectedGroup?.id]);
+  }, [isFetchingPicks]);
+
+  const handleSavePicks = async () => {
+    try {
+      const { status } = await savePicks({
+        roundId: round?.id,
+        groupId: selectedGroup?.id,
+        picks: picks.map(({ teamId, eventId }) => ({ teamId, eventId })),
+      }).unwrap();
+      if (status === 201) {
+        toast.show(`Your picks for "${selectedGroup.groupName}" were saved!`, {
+          type: 'success',
+          placement: 'center',
+        });
+        refetchPicks();
+      }
+    } catch (error) {
+      if (error.message) toast.show(error?.message, { type: 'danger', placement: 'center' });
+      else if (error.data) toast.show(error?.data.message, { type: 'danger', placement: 'center' });
+      else toast.show(JSON.stringify(error), { type: 'danger', placement: 'center' });
+    }
+  };
+
+  const limitReached = useMemo(
+    () => picks.length === limit && selectedGroup.id,
+    [picks.length, limit, selectedGroup.id]
+  );
+
+  const picksChanged = !picks.every(elmt => _.findIndex(prevPicks, elmt) !== -1);
 
   useLayoutEffect(() => {
-    navigation.setParams({
-      picks,
-      roundId: round?.id,
-      groupId: selectedGroup?.id,
-      canSubmit: picks.length === limit,
-    });
-  }, [picks.length, selectedGroup?.id]);
+    navigation.setOptions({ headerLeft });
+  }, [limitReached, loading, picksChanged, navigation]);
+
+  const headerLeft = () => {
+    const canSubmit = limitReached && !loading && picksChanged;
+    return (
+      <Button
+        mode='outlined'
+        onPress={handleSavePicks}
+        labelStyle={{ fontSize: 18, fontWeight: '700' }}
+        uppercase={false}
+        style={{
+          marginLeft: 15,
+          borderColor: canSubmit ? colors.primary : colors.disabled,
+          borderWidth: 2,
+        }}
+        theme={{ roundness: 8 }}
+        disabled={!canSubmit}
+        loading={loading}
+      >
+        {`Sav${loading ? 'ing' : 'e'}`}
+      </Button>
+    );
+  };
 
   const updatePicks = (pick: Pick) => {
+    const timedOut = new Date(round?.startDate).getTime() <= new Date().getTime();
+    if (timedOut)
+      return Alert.alert(
+        'Picking timeout!',
+        `You can only make/change your picks before the first game of the current round \u21C0 "${round?.name}" starts!`
+      );
     const temp = [...picks];
     const peIdx = _.findIndex(picks, pick);
     const pickExists = peIdx !== -1;
@@ -102,139 +131,51 @@ const PicksScreen = () => {
     if (!_.isEqual(picks, temp)) setPicks(temp);
   };
 
+  // Perform a fetch to get the previous picks for the selected group.
+  useEffect(refetchPicks, [selectedGroup?.id, round?.id]);
+
   return (
-    <Container>
+    <>
       <GroupSelector />
       <Separator size='sm' />
       <TopTab tabs={statuses} />
       <Separator size='sm' />
-      {isFetching ? (
-        <ActivityIndicator
-          color={colors.primary}
-          size='large'
-          style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}
-        />
-      ) : games && games?.length ? (
-        <>
-          <View style={{ padding: 15 }}>
-            <Headline style={{ color: colors.primary }}>Time remaining to make picks</Headline>
-            <CountDown date={games[0].eventDate} />
-            <Separator />
-            <H2 style={{ marginTop: 35, marginBottom: 10, textTransform: 'none' }}>
-              Pick teams to win
-            </H2>
-            <Headline style={{ color: colors.primary }}>
-              Select {limit} teams for {round?.name}
-            </Headline>
-          </View>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {games.map((event, idx) => {
-              const { id, teamA, teamB, eventDate } = event;
-              const eventId = id ?? event.eventId;
-              return (
-                <View key={idx}>
-                  {[teamA, teamB].map(({ teamId, logo, name, ranking }, i) => (
-                    <View key={i} style={{ paddingHorizontal: 15 }}>
-                      <Card
-                        style={{
-                          backgroundColor:
-                            _.findIndex(picks, { teamId, eventId }) !== -1
-                              ? colors.primary
-                              : colors.card,
-                        }}
-                        activeOpacity={0.8}
-                        onPress={() => updatePicks({ teamId, eventId })}
-                      >
-                        <Horizontal style={{ flex: 0.86 }}>
-                          <AvatarContainer>
-                            {logo ? (
-                              <Image
-                                source={{ uri: logo }}
-                                resizeMode='contain'
-                                resizeMethod='auto'
-                                style={{ width: 35, height: 35 }}
-                              />
-                            ) : (
-                              <MaterialIcons name='no-photography' size={24} color='#cdcfd1' />
-                            )}
-                          </AvatarContainer>
-                          <View>
-                            <BoldText style={{ fontSize: 12 }}>
-                              {moment(eventDate).format('ddd, MM/D/YYYY, h:mm A')}
-                            </BoldText>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                              <BoldText style={{ fontSize: 14, color: '#979797' }}>
-                                ({ranking})
-                              </BoldText>
-                              <BoldText style={{ fontSize: 18 }}>{name}</BoldText>
-                            </View>
-                          </View>
-                        </Horizontal>
-                        {_.findIndex(prevPicks, { teamId, eventId }) !== -1 ? (
-                          <AntDesign name='checksquare' size={24} color={colors.background} />
-                        ) : null}
-                      </Card>
-                      {!i ? (
-                        <BoldText style={{ fontSize: 12, textAlign: 'center' }}>VS</BoldText>
-                      ) : null}
-                    </View>
-                  ))}
-                  {idx !== games.length - 1 ? <Separator /> : null}
-                </View>
-              );
-            })}
-          </ScrollView>
-        </>
-      ) : (
-        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-          <H4>No scheduled games yet to pick from!</H4>
+      {games.length ? (
+        <View style={{ paddingHorizontal: 15, paddingTop: 2 }}>
+          <H3 style={{ color: colors.primary, textTransform: 'none' }}>
+            Time remaining to make picks
+          </H3>
+          <CountDown date={round?.startDate} />
+          <Separator />
+          <H3 style={{ paddingVertical: 8, textTransform: 'none' }}>Pick teams to win</H3>
+          <H3 style={{ color: colors.primary, textTransform: 'none' }}>
+            Select {limit} teams for {round?.name}
+          </H3>
         </View>
-      )}
-    </Container>
+      ) : null}
+
+      <SearchPaginated
+        fetchMethod={useGetGamesQuery}
+        data={games}
+        updateData={setGames}
+        searchable={false}
+        params={{ roundId: round?.id, status: 'STATUS_SCHEDULED' }}
+        renderItem={({ item, index }) =>
+          pickItem({
+            item,
+            index,
+            handlePress: updatePicks,
+            colors,
+            selectedGroup,
+            prevPicks,
+            picks,
+            games,
+          })
+        }
+        emptyListText='No scheduled games yet to pick from!'
+      />
+    </>
   );
 };
-
-const Container = styled.View`
-  flex: 1;
-  background-color: white;
-`;
-
-const Headline = styled.Text`
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 20px;
-  letter-spacing: 0.8px;
-  text-align: left;
-`;
-
-const HorizontalView = styled.TouchableOpacity`
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row;
-`;
-
-const Card = styled(HorizontalView)`
-  background: white;
-  box-shadow: 0px 0px 20px rgba(35, 20, 115, 0.08);
-  border-radius: 4px;
-  padding: 25px;
-  margin-vertical: 20px;
-`;
-
-const AvatarContainer = styled.ImageBackground`
-  background: #ffffff;
-  border: 2px solid #cccccc;
-  border-radius: 4px;
-  width: 54px;
-  height: 54px;
-  justify-content: center;
-  align-items: center;
-`;
-
-const BoldText = styled.Text`
-  line-height: 20px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-`;
 
 export default PicksScreen;

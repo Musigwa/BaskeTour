@@ -1,11 +1,10 @@
 import { Entypo } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
-import React, { FC, PropsWithChildren } from 'react';
+import React, { FC, PropsWithChildren, useState } from 'react';
 import { Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
 import RenderAvatar from '../../../components/common/Avatar';
 import SearchPaginated from '../../../components/common/Lists/SearchPaginated';
-import { useAppSelector } from '../../../hooks/useStore';
-import { useGetMyGroupsQuery } from '../../../store/api-queries/group-queries';
+import { useGetMyGroupsQuery } from '../../../store/queries/group';
 import { H3, H5, H6, Horizontal } from '../../../styles/styled-elements';
 
 const ListFooterComponent = ({ navigation, colors }) => {
@@ -43,9 +42,9 @@ const renderItem: FC<PropsWithChildren<RenderItemProps>> = ({
       key={idx}
       onPress={() => navigation.navigate('GroupDetails', { group })}
     >
-      <H6 style={{ color: group.availableSpots ? colors.gray : colors.primary }}>
+      <H6 style={{ color: group?.availableSpots ? colors.gray : colors.primary }}>
         {`${group.players.length} member${group.players.length > 1 ? 's' : ''}${
-          !group.availableSpots ? `, ${group.availableSpots} available spots` : ''
+          !group.availableSpots ? `, ${group?.availableSpots} available spots` : ''
         }`}
       </H6>
       <Horizontal>
@@ -78,14 +77,12 @@ const renderItem: FC<PropsWithChildren<RenderItemProps>> = ({
 
 const GroupListScreen: FC<PropsWithChildren<{ navigation: any }>> = ({ navigation }) => {
   const { colors } = useTheme();
-  const { myGroups } = useAppSelector(({ auth: { user }, groups: { myGroups } }) => ({
-    user,
-    myGroups,
-  }));
+  const [myGroups, setMyGroups] = useState([]);
 
   return (
     <SearchPaginated
       data={myGroups}
+      updateData={setMyGroups}
       fetchMethod={useGetMyGroupsQuery}
       ListFooterComponent={ListFooterComponent({ navigation, colors })}
       renderItem={args => renderItem({ ...args, navigation, colors })}

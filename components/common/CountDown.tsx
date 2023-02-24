@@ -10,7 +10,7 @@ const CountDown = ({ date }: { date: Date } & any) => {
   }, []);
 
   return (
-    <Horizontal style={{ marginVertical: 15 }}>
+    <Horizontal style={{ marginVertical: 5 }}>
       {['Days', 'Hours', 'Minutes', 'Seconds'].map((el, idx) => (
         <View key={idx}>
           <H2>{timer[idx]}</H2>

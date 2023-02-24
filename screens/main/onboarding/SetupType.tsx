@@ -13,7 +13,7 @@ import Logo from '../../../assets/svgs/Logo';
 
 import { useNavigation, useTheme } from '@react-navigation/native';
 import Container from '../../../components/common/containers/Container';
-import { useGetTournamentsQuery } from '../../../store/api-queries/tournaments';
+import { useGetTournamentsQuery } from '../../../store/queries/tournament';
 import { H3, H4 } from '../../../styles/styled-elements';
 
 const SetupTypeScreen = ({ route }) => {

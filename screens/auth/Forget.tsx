@@ -11,7 +11,7 @@ import { H2, H3 } from '../../styles/styled-elements';
 import { Button, useTheme } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 import { useAppDispatch } from '../../hooks/useStore';
-import { useForgotPassordMutation } from '../../store/api-queries/auth-queries';
+import { useForgotPassordMutation } from '../../store/queries/auth';
 
 const ForgetPwdScreen = ({ navigation }) => {
   const dispatch = useAppDispatch();

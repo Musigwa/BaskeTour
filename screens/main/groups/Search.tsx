@@ -7,8 +7,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SearchPaginated from '../../../components/common/Lists/SearchPaginated';
 import Container from '../../../components/common/containers/Container';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
-import { useGetGroupsQuery } from '../../../store/api-queries/group-queries';
-import { selectGroup } from '../../../store/slices/groupSlice';
+import { useGetGroupsQuery } from '../../../store/queries/group';
+import { selectGroup } from '../../../store/slices/group';
 import { ellipsizeText } from '../../../utils/methods';
 
 const SearchGroup = ({ navigation }) => {

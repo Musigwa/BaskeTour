@@ -18,7 +18,11 @@ import { Avatar } from 'react-native-paper';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import useSocketIO from '../../../../hooks/socketIO';
 import { useAppSelector } from '../../../../hooks/useStore';
-import { useGetMyGroupsQuery } from '../../../../store/api-queries/group-queries';
+import {
+  useClearUnreadStatusMutation,
+  useGetGroupChatsQuery,
+  useSendGroupMessageMutation,
+} from '../../../../store/queries/group';
 import { H5, H6, Horizontal } from '../../../../styles/styled-elements';
 import { createFormData, ellipsizeText } from '../../../../utils/methods';
 import PhotoModal from './Photo';
@@ -81,16 +85,20 @@ const InboxScreen = ({ route }: any) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>('');
 
+  const [requestMessageSend] = useSendGroupMessageMutation();
+  const [requestClearUnreadStatus] = useClearUnreadStatusMutation();
+
   const handleUnMount = () => {
     clearUnreadStatus();
     socket.off('NEW_GROUP_MESSAGE');
   };
 
-  const clearUnreadStatus = () => {
-    fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/view-messages`, {
-      headers: { 'x-auth-token': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      method: 'patch',
-    }).then(response => {});
+  const clearUnreadStatus = async () => {
+    try {
+      await requestClearUnreadStatus({ groupId: chat?.group.id });
+    } catch (error) {
+      console.log('error', error);
+    }
   };
 
   const handleNGMessage = (message: any) => {
@@ -120,38 +128,26 @@ const InboxScreen = ({ route }: any) => {
   useEffect(() => {
     clearUnreadStatus();
     socket.on('NEW_GROUP_MESSAGE', handleNGMessage);
-    fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`, {
-      headers: { 'x-auth-token': `Bearer ${token}`, 'Content-Type': 'application/json' },
-    })
-      .then(response => response.json())
-      .then(result => {
-        setMessages(result.data);
-      });
     return handleUnMount;
   }, []);
 
-  const handleSendMessage = () => {
-    if (!text.length) return;
-    setText('');
-    resetPhoto();
-    const createdAt = new Date().toISOString();
-    const fileUrl = photo?.uri ?? null;
-    const newMessage = { message, createdAt };
-    const newMessageMeta = { ...newMessage, sender: user, group: chat.group, fileUrl };
-    setMessages(state => [...state, { ...newMessage, ...newMessageMeta }]);
-
-    const formData = createFormData(photo, newMessage, 'messageFile');
-    fetch(`https://api.ullipicks.com/api/v1/group-chat/${chat.group.id}/messages`, {
-      body: photo.uri ? formData : JSON.stringify(newMessage),
-      headers: { 'x-auth-token': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      method: 'post',
-    })
-      .then(resp => resp.json())
-      .then(res => {})
-      .catch(err => {
-        console.log('The error', err);
-      });
-    inputRef?.current?.clear?.();
+  const handleSendMessage = async () => {
+    try {
+      if (!text.length) return;
+      setText('');
+      resetPhoto();
+      const createdAt = new Date().toISOString();
+      const fileUrl = photo?.uri ?? null;
+      const newMessage = { message, createdAt };
+      const newMessageMeta = { ...newMessage, sender: user, group: chat.group, fileUrl };
+      setMessages(state => [...state, { ...newMessage, ...newMessageMeta }]);
+      inputRef?.current?.clear?.();
+      const formData = createFormData(photo, newMessage, 'messageFile');
+      const body = photo.uri ? formData : newMessage;
+      await requestMessageSend({ body, groupId: chat.group.id }).unwrap();
+    } catch (error) {
+      console.log('error', error);
+    }
   };
 
   const resetPhoto = () => setPhoto({});
@@ -178,13 +174,15 @@ const InboxScreen = ({ route }: any) => {
     >
       <PhotoModal visible={modalVisible} hideModal={hideModal} imageUrl={imageUrl} />
       <SearchPaginated
-        data={messages.sort(
-          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        data={[...messages].sort(
+          (a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         )}
         renderItem={args =>
           renderItem({ ...args, colors, user, onMessagePress: handleMessagePress })
         }
-        fetchMethod={useGetMyGroupsQuery}
+        fetchMethod={useGetGroupChatsQuery}
+        params={{ groupId: chat.group.id }}
+        updateData={setMessages}
         style={styles.container}
         searchable={false}
         scrollOnContentChange

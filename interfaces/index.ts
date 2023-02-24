@@ -91,3 +91,13 @@ export interface ITournament {
   rounds: any;
   id: string;
 }
+
+export interface IRound {
+  roundNumber: number;
+  allowedPicks: number;
+  name: string;
+  startDate: string;
+  endDate: string;
+  tournament: string;
+  id: string;
+}

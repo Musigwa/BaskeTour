@@ -4,8 +4,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 import { Menu } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../../hooks/useStore';
-import { useGetMyGroupsQuery } from '../../store/api-queries/group-queries';
-import { selectGroup } from '../../store/slices/groupSlice';
+import { useGetMyGroupsQuery } from '../../store/queries/group';
+import { selectGroup } from '../../store/slices/group';
 import { H4, H5, Horizontal, Separator } from '../../styles/styled-elements';
 import SearchPaginated from './Lists/SearchPaginated';
 
@@ -50,11 +50,11 @@ const GroupDropdown = () => {
           fetchMethod={useGetMyGroupsQuery}
           searchable={false}
           renderItem={({ item, index }) => {
-            const selected = selectedGroup?.groupName === item.groupName;
+            const selected = selectedGroup?.id === item.id;
             return (
               <Pressable onPress={() => handleSelect(item)}>
                 <Horizontal key={index} style={{ paddingVertical: 15 }}>
-                  <H5 style={{ color: selected ? colors.primary : '' }}>{item.groupName}</H5>
+                  <H5 style={{ color: selected ? colors.primary : 'black' }}>{item.groupName}</H5>
                   {selected ? <AntDesign name='check' size={24} color={colors.primary} /> : null}
                 </Horizontal>
               </Pressable>

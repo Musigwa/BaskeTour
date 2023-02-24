@@ -26,7 +26,7 @@ const PhotoUploader = ({ onSelect, style, imageUrl }: Props) => {
 
   return (
     <TouchableOpacity onPress={pickImage} activeOpacity={0.8}>
-      <Wrapper style={style} source={{ uri: imageUrl }}>
+      <Wrapper style={style} source={imageUrl ? { uri: imageUrl } : null}>
         {!imageUrl ? (
           <MaterialIcons
             name='add-a-photo'

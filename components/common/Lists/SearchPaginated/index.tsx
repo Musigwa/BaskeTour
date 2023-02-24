@@ -1,27 +1,21 @@
 import _ from 'lodash';
-import React, { ComponentType, FC, memo, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  FlatListProps,
-  ListRenderItem,
-  StyleSheet,
-  View,
-  ViewStyle,
-} from 'react-native';
-import { H4, H5, Horizontal } from '../../../../styles/styled-elements';
-import Searchbar from '../../Inputs/Searchbar';
+import React, { ComponentType, FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FlatList, FlatListProps, ListRenderItem, StyleSheet, View, ViewStyle } from 'react-native';
 import { useTheme } from 'react-native-paper';
+import { H5 } from '../../../../styles/styled-elements';
+import Searchbar from '../../Inputs/Searchbar';
 import Loading from '../../Loading';
 
 type SearchPaginatedProps = FlatListProps<any> & {
   // Required properties
   renderItem: ListRenderItem<any>;
-  data: any[];
+  data: readonly any[] | null | undefined;
+  updateData: (data: []) => void;
   fetchMethod: Function;
   // Optional properties
   searchable?: boolean;
   params?: { [key: string]: any };
+  options?: { [key: string]: any };
   ListEndComponent?: ComponentType;
   ListEmptyComponent?: ComponentType;
   ListLoadMoreComponent?: ComponentType;
@@ -37,155 +31,136 @@ type SearchPaginatedProps = FlatListProps<any> & {
   emptyListText?: string;
   listEndText?: string;
   defaultBlank?: boolean;
+  shouldRefetch?: boolean;
 };
 
 type StateProps = { page: number; text: string };
 
 const DefaultEmptyComponent: FC<{ text: string }> = ({ text }) => (
-  <H5 style={styles.empty}>{text}</H5>
+  <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+    <H5 style={styles.empty}>{text}</H5>
+  </View>
 );
 
-const DefaultListEndComponent: FC<{ text?: string }> = ({ text }) => (
-  <H4 style={{ textTransform: 'none' }}>{text}</H4>
-);
-
-const DefaultLoadMoreComponent: FC<{ text?: string }> = ({ text }) => {
+export const SearchPaginated: FC<SearchPaginatedProps> = ({
+  data,
+  params,
+  options,
+  updateData,
+  renderItem,
+  fetchMethod,
+  ListEndComponent,
+  ListEmptyComponent,
+  ListLoadMoreComponent,
+  ListFooterComponent,
+  ItemSeparatorComponent,
+  searchable = true,
+  searchKeyName = 'searchQuery',
+  perPageCountName = 'perPage',
+  itemsPerPage = 12,
+  scrollOnContentChange = false,
+  paginatable = true,
+  defaultBlank = false,
+  shouldRefetch = false,
+  loadingMoreText = 'Fetching more items...',
+  emptyListText = '',
+  listEndText = 'End of list, no more data to fetch!',
+  style,
+  ...props
+}) => {
+  const [state, setState] = useState<StateProps>({ page: 1, text: '' });
+  const { page, text } = state;
+  const searchInput = useRef(null);
+  const listRef = useRef(null);
   const { colors } = useTheme();
+
+  const debCallback = text => setState({ text, page: 1 });
+
+  const {
+    isFetching,
+    refetch,
+    data: { meta = {}, data: items = [] } = {},
+  } = fetchMethod(
+    {
+      page,
+      [searchKeyName]: text,
+      [perPageCountName]: itemsPerPage,
+      ...params,
+    },
+    options
+  );
+  const isListEnd = useMemo(() => meta.page === meta.totalPages, [meta.page, meta.totalPages]);
+  const handleDebTextChange = useMemo(() => _.debounce(debCallback, 300), [isFetching]);
+  useEffect(() => {
+    updateData?.(items);
+  }, [isFetching]);
+
+  useEffect(() => {
+    refetch();
+    return handleDebTextChange.cancel;
+  }, [state]);
+
+  const clearText = () => {
+    setState(st => ({ ...st, text: '' }));
+    searchInput.current?.clear?.();
+  };
+
+  const fetchMoreData = () => {
+    if (!isListEnd && !isFetching) {
+      setState(st => ({ ...st, page: page + 1 }));
+    }
+  };
+
+  const handleContentSizeChange = () => {
+    if (scrollOnContentChange) {
+      listRef.current?.scrollToEnd?.();
+    }
+  };
+
+  // Forcibly refetch the data when the boolean dependency changes
+  useCallback(refetch, [shouldRefetch]);
+
   return (
-    <Horizontal>
-      <ActivityIndicator size='large' color={colors.gray} style={{ marginRight: 20 }} />
-      <H4 styles={{ textAlign: 'right' }}>{text}</H4>
-    </Horizontal>
+    <View style={[styles.container, style, { backgroundColor: colors.background }]}>
+      {searchable ? (
+        <Searchbar
+          clearText={clearText}
+          handleTextChange={handleDebTextChange}
+          isFetching={isFetching}
+          text={text}
+          ref={searchInput}
+        />
+      ) : null}
+      <FlatList
+        ref={listRef}
+        refreshing={isFetching}
+        onRefresh={refetch}
+        contentContainerStyle={[{ flexGrow: 1, paddingVertical: 5 }, props.contentContainerStyle]}
+        data={!text.length && defaultBlank ? [] : data}
+        onEndReachedThreshold={1}
+        initialNumToRender={5}
+        onEndReached={paginatable ? fetchMoreData : undefined}
+        showsVerticalScrollIndicator={false}
+        renderItem={renderItem}
+        ItemSeparatorComponent={ItemSeparatorComponent}
+        keyExtractor={(item, index) => `[${index}]${item?.id}`}
+        ListFooterComponent={<View style={styles.footerContainer}>{ListFooterComponent}</View>}
+        ListEmptyComponent={
+          isFetching ? (
+            <Loading show={isFetching} text='Loading items...' showBall={false} />
+          ) : ListEmptyComponent ? (
+            <ListEmptyComponent />
+          ) : (
+            <DefaultEmptyComponent text={emptyListText} />
+          )
+        }
+        onContentSizeChange={handleContentSizeChange}
+        onLayout={handleContentSizeChange}
+        {...props}
+      />
+    </View>
   );
 };
-
-export const SearchPaginated: FC<SearchPaginatedProps> = memo(
-  ({
-    searchable = true,
-    fetchMethod,
-    params,
-    renderItem,
-    ListEndComponent,
-    ListEmptyComponent,
-    ListLoadMoreComponent,
-    ListFooterComponent,
-    ItemSeparatorComponent,
-    data,
-    style,
-    searchKeyName = 'searchQuery',
-    perPageCountName = 'perPage',
-    itemsPerPage = 12,
-    scrollOnContentChange = false,
-    paginatable = true,
-    defaultBlank = false,
-    loadingMoreText = 'Fetching more items...',
-    emptyListText = 'No data matching your search to display!',
-    listEndText = 'End of list, no more data to fetch!',
-    ...props
-  }) => {
-    const [state, setState] = useState<StateProps>({ page: 1, text: '' });
-    const { page, text } = state;
-    const searchInput = useRef(null);
-    const listRef = useRef(null);
-    const { colors } = useTheme();
-
-    const debCallback = text => setState({ text, page: 1 });
-
-    const {
-      isFetching,
-      refetch,
-      data: { meta = {} } = {},
-    } = fetchMethod({
-      [searchKeyName]: text,
-      ...params,
-      page,
-      [perPageCountName]: itemsPerPage,
-    });
-    const isListEnd = useMemo(() => meta.page === meta.totalPages, [meta.page, meta.totalPages]);
-    const handleDebTextChange = useMemo(() => _.debounce(debCallback, 300), [isFetching]);
-
-    useEffect(() => {
-      refetch();
-      return handleDebTextChange.cancel;
-    }, [state]);
-
-    const clearText = () => {
-      setState(st => ({ ...st, text: '' }));
-      searchInput.current?.clear?.();
-    };
-
-    const fetchMoreData = () => {
-      if (!isListEnd && !isFetching) {
-        setState(st => ({ ...st, page: page + 1 }));
-      }
-    };
-
-    const handleContentSizeChange = () => {
-      if (scrollOnContentChange) {
-        listRef.current?.scrollToEnd?.();
-      }
-    };
-
-    return (
-      <View style={[styles.container, style, { backgroundColor: colors.background }]}>
-        {searchable ? (
-          <Searchbar
-            clearText={clearText}
-            handleTextChange={handleDebTextChange}
-            isFetching={isFetching}
-            text={text}
-            ref={searchInput}
-          />
-        ) : null}
-        <FlatList
-          ref={listRef}
-          refreshing={isFetching}
-          onRefresh={refetch}
-          contentContainerStyle={{ flexGrow: 1, paddingVertical: 5 }}
-          data={!text.length && defaultBlank ? [] : data}
-          onEndReachedThreshold={1}
-          initialNumToRender={5}
-          onEndReached={paginatable ? fetchMoreData : undefined}
-          showsVerticalScrollIndicator={false}
-          renderItem={renderItem}
-          ItemSeparatorComponent={ItemSeparatorComponent}
-          keyExtractor={(item, index) => `[${index}]${item?.id}`}
-          ListFooterComponent={
-            <View style={styles.footerContainer}>
-              {/* {isListEnd && !isFetching && data.length ? (
-                ListEndComponent ? (
-                  <ListEndComponent />
-                ) : (
-                  <DefaultListEndComponent text={listEndText} />
-                )
-              ) : null} */}
-              {/* {isFetching && page > 1 ? (
-                ListLoadMoreComponent ? (
-                  <ListLoadMoreComponent />
-                ) : (
-                  <DefaultLoadMoreComponent text={loadingMoreText} />
-                )
-              ) : null} */}
-              {ListFooterComponent}
-            </View>
-          }
-          ListEmptyComponent={
-            isFetching ? (
-              <Loading show={isFetching} text='Loading items...' showBall={false} />
-            ) : ListEmptyComponent ? (
-              <ListEmptyComponent />
-            ) : (
-              <DefaultEmptyComponent text='' />
-            )
-          }
-          onContentSizeChange={handleContentSizeChange}
-          onLayout={handleContentSizeChange}
-          {...props}
-        />
-      </View>
-    );
-  }
-);
 
 const styles = StyleSheet.create({
   container: {

@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import * as Yup from 'yup';
 
-import { useCreateGroupMutation } from '../../../store/api-queries/group-queries';
+import { useCreateGroupMutation } from '../../../store/queries/group';
 
 import Button from '../../../components/common/Buttons';
 import Input from '../../../components/common/Input';

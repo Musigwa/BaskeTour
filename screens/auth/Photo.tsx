@@ -1,11 +1,10 @@
 import { Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components/native';
 import * as Yup from 'yup';
 import { createFormData } from '../../utils/methods';
 
 import { useAppDispatch } from '../../hooks/useStore';
-import { useUploadProfileDetailsMutation } from '../../store/api-queries/auth-queries';
+import { useUploadProfileDetailsMutation } from '../../store/queries/auth';
 
 import IndicatorHeader from '../../components/Indicator';
 import PhotoUploader from '../../components/PhotoUploader';
@@ -16,7 +15,7 @@ import { Alert, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useToast } from 'react-native-toast-notifications';
 import KeyboardAvoid from '../../components/common/containers/KeyboardAvoid';
-import { hasLoggedIn } from '../../store/slices/authSlice';
+import { hasLoggedIn } from '../../store/slices/auth';
 import { H2, Paragraph } from '../../styles/styled-elements';
 
 const PhotoScreen = () => {

@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { IGroup, IJoinGroup } from './../../interfaces/index';
+import { IGroup, IJoinGroup } from '../../interfaces/index';
 
-import { groupApi } from '../api-queries/group-queries';
+import { groupApi } from '../queries/group';
 
 export interface IGroupState {
   groups: Array<IGroup>;
@@ -55,7 +55,7 @@ const groupSlice = createSlice({
     });
 
     builder.addMatcher(groupApi.endpoints.getMyGroups.matchFulfilled, (state, { payload }) => {
-      if (payload.data.length) state.selectedGroup = payload.data[0];
+      if (payload.data.length && !state.selectedGroup.id) state.selectedGroup = payload.data[0];
       const { page } = payload.meta;
       if (page === 1) state.myGroups = payload.data;
       else state.myGroups = [...state.myGroups, ...payload.data];
@@ -100,8 +100,10 @@ const groupSlice = createSlice({
       groupApi.endpoints.updateGroup.matchFulfilled,
       (state, { payload, meta }) => {
         const { originalArgs } = meta.arg;
+        // Find the group
+        const group = state.myGroups.find(g => g.id === originalArgs.groupId);
         const groups = state.myGroups.filter(g => g.id !== originalArgs.groupId);
-        state.myGroups = [...groups, payload.data];
+        state.myGroups = [...groups, { ...group, ...payload.data }];
       }
     );
   },

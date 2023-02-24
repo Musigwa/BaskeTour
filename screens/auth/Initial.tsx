@@ -21,7 +21,7 @@ const InitialScreen = () => {
   };
 
   useEffect(() => {
-    if (token && !user.profilePic) navigation.navigate('Photo');
+    if (token && !user?.profilePic) navigation.navigate('Photo');
   }, [token, user]);
 
   return (

@@ -60,9 +60,8 @@ const countDownTimer = (date: Date | string | number, callback) => {
  * @param {*} tournament
  * @return {*} activeRound
  */
-export const getActiveRound = tournament => {
-  if (tournament?.rounds && tournament.rounds.length) {
-    const { rounds } = tournament;
+export const getActiveRound = ({ rounds }) => {
+  if (rounds && rounds.length) {
     const uncompleted = rounds
       .filter(r => new Date(r.endDate) > new Date())
       .sort((a, b) => +(a.startDate < b.startDate));
