@@ -12,6 +12,7 @@ import { completedOnboarding } from '../../../store/slices/auth';
 import { H4, Horizontal } from '../../../styles/styled-elements';
 import { actions } from '../../../types/api';
 import { openBrowser } from '../../../utils/methods';
+import asyncStorage from '@react-native-async-storage/async-storage';
 
 const options = [
   { title: 'Groups' },
@@ -41,8 +42,11 @@ const SettingsScreen = ({ navigation }) => {
   };
 
   const handleLogout = async () => {
-    await persistor.flush();
-    return dispatch({ type: actions.LOGOUT });
+    persistor.flush().then(() => {
+      asyncStorage.clear().then(() => {
+        dispatch({ type: actions.LOGOUT });
+      });
+    });
   };
 
   const handlePress = async (element: { title: string; screen?: string; dangerous?: boolean }) => {

@@ -1,16 +1,20 @@
 // Absolute imports
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ColorSchemeName } from 'react-native';
 import { ToastProvider } from 'react-native-toast-notifications';
 // Relative imports
 import { defaultScreenOptions } from '../constants';
-import { useAppDispatch, useAppSelector } from '../hooks/useStore';
+import { useAppSelector } from '../hooks/useStore';
+import ForgetPwdScreen from '../screens/auth/Forget';
 import InitialScreen from '../screens/auth/Initial';
 import LoginScreen from '../screens/auth/Login';
 import PhotoScreen from '../screens/auth/Photo';
+import ResetPwdScreen from '../screens/auth/Reset';
 import SignUpScreen from '../screens/auth/SignUp';
+import UpdatePwdScreen from '../screens/auth/UpdatePassword';
+import VerifyScreen from '../screens/auth/Verify';
 import CreateGroupScreen from '../screens/main/groups/Create';
 import GroupDetailsScreen from '../screens/main/groups/Details';
 import JoinGroupScreen from '../screens/main/groups/Join';
@@ -27,23 +31,11 @@ import { AppDarkTheme, AppDefaultTheme } from '../styles/theme';
 import { ellipsizeText } from '../utils/methods';
 import LinkingConfiguration from './LinkingConfiguration';
 import BottomTabNavigator from './main/BottomTab';
-import ForgetPwdScreen from '../screens/auth/Forget';
-import VerifyScreen from '../screens/auth/Verify';
-import ResetPwdScreen from '../screens/auth/Reset';
-import UpdatePwdScreen from '../screens/auth/UpdatePassword';
-import { useGetMyProfileQuery } from '../store/queries/auth';
-import { hasLoggedIn, completedOnboarding as wasOnboarded } from '../store/slices/auth';
 
 const Stack = createStackNavigator();
 
 const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
-  const { isLoggedIn, completedOnboarding, user } = useAppSelector(state => state.auth);
-  const dispatch = useAppDispatch();
-  useGetMyProfileQuery({});
-
-  useEffect(() => {
-    dispatch(hasLoggedIn(!!user));
-  }, [user?.id]);
+  const { token, completedOnboarding } = useAppSelector(state => state.auth);
 
   return (
     <ToastProvider textStyle={{ fontSize: 18 }}>
@@ -52,7 +44,7 @@ const MainNavigator = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
         theme={colorScheme === 'dark' ? AppDarkTheme : AppDefaultTheme}
       >
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {isLoggedIn ? (
+          {token ? (
             <Stack.Group>
               <Stack.Screen
                 name={completedOnboarding ? 'SetupType' : 'Slider'}

@@ -11,13 +11,14 @@ import BallIcon from '../../../assets/svgs/BallIcon';
 import HoopIcon from '../../../assets/svgs/HoopIcon';
 import Logo from '../../../assets/svgs/Logo';
 
-import { useNavigation, useTheme } from '@react-navigation/native';
+import { useTheme } from '@react-navigation/native';
 import Container from '../../../components/common/containers/Container';
+import { useGetMyProfileQuery } from '../../../store/queries/auth';
 import { useGetTournamentsQuery } from '../../../store/queries/tournament';
 import { H3, H4 } from '../../../styles/styled-elements';
 
-const SetupTypeScreen = ({ route }) => {
-  const navigation = useNavigation();
+const SetupTypeScreen = ({ route, navigation }) => {
+  useGetMyProfileQuery({});
   const { bottom: paddingBottom, top: paddingTop } = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   useGetTournamentsQuery();
