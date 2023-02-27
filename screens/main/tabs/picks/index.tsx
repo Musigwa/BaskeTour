@@ -123,7 +123,7 @@ const PicksScreen = ({ navigation }) => {
     if (timedOut)
       return Alert.alert(
         'Picking timeout!',
-        `You can only make/change your picks before the first game of the current round \u21C0 "${round?.name}" starts!`
+        `Picks are locked because the current round \u21C0 "${round?.name}" has begun`
       );
     const temp = [...picks];
     const peIdx = _.findIndex(picks, pick);
@@ -184,7 +184,7 @@ const PicksScreen = ({ navigation }) => {
         }
         emptyListText={
           games.length && timedOut
-            ? 'Picking is disabled since the round has started'
+            ? `Picking is disabled since "${round?.name}" has started.`
             : `No scheduled games to pick from for "${round?.name}".`
         }
       />
