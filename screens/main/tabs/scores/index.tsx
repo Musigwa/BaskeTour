@@ -15,12 +15,13 @@ import TeamContainer from '../../../../components/scores/TeamContainer';
 import { useAppSelector } from '../../../../hooks/useStore';
 import { useGetGamesQuery, useGetTournamentsQuery } from '../../../../store/queries/tournament';
 import { GAME_STATUS } from '../../../../types';
+import _ from 'lodash';
 
 const ScoresScreen = ({ route }) => {
   const statuses = {
     upcoming: 'STATUS_SCHEDULED',
     live: 'STATUS_IN_PROGRESS',
-    completed: 'STATUS_FINAL',
+    complete: 'STATUS_FINAL',
   };
 
   const { bottom } = useSafeAreaInsets();
@@ -42,7 +43,10 @@ const ScoresScreen = ({ route }) => {
         break;
     }
   }, [currentTab]);
-  const myScores = !!params?.scoreType?.toLowerCase().includes('my score');
+  const myScores = useMemo(
+    () => !!params?.scoreType?.toLowerCase().includes('my score'),
+    [params?.scoreType]
+  );
   const options = currentTab === 'STATUS_IN_PROGRESS' ? { pollingInterval: 5000 } : undefined;
   useGetTournamentsQuery();
   const { activeRound, tournament } = useAppSelector(({ tournament }) => ({
@@ -89,28 +93,6 @@ const ScoresScreen = ({ route }) => {
           <H3 style={{ color: colors.card }}>{selectedRound?.name}</H3>
         </Pressable>
       </RoundBanner>
-      <ActionSheet
-        ref={actionSheetRef}
-        containerStyle={{
-          paddingBottom: bottom,
-          padding: 20,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        {tournament?.rounds?.map((r, idx) => (
-          <RadioButton
-            key={idx}
-            selected={selectedRound?.id === r?.id}
-            color={colors.primary}
-            text={r.name}
-            onClick={() => {
-              setSelectedRound(tournament?.rounds?.[idx]);
-              actionSheetRef.current?.hide();
-            }}
-          />
-        ))}
-      </ActionSheet>
       <TopTab
         tabs={Object.keys(statuses).map(title => ({ title }))}
         shadowVisible={false}
@@ -118,7 +100,7 @@ const ScoresScreen = ({ route }) => {
       />
       <Separator size='sm' />
       <SearchPaginated
-        data={games}
+        data={_.sortBy(games, 'eventDate')}
         updateData={setGames}
         searchable={false}
         params={{ roundId: selectedRound?.id, status: currentTab, myScores }}
@@ -129,9 +111,21 @@ const ScoresScreen = ({ route }) => {
             <View key={idx}>
               <Horizontal>
                 <TeamsWrapper style={{ flex: 0.76 }}>
-                  {[teamA, teamB].map((team, idx) => (
-                    <TeamContainer key={idx} team={team} currentTab={currentTab} />
-                  ))}
+                  {[teamA, teamB].map((team, idx) => {
+                    const isWinner =
+                      team.teamId === teamA.teamId
+                        ? teamA.score > teamB.score
+                        : team.teamId === teamB.teamId
+                        ? teamB.score > teamA.score
+                        : false;
+                    return (
+                      <TeamContainer
+                        key={idx}
+                        team={{ ...team, isWinner: isWinner }}
+                        currentTab={currentTab}
+                      />
+                    );
+                  })}
                 </TeamsWrapper>
                 <View
                   style={{
@@ -166,6 +160,28 @@ const ScoresScreen = ({ route }) => {
         }}
         emptyListText={emptyListText}
       />
+      <ActionSheet
+        ref={actionSheetRef}
+        containerStyle={{
+          paddingBottom: bottom,
+          padding: 20,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        {tournament?.rounds?.map((r, idx) => (
+          <RadioButton
+            key={idx}
+            selected={selectedRound?.id === r?.id}
+            color={colors.primary}
+            text={r.name}
+            onClick={() => {
+              setSelectedRound(tournament?.rounds?.[idx]);
+              actionSheetRef.current?.hide();
+            }}
+          />
+        ))}
+      </ActionSheet>
     </Container>
   );
 };

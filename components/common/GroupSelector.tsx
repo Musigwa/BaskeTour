@@ -11,13 +11,15 @@ import SearchPaginated from './Lists/SearchPaginated';
 
 const GroupDropdown = () => {
   const dispatch = useAppDispatch();
+  /**
+   * Invoke useGetMyGroupsQuery to get the groups.
+   * This is necessary for setting the default group
+   */
   useGetMyGroupsQuery({});
-  const { selectedGroup, myGroups } = useAppSelector(({ groups: { selectedGroup, myGroups } }) => ({
-    selectedGroup,
-    myGroups,
-  }));
+  const selectedGroup = useAppSelector(({ groups: { selectedGroup } }) => selectedGroup);
   const { colors } = useTheme();
   const [open, setOpen] = useState(false);
+  const [myGroups, setMyGroups] = useState([]);
   const toggleMenu = () => setOpen(prev => !prev);
 
   const handleSelect = selectedItem => {
@@ -47,6 +49,7 @@ const GroupDropdown = () => {
       {disabled ? null : (
         <SearchPaginated
           data={myGroups}
+          updateData={setMyGroups}
           fetchMethod={useGetMyGroupsQuery}
           searchable={false}
           renderItem={({ item, index }) => {

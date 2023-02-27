@@ -1,4 +1,5 @@
 import { AntDesign, Entypo } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
@@ -12,7 +13,6 @@ import { completedOnboarding } from '../../../store/slices/auth';
 import { H4, Horizontal } from '../../../styles/styled-elements';
 import { actions } from '../../../types/api';
 import { openBrowser } from '../../../utils/methods';
-import asyncStorage from '@react-native-async-storage/async-storage';
 
 const options = [
   { title: 'Groups' },
@@ -32,21 +32,19 @@ const SettingsScreen = ({ navigation }) => {
   const toast = useToast();
   const [requestAccountDeletion, { isLoading }] = useDeleteAccountMutation();
 
+  const handleLogout = async () => {
+    await persistor.flush();
+    await AsyncStorage.clear();
+    dispatch({ type: actions.LOGOUT });
+  };
+
   const handleAccountDeletion = async () => {
     try {
-      await requestAccountDeletion({});
+      await requestAccountDeletion({}).unwrap();
       if (!isLoading) await handleLogout();
     } catch (error) {
       toast.show(error.data.message);
     }
-  };
-
-  const handleLogout = async () => {
-    persistor.flush().then(() => {
-      asyncStorage.clear().then(() => {
-        dispatch({ type: actions.LOGOUT });
-      });
-    });
   };
 
   const handlePress = async (element: { title: string; screen?: string; dangerous?: boolean }) => {
@@ -66,7 +64,7 @@ const SettingsScreen = ({ navigation }) => {
         );
         break;
       case 'tutorial':
-        await dispatch(completedOnboarding(false));
+        dispatch(completedOnboarding(false));
         navigation.navigate(element.screen);
         break;
       case 'detailed rules':

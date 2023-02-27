@@ -1,10 +1,17 @@
 import _ from 'lodash';
 import React, { ComponentType, FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, FlatListProps, ListRenderItem, StyleSheet, View, ViewStyle } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  FlatListProps,
+  ListRenderItem,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { H5 } from '../../../../styles/styled-elements';
 import Searchbar from '../../Inputs/Searchbar';
-import Loading from '../../Loading';
 
 type SearchPaginatedProps = FlatListProps<any> & {
   // Required properties
@@ -25,6 +32,7 @@ type SearchPaginatedProps = FlatListProps<any> & {
   perPageCountName?: string;
   itemsPerPage?: number;
   style?: ViewStyle;
+  contentContainerStyle?: ViewStyle;
   scrollOnContentChange?: boolean;
   paginatable?: boolean;
   loadingMoreText?: string;
@@ -66,6 +74,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = ({
   emptyListText = '',
   listEndText = 'End of list, no more data to fetch!',
   style,
+  contentContainerStyle,
   ...props
 }) => {
   const [state, setState] = useState<StateProps>({ page: 1, text: '' });
@@ -78,6 +87,7 @@ export const SearchPaginated: FC<SearchPaginatedProps> = ({
 
   const {
     isFetching,
+    isLoading,
     refetch,
     data: { meta = {}, data: items = [] } = {},
   } = fetchMethod(
@@ -90,10 +100,10 @@ export const SearchPaginated: FC<SearchPaginatedProps> = ({
     options
   );
   const isListEnd = useMemo(() => meta.page === meta.totalPages, [meta.page, meta.totalPages]);
-  const handleDebTextChange = useMemo(() => _.debounce(debCallback, 300), [isFetching]);
+  const handleDebTextChange = useMemo(() => _.debounce(debCallback, 300), [isFetching, isLoading]);
   useEffect(() => {
     updateData?.(items);
-  }, [isFetching]);
+  }, [isFetching, isLoading]);
 
   useEffect(() => {
     refetch();
@@ -133,9 +143,9 @@ export const SearchPaginated: FC<SearchPaginatedProps> = ({
       ) : null}
       <FlatList
         ref={listRef}
-        refreshing={isFetching}
+        refreshing={isFetching && !isLoading}
         onRefresh={refetch}
-        contentContainerStyle={[{ flexGrow: 1, paddingVertical: 5 }, props.contentContainerStyle]}
+        contentContainerStyle={[{ flexGrow: 1, paddingVertical: 5 }, contentContainerStyle]}
         data={!text.length && defaultBlank ? [] : data}
         onEndReachedThreshold={1}
         initialNumToRender={5}
@@ -146,8 +156,12 @@ export const SearchPaginated: FC<SearchPaginatedProps> = ({
         keyExtractor={(item, index) => `[${index}]${item?.id}`}
         ListFooterComponent={<View style={styles.footerContainer}>{ListFooterComponent}</View>}
         ListEmptyComponent={
-          isFetching ? (
-            <Loading show={isFetching} text='Loading items...' showBall={false} />
+          isLoading ? (
+            <ActivityIndicator
+              size='large'
+              color={colors.primary}
+              style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+            />
           ) : ListEmptyComponent ? (
             <ListEmptyComponent />
           ) : (

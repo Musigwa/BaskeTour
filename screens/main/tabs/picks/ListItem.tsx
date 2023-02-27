@@ -20,9 +20,11 @@ const pickItem = ({
   const { id: eventId, teamA, teamB, eventDate } = event;
   return (
     <View key={idx}>
-      {[teamA, teamB].map(({ teamId, logo, name, ranking }, i) => {
+      {[teamA, teamB].map(({ teamId, logo, name, ranking, abbreviation }, i) => {
         const [first, last] = name.split(' ');
-        const label = `${first.slice(0, 1)} ${last?.length ? last.slice(0, 1) : first.slice(1, 2)}`;
+        const label = abbreviation
+          ? abbreviation
+          : `${first.slice(0, 1)} ${last?.length ? last.slice(0, 1) : first.slice(1, 2)}`;
         const groupId = selectedGroup.id;
         const selected = _.findIndex(picks, { teamId, eventId, groupId }) !== -1;
         return (

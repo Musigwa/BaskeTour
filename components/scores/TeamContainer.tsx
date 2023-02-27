@@ -14,7 +14,9 @@ type TeamProps = {
 const TeamContainer = ({ team, currentTab }: TeamProps) => {
   const { colors } = useTheme();
   const [first, last] = team.name;
-  const label = `${first?.slice(0, 1)}${last ? last?.slice(0, 1) : first?.slice(1, 2)}`;
+  const label = team.abbreviation
+    ? team.abbreviation
+    : `${first?.slice(0, 1)}${last ? last?.slice(0, 1) : first?.slice(1, 2)}`;
   return (
     <Horizontal>
       <Horizontal style={{ justifyContent: 'flex-start' }}>
@@ -34,10 +36,18 @@ const TeamContainer = ({ team, currentTab }: TeamProps) => {
         )}
         <H6 style={{ color: '#CBB7B7' }}>
           {`${team?.ranking}\u0020`}
-          <H6 style={{ color: '#000' }}>{team.name}</H6>
+          <H6
+            style={{
+              color: team.isWinner && currentTab === 'STATUS_FINAL' ? colors.primary : 'black',
+            }}
+          >
+            {team.name}
+          </H6>
         </H6>
       </Horizontal>
-      <H6 style={{ color: team.isWinner ? colors.primary : 'black' }}>
+      <H6
+        style={{ color: team.isWinner && currentTab === 'STATUS_FINAL' ? colors.primary : 'black' }}
+      >
         {currentTab === 'STATUS_SCHEDULED' ? team.record : team.score}
       </H6>
     </Horizontal>

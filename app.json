@@ -33,7 +33,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ulli.ulliapp",
-      "buildNumber": "4"
+      "buildNumber": "5"
     },
     "android": {
       "adaptiveIcon": {

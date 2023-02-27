@@ -17,6 +17,7 @@ import {
 } from '../../../../store/queries/tournament';
 import { H3, Separator } from '../../../../styles/styled-elements';
 import pickItem from './ListItem';
+import { IGame } from '../../../../interfaces';
 
 type Pick = { eventId: string; teamId: string; groupId: string };
 const statuses = [{ title: 'East' }, { title: 'South' }, { title: 'Midwest' }, { title: 'West' }];
@@ -46,7 +47,6 @@ const PicksScreen = ({ navigation }) => {
   const [games, setGames] = useState([]);
   const [limit] = useState(round?.allowedPicks ?? 3);
   const [savePicks, { isLoading: loading }] = useCreatePickMutation();
-
   useEffect(() => {
     const prev = prevPicks
       .filter(({ groupId }) => selectedGroup.id === groupId)
@@ -80,7 +80,10 @@ const PicksScreen = ({ navigation }) => {
     [picks.length, limit, selectedGroup.id]
   );
 
-  const picksChanged = !picks.every(elmt => _.findIndex(prevPicks, elmt) !== -1);
+  const picksChanged = useMemo(
+    () => !picks.every(elmt => _.findIndex(prevPicks, elmt) !== -1),
+    [prevPicks.length, picks.length]
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({ headerLeft });
@@ -108,8 +111,15 @@ const PicksScreen = ({ navigation }) => {
     );
   };
 
+  const sortByDate = (games: IGame[] = []) => _.sortBy(games, 'eventDate');
+
+  const timedOut = useMemo(
+    () => new Date(sortByDate(games)[0]?.eventDate).getTime() <= new Date().getTime(),
+    [sortByDate(games)[0]?.eventDate]
+  );
+
   const updatePicks = (pick: Pick) => {
-    const timedOut = new Date(round?.startDate).getTime() <= new Date().getTime();
+    // const timedOut = new Date(sortByDate(games)[0]?.eventDate).getTime() <= new Date().getTime();
     if (timedOut)
       return Alert.alert(
         'Picking timeout!',
@@ -145,7 +155,7 @@ const PicksScreen = ({ navigation }) => {
           <H3 style={{ color: colors.primary, textTransform: 'none' }}>
             Time remaining to make picks
           </H3>
-          <CountDown date={round?.startDate} />
+          <CountDown date={sortByDate(games)[0]?.eventDate} />
           <Separator />
           <H3 style={{ paddingVertical: 8, textTransform: 'none' }}>Pick teams to win</H3>
           <H3 style={{ color: colors.primary, textTransform: 'none' }}>
@@ -156,7 +166,7 @@ const PicksScreen = ({ navigation }) => {
 
       <SearchPaginated
         fetchMethod={useGetGamesQuery}
-        data={games}
+        data={timedOut ? [] : sortByDate(games)}
         updateData={setGames}
         searchable={false}
         params={{ roundId: round?.id, status: 'STATUS_SCHEDULED' }}
@@ -172,7 +182,11 @@ const PicksScreen = ({ navigation }) => {
             games,
           })
         }
-        emptyListText='No scheduled games yet to pick from!'
+        emptyListText={
+          games.length && timedOut
+            ? 'Picking is disabled since the round has started'
+            : `No scheduled games to pick from for "${round?.name}".`
+        }
       />
     </>
   );

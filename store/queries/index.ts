@@ -3,6 +3,7 @@ import Config from '../../environment';
 
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { RootState } from '..';
 import { actions } from '../../types/api';
 
@@ -23,8 +24,10 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
   extraOptions
 ) => {
   let result = await baseQuery(args, api, extraOptions);
-  if ((result.meta?.response?.status || result?.error?.status) === 401)
+  if ((result.meta?.response?.status || result?.error?.status) === 401) {
+    await AsyncStorage.clear();
     api.dispatch({ type: actions.LOGOUT });
+  }
   return result;
 };
 
