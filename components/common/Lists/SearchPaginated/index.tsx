@@ -128,7 +128,9 @@ export const SearchPaginated: FC<SearchPaginatedProps> = ({
   };
 
   // Forcibly refetch the data when the boolean dependency changes
-  useCallback(refetch, [shouldRefetch]);
+  useEffect(() => {
+    if (shouldRefetch === true) refetch();
+  }, [shouldRefetch]);
 
   return (
     <View style={[styles.container, style, { backgroundColor: colors.background }]}>

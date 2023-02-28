@@ -17,7 +17,7 @@ import { useGetMyProfileQuery } from '../../../store/queries/auth';
 import { useGetTournamentsQuery } from '../../../store/queries/tournament';
 import { H3, H4 } from '../../../styles/styled-elements';
 
-const SetupTypeScreen = ({ route, navigation }) => {
+const SetupTypeScreen = ({ navigation }) => {
   useGetMyProfileQuery({});
   const { bottom: paddingBottom, top: paddingTop } = useSafeAreaInsets();
   const { width } = useWindowDimensions();

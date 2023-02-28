@@ -77,7 +77,7 @@ const InboxScreen = ({ route }: any) => {
 
   const inputRef = useRef(null);
   const message = useMemo(() => text.trim(), [text]);
-  const { user, token } = useAppSelector(({ auth }) => auth);
+  const { user } = useAppSelector(({ auth }) => auth);
   const [messages, setMessages] = useState<any[]>([]);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const socket = useSocketIO();
@@ -132,8 +132,8 @@ const InboxScreen = ({ route }: any) => {
   }, []);
 
   const handleSendMessage = async () => {
+    if (!canSend) return;
     try {
-      if (!text.length) return;
       setText('');
       resetPhoto();
       const createdAt = new Date().toISOString();
@@ -167,6 +167,8 @@ const InboxScreen = ({ route }: any) => {
     setImageUrl(item.fileUrl);
     showModal();
   };
+
+  const canSend = useMemo(() => message.length > 0 || photo?.uri, [message, photo?.uri]);
 
   return (
     <View
@@ -240,12 +242,12 @@ const InboxScreen = ({ route }: any) => {
             <Pressable
               style={styles.inputBtnContainer}
               onPress={handleSendMessage}
-              disabled={!message}
+              disabled={!canSend}
             >
               <FontAwesome
                 name='send-o'
                 size={24}
-                color={message ? colors.primary : colors.disabled}
+                color={canSend ? colors.primary : colors.disabled}
               />
             </Pressable>
           </Horizontal>

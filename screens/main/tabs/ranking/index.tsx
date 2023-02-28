@@ -69,15 +69,15 @@ const RankingScreen = () => {
                   </View>
                   <View>
                     <View>
-                      <H2>{player?.totalPoints}</H2>
+                      <H2>{player?.cumulativeRoundPoints}</H2>
                       <H6>Total points</H6>
                     </View>
                   </View>
                   <View>
                     <View>
-                      <H2>{player?.totalLosses}</H2>
+                      <H2>{player?.cumulativeRoundLosses}</H2>
                       <H6 style={{ textTransform: 'none' }}>{`Loss${
-                        player?.totalLosses > 1 ? 'es' : ''
+                        player?.cumulativeRoundLosses > 1 ? 'es' : ''
                       }`}</H6>
                     </View>
                   </View>
@@ -92,11 +92,13 @@ const RankingScreen = () => {
                   }}
                 >
                   {picks.length
-                    ? picks.map(({ team }, idx) => (
-                        <H6 key={idx} style={{}}>
-                          {idx + 1}. ({team?.ranking}) {team?.abbreviation}
-                        </H6>
-                      ))
+                    ? picks.map(({ team }, idx) =>
+                        team?.abbreviation ? (
+                          <H6 key={idx}>
+                            {idx + 1}. ({team?.ranking}) {team?.abbreviation}
+                          </H6>
+                        ) : null
+                      )
                     : null}
                 </RNView>
               </View>

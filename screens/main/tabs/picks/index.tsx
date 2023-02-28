@@ -9,6 +9,7 @@ import GroupSelector from '../../../../components/common/GroupSelector';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import TopTab from '../../../../components/common/TopTab';
 import { useAppSelector } from '../../../../hooks/useStore';
+import { IGame } from '../../../../interfaces';
 import {
   useCreatePickMutation,
   useGetGamesQuery,
@@ -17,7 +18,6 @@ import {
 } from '../../../../store/queries/tournament';
 import { H3, Separator } from '../../../../styles/styled-elements';
 import pickItem from './ListItem';
-import { IGame } from '../../../../interfaces';
 
 type Pick = { eventId: string; teamId: string; groupId: string };
 const statuses = [{ title: 'East' }, { title: 'South' }, { title: 'Midwest' }, { title: 'West' }];
@@ -80,10 +80,7 @@ const PicksScreen = ({ navigation }) => {
     [picks.length, limit, selectedGroup.id]
   );
 
-  const picksChanged = useMemo(
-    () => !picks.every(elmt => _.findIndex(prevPicks, elmt) !== -1),
-    [prevPicks.length, picks.length]
-  );
+  const picksChanged = !picks.every(elmt => _.findIndex(prevPicks, elmt) !== -1);
 
   useLayoutEffect(() => {
     navigation.setOptions({ headerLeft });
@@ -113,12 +110,8 @@ const PicksScreen = ({ navigation }) => {
 
   const sortByDate = (games: IGame[] = []) => _.sortBy(games, 'eventDate');
 
-  const timedOut = useMemo(
-    () => new Date(sortByDate(games)[0]?.eventDate).getTime() <= new Date().getTime(),
-    [sortByDate(games)[0]?.eventDate]
-  );
-
   const updatePicks = (pick: Pick) => {
+    const timedOut = new Date(sortByDate(games)[0]?.eventDate).getTime() <= new Date().getTime();
     if (timedOut)
       return Alert.alert(
         'Picking timeout!',

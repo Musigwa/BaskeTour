@@ -1,4 +1,4 @@
-import { useTheme } from '@react-navigation/native';
+import { useIsFocused, useTheme } from '@react-navigation/native';
 import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -57,7 +57,7 @@ const ChatListScreen = ({ navigation }) => {
   const socket = useSocketIO();
   const { user } = useAppSelector(({ auth }) => auth);
   const [conversations, setConversations] = useState([]);
-  const [triggerRefetch, setTriggerRefetch] = useState(false);
+  const shouldRefetch = useIsFocused();
 
   useEffect(() => {
     if (conversations.length === 1) {
@@ -71,7 +71,6 @@ const ChatListScreen = ({ navigation }) => {
   }, []);
 
   const handleNGMessage = (message: any) => {
-    setTriggerRefetch(false);
     setConversations(prev => {
       let found;
       found = prev.find(c => c?.group?.id === message.group.id);
@@ -83,14 +82,12 @@ const ChatListScreen = ({ navigation }) => {
     });
   };
 
-  useEffect(() => navigation.addListener('focus', () => setTriggerRefetch(true)), [navigation]);
-
   return (
     <SearchPaginated
       style={{ backgroundColor: 'white' }}
       data={conversations}
       updateData={setConversations}
-      shouldRefetch={triggerRefetch}
+      shouldRefetch={shouldRefetch}
       fetchMethod={useGetConversationsQuery}
       renderItem={args => renderItem({ ...args, navigation, colors })}
     />

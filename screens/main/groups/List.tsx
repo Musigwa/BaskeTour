@@ -1,5 +1,5 @@
 import { Entypo } from '@expo/vector-icons';
-import { useTheme } from '@react-navigation/native';
+import { useIsFocused, useTheme } from '@react-navigation/native';
 import React, { FC, PropsWithChildren, useState } from 'react';
 import { Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
 import RenderAvatar from '../../../components/common/Avatar';
@@ -78,11 +78,13 @@ const renderItem: FC<PropsWithChildren<RenderItemProps>> = ({
 const GroupListScreen: FC<PropsWithChildren<{ navigation: any }>> = ({ navigation }) => {
   const { colors } = useTheme();
   const [myGroups, setMyGroups] = useState([]);
+  const shouldRefetch = useIsFocused();
 
   return (
     <SearchPaginated
       data={myGroups}
       updateData={setMyGroups}
+      shouldRefetch={shouldRefetch}
       fetchMethod={useGetMyGroupsQuery}
       ListFooterComponent={ListFooterComponent({ navigation, colors })}
       renderItem={args => renderItem({ ...args, navigation, colors })}

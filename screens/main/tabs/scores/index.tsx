@@ -58,6 +58,10 @@ const ScoresScreen = ({ route }) => {
   const [selectedRound, setSelectedRound] = useState(activeRound);
   const [games, setGames] = useState([]);
 
+  useEffect(() => {
+    if (activeRound?.id) setSelectedRound(activeRound);
+  }, [activeRound?.id]);
+
   return (
     <Container>
       <RoundBanner source={require('../../../../assets/images/roundImage.png')}>
