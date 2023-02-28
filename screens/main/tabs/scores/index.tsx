@@ -3,11 +3,11 @@ import styled from 'styled-components/native';
 import { H3, H6, Horizontal, Separator } from '../../../../styles/styled-elements';
 
 import { useTheme } from '@react-navigation/native';
+import _ from 'lodash';
 import moment from 'moment';
 import { Pressable, StyleSheet, View } from 'react-native';
 import ActionSheet, { ActionSheetRef } from 'react-native-actions-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useToast } from 'react-native-toast-notifications';
 import SearchPaginated from '../../../../components/common/Lists/SearchPaginated';
 import RadioButton from '../../../../components/common/RadioButton';
 import TopTab from '../../../../components/common/TopTab';
@@ -15,7 +15,6 @@ import TeamContainer from '../../../../components/scores/TeamContainer';
 import { useAppSelector } from '../../../../hooks/useStore';
 import { useGetGamesQuery, useGetTournamentsQuery } from '../../../../store/queries/tournament';
 import { GAME_STATUS } from '../../../../types';
-import _ from 'lodash';
 
 const ScoresScreen = ({ route }) => {
   const statuses = {
@@ -29,7 +28,6 @@ const ScoresScreen = ({ route }) => {
   const { colors } = useTheme();
   const [currentTab, setCurrentTab] = useState<GAME_STATUS>('STATUS_SCHEDULED');
   const { params } = route;
-  const toast = useToast();
 
   const emptyListText = useMemo(() => {
     switch (currentTab) {
@@ -47,7 +45,10 @@ const ScoresScreen = ({ route }) => {
     () => !!params?.scoreType?.toLowerCase().includes('my score'),
     [params?.scoreType]
   );
-  const options = currentTab === 'STATUS_IN_PROGRESS' ? { pollingInterval: 5000 } : undefined;
+  const options = useMemo(
+    () => (currentTab === 'STATUS_IN_PROGRESS' ? { pollingInterval: 5000 } : undefined),
+    [currentTab]
+  );
   useGetTournamentsQuery();
   const { activeRound, tournament } = useAppSelector(({ tournament }) => ({
     activeRound: tournament.activeRound,
@@ -56,26 +57,6 @@ const ScoresScreen = ({ route }) => {
 
   const [selectedRound, setSelectedRound] = useState(activeRound);
   const [games, setGames] = useState([]);
-
-  const {
-    refetch,
-    isError,
-    error: err,
-  } = useGetGamesQuery({ roundId: selectedRound?.id, status: currentTab, myScores }, options);
-
-  useEffect(() => {
-    if (isError) {
-      let { message } = err?.data;
-      if (err.data.errors) message = JSON.stringify(err?.data?.errors);
-      toast.show(message, { type: 'danger', placement: 'center', animationType: 'zoom-in' });
-    }
-  }, [isError, err]);
-
-  useEffect(() => {
-    if (activeRound?.id) setSelectedRound(activeRound);
-  }, [activeRound?.id]);
-
-  useEffect(refetch, [currentTab, myScores, selectedRound?.id]);
 
   return (
     <Container>
@@ -103,7 +84,7 @@ const ScoresScreen = ({ route }) => {
         data={_.sortBy(games, 'eventDate')}
         updateData={setGames}
         searchable={false}
-        params={{ roundId: selectedRound?.id, status: currentTab, myScores }}
+        params={{ roundId: selectedRound?.id, gameStatus: currentTab, myScores }}
         options={options}
         fetchMethod={useGetGamesQuery}
         renderItem={({ item: { teamA, teamB, eventDate, gameClock }, index: idx }) => {

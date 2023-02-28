@@ -1,4 +1,3 @@
-import { GAME_STATUS } from '../types';
 import { buildQueryParams } from '../utils/methods';
 
 export const TODOS = 'https://jsonplaceholder.typicode.com/todos';
@@ -30,15 +29,17 @@ export const MARK_AS_READ = (groupId: string) => `${CHAT}/${groupId}/view-messag
 
 // Games endpoints
 export const TOURNAMENTS = `/tournaments`;
-export const GET_MY_SCORES = (roundId: string, status: GAME_STATUS) => {
-  return `${TOURNAMENTS}/rounds/${roundId}/my-scores?gameStatus=${status}`;
-};
-export const GET_ALL_SCORES = (
+export const GET_SCORES = (
   { roundId }: { [key: string]: any },
-  qeryParams: { [key: string]: any }
+  qeryParams: { [key: string]: any },
+  options?: { [key: string]: any }
 ) => {
-  return `${TOURNAMENTS}/rounds/${roundId}/games?${buildQueryParams(qeryParams)}`;
+  const { myScores = false } = options ?? {};
+  return `${TOURNAMENTS}/rounds/${roundId}/${myScores ? 'my-scores' : 'games'}?${buildQueryParams(
+    qeryParams
+  )}`;
 };
+
 export const PICKS = '/picks';
 export const MY_PICKS = (tournamentId, roundId, groupId) =>
   `${PICKS}/my-picks?tournamentId=${tournamentId}&roundId=${roundId}&groupId=${groupId}`;

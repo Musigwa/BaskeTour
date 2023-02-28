@@ -3,11 +3,11 @@ import baseQuery from './';
 
 import { GAME_STATUS } from '../../types';
 import { BaseSearchQuery } from '../../types/api';
-import { GET_ALL_SCORES, GET_MY_SCORES, MY_PICKS, PICKS, TOURNAMENTS } from '../endpoints';
+import { GET_SCORES, MY_PICKS, PICKS, TOURNAMENTS } from '../endpoints';
 
 type GQueryParamsType = BaseSearchQuery & {
   roundId: string;
-  status: GAME_STATUS;
+  gameStatus: GAME_STATUS;
   myScores?: boolean;
 };
 type GPicksQueryParams = BaseSearchQuery & {
@@ -24,10 +24,8 @@ export const tournamentApi = createApi({
   endpoints: builder => ({
     getTournaments: builder.query<any, void>({ query: () => TOURNAMENTS }),
     getGames: builder.query<any, GQueryParamsType>({
-      query: ({ roundId, status, myScores = false, ...rest }) => {
-        if (myScores) return GET_MY_SCORES(roundId, status);
-        return GET_ALL_SCORES({ roundId }, rest);
-      },
+      query: ({ roundId, myScores = false, ...rest }) =>
+        GET_SCORES({ roundId }, rest, { myScores }),
     }),
     createPick: builder.mutation({ query: body => ({ url: PICKS, method: 'POST', body }) }),
     getPicks: builder.query<any, GPicksQueryParams>({
