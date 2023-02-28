@@ -163,3 +163,9 @@ export const genColor = (args?: ColorGenArgs) => {
 export const openBrowser = async (url = TCUrl) => {
   await WebBrowser.openBrowserAsync(url);
 };
+
+export const buildQueryParams = (queryObject: { [key: string]: string } | {}) => {
+  let query = ``;
+  for (let key in queryObject) query += `&${key}=${queryObject[key]}`;
+  return query.slice(1);
+};

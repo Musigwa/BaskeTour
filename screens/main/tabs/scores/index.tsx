@@ -110,7 +110,7 @@ const ScoresScreen = ({ route }) => {
           return (
             <View key={idx}>
               <Horizontal>
-                <TeamsWrapper style={{ flex: 0.76 }}>
+                <TeamsWrapper style={{ flex: 0.8 }}>
                   {[teamA, teamB].map((team, idx) => {
                     const isWinner =
                       team.teamId === teamA.teamId

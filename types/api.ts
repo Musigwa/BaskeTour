@@ -18,3 +18,5 @@ export interface IUser {
 export const actions = {
   LOGOUT: 'auth/logOut',
 };
+
+export type BaseSearchQuery = { searchQuery?: string; page?: number; perPage?: number };

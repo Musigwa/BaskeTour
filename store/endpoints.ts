@@ -1,4 +1,5 @@
 import { GAME_STATUS } from '../types';
+import { buildQueryParams } from '../utils/methods';
 
 export const TODOS = 'https://jsonplaceholder.typicode.com/todos';
 // Users endpoints
@@ -32,8 +33,11 @@ export const TOURNAMENTS = `/tournaments`;
 export const GET_MY_SCORES = (roundId: string, status: GAME_STATUS) => {
   return `${TOURNAMENTS}/rounds/${roundId}/my-scores?gameStatus=${status}`;
 };
-export const GET_ALL_SCORES = (roundId: string, status: GAME_STATUS) => {
-  return `${TOURNAMENTS}/rounds/${roundId}/games?gameStatus=${status}`;
+export const GET_ALL_SCORES = (
+  { roundId }: { [key: string]: any },
+  qeryParams: { [key: string]: any }
+) => {
+  return `${TOURNAMENTS}/rounds/${roundId}/games?${buildQueryParams(qeryParams)}`;
 };
 export const PICKS = '/picks';
 export const MY_PICKS = (tournamentId, roundId, groupId) =>

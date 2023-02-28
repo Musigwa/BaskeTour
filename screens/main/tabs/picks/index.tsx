@@ -119,7 +119,6 @@ const PicksScreen = ({ navigation }) => {
   );
 
   const updatePicks = (pick: Pick) => {
-    // const timedOut = new Date(sortByDate(games)[0]?.eventDate).getTime() <= new Date().getTime();
     if (timedOut)
       return Alert.alert(
         'Picking timeout!',
@@ -166,10 +165,10 @@ const PicksScreen = ({ navigation }) => {
 
       <SearchPaginated
         fetchMethod={useGetGamesQuery}
-        data={timedOut ? [] : sortByDate(games)}
+        data={sortByDate(games)}
         updateData={setGames}
         searchable={false}
-        params={{ roundId: round?.id, status: 'STATUS_SCHEDULED' }}
+        params={{ roundId: round?.id }}
         renderItem={({ item, index }) =>
           pickItem({
             item,
@@ -182,11 +181,7 @@ const PicksScreen = ({ navigation }) => {
             games,
           })
         }
-        emptyListText={
-          games.length && timedOut
-            ? `Picking is disabled since "${round?.name}" has started.`
-            : `No scheduled games to pick from for "${round?.name}".`
-        }
+        emptyListText={`No scheduled games to pick from for "${round?.name}".`}
       />
     </>
   );
